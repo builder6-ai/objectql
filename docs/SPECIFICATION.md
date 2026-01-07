@@ -43,6 +43,39 @@ The system uses a **"Directory-as-Datasource"** convention to map objects to dat
 2. **Implicit:** Subdirectory name under `/objects/`.
 3. **Fallback:** `default` connection.
 
+### 2.3 Connection Configuration (`.objectqlrc.js`)
+
+This file exports the configuration for all valid datasources. The `default` datasource is required.
+
+```javascript
+module.exports = {
+  datasources: {
+    // The 'default' connection (Required)
+    // Used for files in /objects/*.yml (root)
+    default: {
+      driver: '@objectql/driver-mongo',
+      connection: process.env.MONGO_URL
+    },
+
+    // 'logs' connection
+    // Used for files in /objects/logs/*.yml
+    logs: {
+      driver: '@objectql/driver-knex', // NPM package or Driver Instance
+      client: 'pg',                    // Knex specific config
+      connection: process.env.POSTGRES_URL
+    },
+
+    // 'external' connection
+    // Used for files in /objects/external/*.yml
+    external: {
+      driver: './drivers/oracle-driver', // Local path resolution
+      host: '192.168.1.50',
+      user: 'sysadmin'
+    }
+  }
+}
+```
+
 ## 3. Schema Definition (`.object.yml`)
 
 Files must use **Snake Case** (e.g., `customer_orders.yml`).
