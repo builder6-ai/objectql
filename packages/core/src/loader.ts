@@ -89,6 +89,26 @@ export function loadObjectConfigs(dir: string): Record<string, ObjectConfig> {
                  if (hookModule.default && typeof hookModule.default === 'object') {
                       Object.assign(listeners, hookModule.default);
                  }
+
+                 // Load Actions
+                 // Convention: export const actions = { myAction: (ctx, params) => ... }
+                 // OR export function myAction(ctx, params) ... (Ambiguous with hooks? No, hooks have explicit names)
+                 // Safer: look for `actions` export.
+                 
+                 if (hookModule.actions && typeof hookModule.actions === 'object') {
+                     if (!configs[objectName].actions) {
+                         configs[objectName].actions = {};
+                     }
+                     
+                     for (const [actionName, handler] of Object.entries(hookModule.actions)) {
+                         // We might have metadata from YAML already
+                         if (!configs[objectName].actions![actionName]) {
+                             configs[objectName].actions![actionName] = { };
+                         }
+                         // Attach handler
+                         configs[objectName].actions![actionName].handler = handler as any;
+                     }
+                 }
             }
         } catch (e) {
             console.error(`Error loading hook from ${file}:`, e);
