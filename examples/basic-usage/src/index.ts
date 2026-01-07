@@ -1,6 +1,5 @@
 import { ObjectQL, ObjectConfig } from '@objectql/core';
-import { MongoDriver } from '@objectql/driver-mongo';
-import { KnexDriver } from '@objectql/driver-knex';
+import { MockDriver } from './mock-driver';
 
 const projectObj: ObjectConfig = {
   name: 'projects',
@@ -38,8 +37,8 @@ const app = new ObjectQL({
     tasks: taskObj
   },
   datasources: {
-    // Environment A: Cloud / Prototype (MongoDB)
-    default: new MongoDriver({ url: process.env.MONGO_URL }),
+    // default: new MongoDriver({ url: process.env.MONGO_URL }),
+    default: new MockDriver()
   }
 });
 
@@ -61,16 +60,25 @@ const query = {
 };
 
 (async () => {
+    // 1. Create some dummy data
+    const systemCtx = app.createContext({ isSystem: true });
+    await systemCtx.object('projects').create({
+        name: 'Website Redesign',
+        status: 'in_progress',
+        priority: 'high'
+    });
+    await systemCtx.object('projects').create({
+        name: 'Mobile App',
+        status: 'planned',
+        priority: 'high'
+    });
+
+    // 2. Query
     // Option A: Execute on MongoDB
     // ObjectQL compiles this to an Aggregation Pipeline
     const ctx = app.createContext({
       userId: 'u-123'
     });
     const resultsMongo = await ctx.object('projects').find(query);
-    console.log('Mongo Results:', resultsMongo);
-
-    // Option B: Execute on PostgreSQL
-    // ObjectQL compiles this to a SQL query with JSONB operators and JOINs
-    // const resultsSql = await app.datasource('runtime').find(query);
-    // console.log('SQL Results:', resultsSql);
+    console.log('Query Results:', JSON.stringify(resultsMongo, null, 2));
 })();
