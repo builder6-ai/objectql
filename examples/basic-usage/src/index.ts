@@ -1,8 +1,42 @@
-import { ObjectQL } from '@objectql/core';
+import { ObjectQL, ObjectConfig } from '@objectql/core';
 import { MongoDriver } from '@objectql/driver-mongo';
 import { KnexDriver } from '@objectql/driver-knex';
 
+const projectObj: ObjectConfig = {
+  name: 'projects',
+  label: 'Project',
+  fields: {
+    name: { type: 'text', required: true, label: 'Name' },
+    status: {
+      type: 'select',
+      options: ['planned', 'in_progress', 'completed'],
+      defaultValue: 'planned'
+    },
+    priority: {
+      type: 'select',
+      options: ['low', 'normal', 'high'],
+      defaultValue: 'normal'
+    },
+    description: { type: 'textarea' }
+  }
+};
+
+const taskObj: ObjectConfig = {
+  name: 'tasks',
+  label: 'Task',
+  fields: {
+    name: { type: 'text', required: true },
+    project: { type: 'lookup', reference_to: 'projects' },
+    due_date: { type: 'date' },
+    completed: { type: 'boolean', defaultValue: false }
+  }
+};
+
 const app = new ObjectQL({
+  objects: {
+    projects: projectObj,
+    tasks: taskObj
+  },
   datasources: {
     // Environment A: Cloud / Prototype (MongoDB)
     design: new MongoDriver({ url: process.env.MONGO_URL }),
@@ -14,17 +48,17 @@ const app = new ObjectQL({
 
 // Example: Find orders with amount > 1000 and expand customer details
 const query = {
-  entity: 'orders',
-  fields: ['id', 'order_no', 'amount', 'created_at'],
+  entity: 'projects',
+  fields: ['name', 'status', 'priority'],
   filters: [
-    ['status', '=', 'paid'],
+    ['status', '=', 'in_progress'],
     'and',
-    ['amount', '>', 1000]
+    ['priority', '=', 'high']
   ],
-  sort: [['created_at', 'desc']],
+  sort: [['name', 'desc']],
   expand: {
-    customer: {
-      fields: ['name', 'email']
+    tasks: {
+      fields: ['name', 'due_date']
     }
   }
 };
