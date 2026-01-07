@@ -1,322 +1,463 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-gray-50 antialiased">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>ObjectQL Admin</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; display: flex; height: 100vh; }
-        #sidebar { width: 250px; background: #f4f4f4; border-right: 1px solid #ddd; padding: 20px; box-sizing: border-box; overflow-y: auto; }
-        #main { flex: 1; padding: 20px; box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; }
-        
-        h1, h2 { margin-top: 0; }
-        ul { list-style: none; padding: 0; }
-        li { padding: 10px; cursor: pointer; border-radius: 4px; }
-        li:hover { background: #e0e0e0; }
-        li.active { background: #007bff; color: white; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; }
-        tr:hover { background: #f1f1f1; }
-        
-        .toolbar { margin-bottom: 20px; display: flex; gap: 10px; }
-        button { padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        button.secondary { background: #6c757d; }
-        button.secondary:hover { background: #545b62; }
-        button.danger { background: #dc3545; }
-        button.danger:hover { background: #c82333; }
+    
+    <!-- SF Pro Font look-alike -->
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal.open { display: flex; }
-        .modal-content { background: white; padding: 20px; border-radius: 8px; width: 500px; max-width: 90%; max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; }
-        .action-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        ios: {
+                            blue: '#007AFF',
+                            gray: '#8E8E93',
+                            bg: '#F2F2F7',
+                            card: '#FFFFFF',
+                            separator: '#C6C6C8',
+                            destruct: '#FF3B30'
+                        }
+                    },
+                    boxShadow: {
+                        'ios': '0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.02)',
+                        'ios-hover': '0 4px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
         
-        #error-msg { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; display: none; margin-bottom: 10px; }
+        /* iOS-like Scrolling */
+        .ios-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .ios-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Glassmorphism for mobile header */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+        }
+
+        /* Responsive Modal Animations */
+        .mobile-sheet {
+            transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+        }
     </style>
 </head>
-<body>
-    <div id="sidebar">
-        <h2>Objects</h2>
-        <ul id="object-list">Loading...</ul>
-    </div>
-    <div id="main">
-        <div id="welcome-view">
-            <h1>Welcome to ObjectQL Admin</h1>
-            <p>Select an object from the sidebar to view and manage its data.</p>
+<body class="h-full flex flex-col md:flex-row text-gray-900 overflow-hidden bg-ios-bg" x-data="app()" x-init="initApp()" x-cloak>
+
+    <!-- Mobile Header -->
+    <header class="md:hidden h-14 glass-header border-b border-gray-200 flex items-center justify-between px-4 fixed top-0 w-full z-40">
+        <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="text-ios-blue text-lg">
+            <i class="ri-menu-line" x-show="!isMobileMenuOpen"></i>
+            <i class="ri-close-line" x-show="isMobileMenuOpen"></i>
+        </button>
+        <span class="font-semibold text-base" x-text="currentObject?.label || 'ObjectQL'"></span>
+        <button class="text-ios-blue text-lg" @click="currentObject && openModal()">
+            <i class="ri-add-line"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar (Desktop & Mobile Drawer) -->
+    <div 
+        class="fixed inset-0 bg-black/30 z-30 md:hidden transition-opacity duration-300"
+        x-show="isMobileMenuOpen"
+        x-transition:enter="opacity-0" x-transition:enter-end="opacity-100"
+        x-transition:leave="opacity-100" x-transition:leave-end="opacity-0"
+        @click="isMobileMenuOpen = false"
+    ></div>
+
+    <aside 
+        class="fixed inset-y-0 left-0 w-72 bg-ios-bg md:bg-[#F9F9FB] border-r border-[#D1D1D4] z-40 transform transition-transform duration-300 md:relative md:transform-none flex flex-col"
+        :class="isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'"
+    >
+        <div class="h-14 md:h-16 flex items-center px-5 flex-shrink-0 border-b border-gray-200 md:border-transparent">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-ios-blue text-white flex items-center justify-center shadow-sm">
+                    <i class="ri-database-2-fill text-lg"></i>
+                </div>
+                <h1 class="font-bold text-lg tracking-tight">ObjectQL</h1>
+            </div>
         </div>
-        <div id="object-view" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1 id="object-title">Object Name</h1>
-                <div class="toolbar">
-                    <button onclick="openCreateModal()">New Record</button>
-                    <button class="secondary" onclick="loadData()">Refresh</button>
+
+        <div class="px-3 py-2 flex-1 ios-scroll overflow-y-auto">
+            <h2 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 mt-2">Database</h2>
+            <div class="space-y-0.5">
+                <template x-for="obj in objects" :key="obj.name">
+                    <button 
+                        @click="selectObject(obj)"
+                        class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-3 active:scale-95 transform"
+                        :class="currentObject && currentObject.name === obj.name ? 'bg-white text-ios-blue shadow-ios' : 'text-gray-600 hover:bg-black/5'"
+                    >
+                        <i class="ri-table-fill opacity-80" :class="currentObject && currentObject.name === obj.name ? 'text-ios-blue' : 'text-gray-400'"></i>
+                        <span x-text="obj.label || obj.name"></span>
+                        <i class="ri-arrow-right-s-line ml-auto text-gray-300"></i>
+                    </button>
+                </template>
+            </div>
+        </div>
+        
+        <div class="p-4 border-t border-[#D1D1D4] bg-white/50 backdrop-blur-sm">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                    <i class="ri-user-fill"></i>
+                </div>
+                <div class="text-sm">
+                    <div class="font-medium text-gray-900">Administrator</div>
+                    <div class="text-gray-500 text-xs">System</div>
                 </div>
             </div>
-            <div id="error-msg"></div>
-            <div style="overflow-x: auto;">
-                <table id="data-table">
-                    <thead><tr id="table-header"></tr></thead>
-                    <tbody id="table-body"></tbody>
-                </table>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative h-full pt-14 md:pt-0 overflow-hidden" @click="isMobileMenuOpen = false">
+        
+        <div x-show="!currentObject" class="flex-1 flex items-center justify-center p-6 text-center text-gray-400">
+            <div>
+                <i class="ri-command-line text-4xl mb-4 block opacity-20"></i>
+                <p>Select an object to manage data</p>
             </div>
         </div>
-    </div>
 
-    <!-- Edit/Create Modal -->
-    <div id="record-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="modal-title">Create/Edit</h2>
-            <form id="record-form"></form>
-            <div class="action-bar">
-                <button class="secondary" onclick="closeModal()">Cancel</button>
-                <button onclick="saveRecord()">Save</button>
+        <div x-show="currentObject" class="flex-1 flex flex-col h-full w-full max-w-7xl mx-auto">
+            
+            <!-- Desktop Toolbar -->
+            <div class="hidden md:flex h-16 items-center justify-between px-6 md:px-8 border-b border-gray-200 bg-white sticky top-0 z-20">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900" x-text="currentObject?.label || currentObject?.name"></h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button @click="loadData()" class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center justify-center">
+                        <i class="ri-refresh-line" :class="{'animate-spin': loading}"></i>
+                    </button>
+                    <button @click="openModal()" class="px-4 py-1.5 bg-ios-blue hover:bg-blue-600 text-white text-sm font-medium rounded-full shadow-ios hover:shadow-ios-hover transition-all active:scale-95 flex items-center gap-1.5">
+                        <i class="ri-add-line"></i>
+                        <span>New</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto ios-scroll p-4 md:p-8">
+                
+                <div x-show="error" class="mb-4 bg-red-50 text-red-600 px-4 py-3 rounded-xl border border-red-100 text-sm flex items-center gap-2">
+                    <i class="ri-error-warning-fill"></i>
+                    <span x-text="error"></span>
+                </div>
+
+                <!-- Card List (Mobile) -->
+                <div class="md:hidden space-y-3 pb-20">
+                     <template x-for="row in records" :key="row._id || row.id">
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 active:scale-[0.98] transition-transform" @click="openModal(row)">
+                             <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-gray-900" x-text="getRowTitle(row)"></h3>
+                                <span class="text-xs text-gray-400 font-mono" x-text="(row._id || row.id).toString().slice(-4)"></span>
+                             </div>
+                             <div class="space-y-1">
+                                <template x-for="field in displayFields.slice(1, 4)" :key="field.name">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-500" x-text="field.label || field.name"></span>
+                                        <span class="text-gray-900 font-medium truncate max-w-[150px]" x-text="formatValue(row[field.name], field)"></span>
+                                    </div>
+                                </template>
+                             </div>
+                        </div>
+                     </template>
+                     <div x-show="records.length === 0 && !loading" class="text-center py-10 text-gray-500">
+                        No records
+                     </div>
+                </div>
+
+                <!-- Table (Desktop) -->
+                <div class="hidden md:block bg-white rounded-xl shadow-ios border border-gray-100 overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead class="bg-gray-50/50">
+                            <tr>
+                                <template x-for="field in displayFields" :key="field.name">
+                                    <th class="px-6 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" x-text="field.label || field.name"></th>
+                                </template>
+                                <th class="px-6 py-3.5 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                            <template x-for="row in records" :key="row._id || row.id">
+                                <tr class="hover:bg-gray-50/80 transition-colors group cursor-pointer" @click="openModal(row)">
+                                    <template x-for="field in displayFields" :key="field.name">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 group-hover:text-black">
+                                            <span x-text="formatValue(row[field.name], field)"></span>
+                                        </td>
+                                    </template>
+                                    <td class="px-6 py-4 text-right text-sm font-medium">
+                                        <i class="ri-arrow-right-s-line text-gray-300 group-hover:text-gray-500"></i>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                    <div x-show="records.length === 0 && !loading" class="text-center py-16 text-gray-400">
+                        <i class="ri-inbox-line text-4xl opacity-20 mb-3 block"></i>
+                        No records found
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal / Sheet -->
+    <div x-show="isModalOpen" class="relative z-50">
+        <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300" x-transition:enter="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="opacity-100" x-transition:leave-end="opacity-0" @click="closeModal()"></div>
+
+        <!-- Desktop Modal / Mobile Sheet -->
+        <div class="fixed inset-x-0 bottom-0 md:inset-0 md:flex md:items-center md:justify-center pointer-events-none">
+            
+            <div 
+                class="bg-white w-full md:w-[600px] md:rounded-2xl md:shadow-2xl h-[90vh] md:h-auto md:max-h-[85vh] flex flex-col pointer-events-auto mobile-sheet rounded-t-2xl transform"
+                x-transition:enter="translate-y-full md:transition md:duration-200 md:ease-out md:scale-95 md:opacity-0 md:translate-y-0"
+                x-transition:enter-end="translate-y-0 md:scale-100 md:opacity-100"
+                x-transition:leave="translate-y-full md:transition md:duration-150 md:ease-in md:scale-95 md:opacity-0 md:translate-y-0"
+            >
+                <!-- Drag Handle (Mobile) -->
+                <div class="md:hidden h-6 flex items-center justify-center pt-2 pb-1" @click="closeModal()">
+                    <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+                </div>
+
+                <!-- Header -->
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-white md:rounded-t-2xl sticky top-0 z-10">
+                    <h3 class="text-lg font-bold text-gray-900">
+                        <span x-text="editId ? 'Edit Record' : 'New Record'"></span>
+                    </h3>
+                    <div class="flex gap-4">
+                         <button x-show="editId" @click="deleteRecord(editId)" class="text-red-500 font-medium text-sm hover:opacity-80 transition-opacity">Delete</button>
+                         <button @click="closeModal()" class="md:block hidden text-gray-400 hover:text-gray-600">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="ri-close-line text-lg"></i>
+                            </div>
+                        </button>
+                         <button @click="closeModal()" class="md:hidden text-ios-blue font-medium">Cancel</button>
+
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto ios-scroll p-6 bg-[#F9F9FB] md:bg-white">
+                    <form id="recordForm" @submit.prevent="saveRecord()" class="space-y-5">
+                        <template x-for="field in formFields" :key="field.name">
+                            <div class="bg-white md:bg-transparent rounded-xl px-4 py-3 md:p-0 border border-gray-100 md:border-0 shadow-sm md:shadow-none">
+                                <label :for="field.name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5" x-text="field.label || field.name"></label>
+                                
+                                <template x-if="(field.type === 'select' && field.options) || field.type === 'boolean'">
+                                    <div class="relative">
+                                        <select :id="field.name" class="appearance-none block w-full bg-[#F2F2F7] md:bg-gray-50 border-0 rounded-lg py-3 px-4 text-gray-900 focus:ring-2 focus:ring-ios-blue focus:bg-white transition-all text-base" x-model="formData[field.name]">
+                                            <template x-if="field.type === 'boolean'">
+                                                <optgroup>
+                                                    <option :value="true">Yes</option>
+                                                    <option :value="false">No</option>
+                                                </optgroup>
+                                            </template>
+                                            <template x-if="userOptions(field)">
+                                                <optgroup>
+                                                   <template x-for="opt in userOptions(field)" :key="opt.value">
+                                                       <option :value="opt.value" x-text="opt.label"></option>
+                                                   </template>
+                                                </optgroup>
+                                           </template>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                                            <i class="ri-arrow-up-down-line text-sm"></i>
+                                        </div>
+                                    </div>
+                                </template>
+
+                                <template x-if="field.type === 'textarea'">
+                                    <textarea :id="field.name" rows="3" class="block w-full bg-[#F2F2F7] md:bg-gray-50 border-0 rounded-lg py-3 px-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-ios-blue focus:bg-white transition-all text-base resize-none" x-model="formData[field.name]"></textarea>
+                                </template>
+
+                                <template x-if="!['select', 'boolean', 'textarea'].includes(field.type)">
+                                    <input 
+                                        :type="field.type === 'number' ? 'number' : 'text'" 
+                                        :id="field.name" 
+                                        class="block w-full bg-[#F2F2F7] md:bg-gray-50 border-0 rounded-lg py-3 px-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-ios-blue focus:bg-white transition-all text-base" 
+                                        x-model="formData[field.name]"
+                                    >
+                                </template>
+                            </div>
+                        </template>
+                    </form>
+                </div>
+
+                <!-- Footer -->
+                <div class="p-4 border-t border-gray-100 bg-white md:rounded-b-2xl pb-safe">
+                    <button form="recordForm" type="submit" class="w-full bg-ios-blue hover:bg-blue-600 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-blue-500/30 active:scale-[0.98] transition-all text-lg md:text-base">
+                        Save
+                    </button>
+                    <div class="md:hidden h-4"></div> <!-- Bottom safe area spacer -->
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_BASE = '/api';
-        let customHeaders = {
-            'X-User-Id': 'admin' // Force admin for this demo
-        };
-
-        let schemas = {};
-        let currentObject = null;
-        let currentData = [];
-
-        async function init() {
-            try {
-                const res = await fetch(`${API_BASE}/_schema`, { headers: customHeaders });
-                if (!res.ok) throw new Error(await res.text());
-                schemas = await res.json();
-                renderSidebar();
-            } catch (e) {
-                alert("Failed to load schema: " + e.message);
-            }
-        }
-
-        function renderSidebar() {
-            const list = document.getElementById('object-list');
-            list.innerHTML = '';
-            Object.keys(schemas).forEach(key => {
-                const li = document.createElement('li');
-                li.textContent = schemas[key].label || schemas[key].name;
-                li.onclick = () => selectObject(key);
-                list.appendChild(li);
-            });
-        }
-
-        function selectObject(name) {
-            currentObject = schemas[name];
-            document.querySelectorAll('#sidebar li').forEach(li => li.classList.remove('active'));
-            // Highlight active (simple check)
-            Array.from(document.querySelectorAll('#sidebar li')).find(l => l.innerText === (currentObject.label || currentObject.name)).classList.add('active');
-
-            document.getElementById('welcome-view').style.display = 'none';
-            document.getElementById('object-view').style.display = 'block';
-            document.getElementById('object-title').textContent = currentObject.label || currentObject.name;
-            
-            loadData();
-        }
-
-        async function loadData() {
-            if (!currentObject) return;
-            const tableHead = document.getElementById('table-header');
-            const tableBody = document.getElementById('table-body');
-            const errorDiv = document.getElementById('error-msg');
-            
-            tableHead.innerHTML = '';
-            tableBody.innerHTML = '';
-            errorDiv.style.display = 'none';
-
-            // Setup columns
-            const fields = Object.values(currentObject.fields);
-            // Limit visible columns for simplicity
-            const displayFields = fields.slice(0, 5); 
-            
-            displayFields.forEach(f => {
-                const th = document.createElement('th');
-                th.textContent = f.label || f.name;
-                tableHead.appendChild(th);
-            });
-            // Actions column
-            const th = document.createElement('th');
-            th.textContent = 'Actions';
-            tableHead.appendChild(th);
-
-            try {
-                const res = await fetch(`${API_BASE}/${currentObject.name}?sort=created:desc`, { headers: customHeaders });
-                if (!res.ok) throw new Error(await res.text());
-                currentData = await res.json();
-
-                currentData.forEach(row => {
-                    const tr = document.createElement('tr');
-                    displayFields.forEach(f => {
-                        const td = document.createElement('td');
-                        const val = row[f.name];
-                        td.textContent = (typeof val === 'object') ? JSON.stringify(val) : val;
-                        tr.appendChild(td);
-                    });
-                    
-                    // Actions
-                    const actionTd = document.createElement('td');
-                    
-                    // Edit
-                    const editBtn = document.createElement('button');
-                    editBtn.textContent = 'Edit';
-                    editBtn.className = 'secondary';
-                    editBtn.style.marginRight = '5px';
-                    editBtn.onclick = () => openEditModal(row._id || row.id); // Try both
-                    actionTd.appendChild(editBtn);
-                    
-                    // Actions (Custom)
-                    // If methods (actions) are defined in schema? Not exposed in schema currently.
-                    // Let's manually add 'trigger' button if it exists
-                    // We need to look up which files we added to see if project has actions
-                    
-                    // Delete
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = 'Del';
-                    delBtn.className = 'danger';
-                    delBtn.onclick = () => deleteRecord(row._id || row.id);
-                    actionTd.appendChild(delBtn);
-
-                    tr.appendChild(actionTd);
-                    tableBody.appendChild(tr);
-                });
-
-            } catch (e) {
-                errorDiv.textContent = e.message;
-                errorDiv.style.display = 'block';
-            }
-        }
-
-        let editingId = null;
-
-        function openCreateModal() {
-            editingId = null;
-            document.getElementById('modal-title').textContent = `New ${currentObject.label || currentObject.name}`;
-            renderForm({});
-            document.getElementById('record-modal').classList.add('open');
-        }
-
-        function openEditModal(id) {
-            editingId = id;
-            const record = currentData.find(d => (d._id || d.id) === id);
-            document.getElementById('modal-title').textContent = `Edit ${currentObject.label || currentObject.name}`;
-            renderForm(record);
-            document.getElementById('record-modal').classList.add('open');
-        }
-
-        function closeModal() {
-            document.getElementById('record-modal').classList.remove('open');
-        }
-
-        function renderForm(data) {
-            const form = document.getElementById('record-form');
-            form.innerHTML = '';
-            
-            Object.values(currentObject.fields).forEach(f => {
-                if (f.name === '_id' || f.name === 'id') return; // Skip ID
+        function app() {
+            return {
+                isMobileMenuOpen: false,
+                API_BASE: '/api',
+                HEADERS: { 'X-User-Id': 'admin', 'Content-Type': 'application/json' },
                 
-                const group = document.createElement('div');
-                group.className = 'form-group';
+                objects: [],
+                currentObject: null,
+                records: [],
+                loading: false,
+                error: null,
                 
-                const label = document.createElement('label');
-                label.textContent = f.label || f.name;
-                group.appendChild(label);
-                
-                let input;
-                if (f.type === 'textarea') {
-                    input = document.createElement('textarea');
-                } else if (f.type === 'select' && f.options) {
-                    input = document.createElement('select');
-                    f.options.forEach(opt => {
-                        const option = document.createElement('option');
-                        option.value = opt.value;
-                        option.textContent = opt.label;
-                        input.appendChild(option);
-                    });
-                } else if (f.type === 'boolean') {
-                    input = document.createElement('select');
-                    const optT = document.createElement('option'); optT.value = 'true'; optT.textContent = 'Yes';
-                    const optF = document.createElement('option'); optF.value = 'false'; optF.textContent = 'No';
-                    input.appendChild(optT);
-                    input.appendChild(optF);
-                } else {
-                    input = document.createElement('input');
-                    input.type = f.type === 'number' ? 'number' : 'text';
-                }
-                
-                input.name = f.name;
-                // Pre-fill
-                if (data && data[f.name] !== undefined) {
-                    input.value = data[f.name];
-                }
-                
-                group.appendChild(input);
-                form.appendChild(group);
-            });
-        }
+                isModalOpen: false,
+                editId: null,
+                formData: {},
 
-        async function saveRecord() {
-            try {
-                const form = document.getElementById('record-form');
-                const formData = new FormData(form); // Doesn't work well with non-standard inputs, manual collection better
-                const payload = {};
-                
-                Array.from(form.elements).forEach(el => {
-                    if (el.name) {
-                        const field = Object.values(currentObject.fields).find(f => f.name === el.name);
-                        let val = el.value;
-                        if (field && field.type === 'number') val = parseFloat(val);
-                        if (field && field.type === 'boolean') val = (val === 'true');
-                        payload[el.name] = val;
+                async initApp() {
+                    try {
+                        const res = await fetch(`${this.API_BASE}/_schema`, { headers: this.HEADERS });
+                        if (!res.ok) throw new Error("Could not load schema");
+                        const schemas = await res.json();
+                        this.objects = Object.values(schemas);
+                        // Auto-select first if desktop
+                        if(window.innerWidth > 768 && this.objects.length > 0) {
+                            this.selectObject(this.objects[0]);
+                        }
+                    } catch (e) {
+                        this.error = e.message;
                     }
-                });
+                },
 
-                const url = editingId 
-                    ? `${API_BASE}/${currentObject.name}/${editingId}` 
-                    : `${API_BASE}/${currentObject.name}`;
-                
-                const method = editingId ? 'PUT' : 'POST';
-                
-                const res = await fetch(url, {
-                    method,
-                    headers: { ...customHeaders, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                selectObject(obj) {
+                    this.currentObject = obj;
+                    this.isMobileMenuOpen = false;
+                    this.loadData();
+                },
 
-                if (!res.ok) throw new Error(await res.text());
+                async loadData() {
+                    if (!this.currentObject) return;
+                    this.loading = true;
+                    this.error = null;
+                    try {
+                        const res = await fetch(`${this.API_BASE}/${this.currentObject.name}?sort=created:desc`, { headers: this.HEADERS });
+                        if (!res.ok) throw new Error(await res.text());
+                        this.records = await res.json();
+                    } catch (e) {
+                        this.error = e.message;
+                        this.records = [];
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                get displayFields() {
+                    if (!this.currentObject) return [];
+                    return Object.values(this.currentObject.fields).filter(f => !['_id', 'password'].includes(f.name)).slice(0, 5);
+                },
+
+                get formFields() {
+                    if (!this.currentObject) return [];
+                    return Object.values(this.currentObject.fields).filter(f => !['_id', 'id', 'created', 'modified'].includes(f.name));
+                },
                 
-                closeModal();
-                loadData();
-            } catch (e) {
-                alert("Error saving: " + e.message);
+                userOptions(field) { return field.options; },
+
+                formatValue(value, field) {
+                    if (value === null || value === undefined) return '';
+                    if (field.type === 'boolean') return value ? 'Yes' : 'No';
+                    if (typeof value === 'object') return JSON.stringify(value);
+                    return value;
+                },
+
+                getRowTitle(row) {
+                    // Try to guess the "title" field: name, title, label, etc.
+                    const fields = this.displayFields;
+                    const titleField = fields.find(f => ['name', 'title', 'subject'].includes(f.name)) || fields[0];
+                    return titleField ? row[titleField.name] : 'Record';
+                },
+
+                openModal(record = null) {
+                    this.editId = record ? (record._id || record.id) : null;
+                    this.formData = {};
+                    
+                    this.formFields.forEach(f => {
+                        if (record && record[f.name] !== undefined) {
+                            this.formData[f.name] = record[f.name];
+                        } else if (f.defaultValue !== undefined) {
+                            this.formData[f.name] = f.defaultValue;
+                        } else {
+                            this.formData[f.name] = (f.type === 'boolean') ? false : '';
+                        }
+                    });
+                    
+                    this.isModalOpen = true;
+                },
+
+                closeModal() {
+                    this.isModalOpen = false;
+                    this.formData = {};
+                    this.editId = null;
+                },
+
+                async saveRecord() {
+                    try {
+                        const payload = { ...this.formData };
+                        this.formFields.forEach(f => {
+                            if (f.type === 'number') payload[f.name] = Number(payload[f.name]);
+                            if (f.type === 'boolean') payload[f.name] = String(payload[f.name]) === 'true'; 
+                        });
+
+                        const url = this.editId 
+                            ? `${this.API_BASE}/${this.currentObject.name}/${this.editId}` 
+                            : `${this.API_BASE}/${this.currentObject.name}`;
+                        
+                        const method = this.editId ? 'PUT' : 'POST';
+                        
+                        const res = await fetch(url, { method, headers: this.HEADERS, body: JSON.stringify(payload) });
+
+                        if (!res.ok) throw new Error(await res.text());
+                        
+                        this.closeModal();
+                        this.loadData();
+                    } catch (e) {
+                        this.error = e.message;
+                    }
+                },
+
+                async deleteRecord(id) {
+                    if (!confirm("Are you sure?")) return;
+                    try {
+                        const res = await fetch(`${this.API_BASE}/${this.currentObject.name}/${id}`, {
+                            method: 'DELETE',
+                            headers: this.HEADERS
+                        });
+                        if (!res.ok) throw new Error(await res.text());
+                        this.closeModal();
+                        this.loadData();
+                    } catch (e) {
+                         this.error = e.message;
+                    }
+                }
             }
         }
-
-        async function deleteRecord(id) {
-            if (!confirm("Are you sure?")) return;
-            try {
-                const res = await fetch(`${API_BASE}/${currentObject.name}/${id}`, {
-                    method: 'DELETE',
-                    headers: customHeaders
-                });
-                if (!res.ok) throw new Error(await res.text());
-                loadData();
-            } catch (e) {
-                alert("Error deleting: " + e.message);
-            }
-        }
-
-        // Invoke
-        init();
     </script>
 </body>
 </html>
