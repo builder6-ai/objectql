@@ -1,69 +1,78 @@
-# Builder6 ObjectQL
+
+# ObjectQL
 
 **One Protocol, Any Database, AI-Ready.**
 
-A modern, dual-stack data query engine designed for the AI era.  
-Write your logic once in JSON-DSL, run it seamlessly on MongoDB (for flexible design) or PostgreSQL (for strict production).
+A universal data query engine for the modern stack.
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-blue.svg)](http://www.typescriptlang.org/)
-[![Status](https://img.shields.io/badge/status-alpha-orange.svg)]()
+Write your logic once in JSON-DSL, run it seamlessly on MongoDB (Schema-less) or PostgreSQL (Schema-strict).
 
 ---
 
 ## 📖 Introduction
 
-**Builder6 ObjectQL** is a complete rewrite of the legacy `@steedos/objectql` engine. It addresses the modern challenge of building dynamic, low-code applications: **The conflict between flexible design and structured storage.**
+**ObjectQL** is a standalone, open-source query engine designed to bridge the gap between flexible design and structured storage.
 
-In a typical lifecycle:
-1.  **Design Time:** You want the flexibility of MongoDB to drag-and-drop fields without schema migrations.
-2.  **Run Time:** Enterprises demand the reliability, ACID transactions, and BI compatibility of SQL (PostgreSQL).
+In modern application development, developers often face a dilemma:
 
-Builder6 ObjectQL bridges this gap with a unified **JSON-DSL** that compiles to native queries for both worlds.
+1. **Design Phase:** You want the flexibility of **NoSQL (MongoDB)** to iterate fast, change schemas on the fly, and handle dynamic fields.
+2. **Production Phase:** You need the reliability, transactions, and reporting capabilities of **SQL (PostgreSQL)**.
+
+ObjectQL solves this by providing a unified **JSON-DSL (Domain Specific Language)**. It acts as a transpiler that compiles your abstract query logic into optimized native queries for whichever database you are running on.
+
+It is **not** an ORM, but a high-level data protocol designed for AI agents, low-code engines, and dynamic API layers.
 
 ## ✨ Key Features
 
--   **🚀 Dual-Stack Engine:**
-    -   **Mongo Driver:** Native performance for schema-less data and rapid prototyping.
-    -   **Knex SQL Driver:** First-class support for PostgreSQL, MySQL, and SQLite. Utilizes `JSONB` for dynamic columns while keeping core fields structured.
--   **🤖 AI-First Design:**
-    -   Queries are defined as standardized JSON objects (AST), not strings.
-    -   Optimized for LLMs (ChatGPT/Claude) to understand and generate accurate business logic.
--   **⚡ Modern Stack:**
-    -   Written in 100% TypeScript.
-    -   **Zero heavy dependencies.** No more `Meteor`, `Fibers`, or legacy wrappers.
-    -   Promise-based asynchronous API.
--   **🔌 Pluggable Architecture:**
-    -   Core logic is decoupled from storage drivers.
-    -   Easy to implement custom adapters (e.g., REST, GraphQL wrapper).
+* **🚀 Dual-Stack Engine:**
+* **Mongo Driver:** Native performance for schema-less data and rapid prototyping.
+* **Knex SQL Driver:** First-class support for PostgreSQL, MySQL, and SQLite. It uniquely employs a "Core Columns + JSONB" strategy to handle dynamic fields within a relational structure.
+
+
+* **🤖 AI-Native Protocol:**
+* Queries are defined as standardized **JSON ASTs** (Abstract Syntax Trees), not string concatenation.
+* This structure is optimized for LLMs (like ChatGPT/Claude) to understand schema and generate accurate, safe business logic without hallucinating SQL syntax.
+
+
+* **⚡ Modern & Lightweight:**
+* Written in 100% **TypeScript**.
+* **Zero heavy legacy dependencies.** No runtime environment requirements beyond Node.js.
+* Promise-based asynchronous API.
+
+
+* **🔌 Pluggable Architecture:**
+* The core logic is completely decoupled from storage drivers.
+* Easily extensible to support other data sources (e.g., REST APIs, GraphQL, SQLite).
+
 
 
 ## 📦 Installation
 
 ```bash
-# Install core
-npm install @builder6/objectql
+# Install the core engine
+npm install @objectql/core
 
 # Install drivers as needed
-npm install @builder6/objectql-driver-mongo
-npm install @builder6/objectql-driver-knex
+npm install @objectql/driver-mongo
+npm install @objectql/driver-knex
 
 ```
 
 ## ⚡ Quick Start
 
-### 1. Define your App & Drivers
+### 1. Initialize ObjectQL
 
 ```typescript
-import { B6App } from '@builder6/objectql';
-import { MongoDriver } from '@builder6/objectql-driver-mongo';
-import { KnexDriver } from '@builder6/objectql-driver-knex';
+import { ObjectQL } from '@objectql/core';
+import { MongoDriver } from '@objectql/driver-mongo';
+import { KnexDriver } from '@objectql/driver-knex';
 
-const app = new B6App({
+const app = new ObjectQL({
   datasources: {
-    // Cloud Design Environment
+    // Environment A: Cloud / Prototype (MongoDB)
     design: new MongoDriver({ url: process.env.MONGO_URL }),
-    // Local Production Environment
+    
+    // Environment B: On-Premise / Production (PostgreSQL)
     runtime: new KnexDriver({ client: 'pg', connection: process.env.PG_URL })
   }
 });
@@ -72,10 +81,10 @@ const app = new B6App({
 
 ### 2. The Unified Query (JSON-DSL)
 
-This syntax is designed to be easily generated by AI agents and frontend UI builders.
+This syntax is consistent regardless of the underlying database. It is designed to be easily generated by frontend UI builders or AI agents.
 
 ```typescript
-// Find orders with amount > 1000 and expand customer details
+// Example: Find orders with amount > 1000 and expand customer details
 const query = {
   entity: 'orders',
   fields: ['id', 'order_no', 'amount', 'created_at'],
@@ -92,24 +101,28 @@ const query = {
   }
 };
 
-// Execute on MongoDB
+// Option A: Execute on MongoDB
+// ObjectQL compiles this to an Aggregation Pipeline
 const resultsMongo = await app.datasource('design').find(query);
 
-// Execute on PostgreSQL (Auto-transpiled to SQL with JOINs)
+// Option B: Execute on PostgreSQL
+// ObjectQL compiles this to a SQL query with JSONB operators and JOINs
 const resultsSql = await app.datasource('runtime').find(query);
 
 ```
 
 ## 🏗 Architecture
 
+ObjectQL follows a strict separation of concerns, acting as a compiler between your intent (DSL) and the execution (Driver).
+
 ```mermaid
 graph TD
-    Client[Frontend / AI Agent] -->|JSON DSL| Core[Builder6 Core]
+    Client[Frontend / AI Agent] -->|JSON DSL| Core[ObjectQL Core]
     Core -->|AST Analysis| Adapter
     
     subgraph Drivers
-    Adapter -->|Transpiler| Mongo[Mongo Driver]
-    Adapter -->|Transpiler| SQL[Knex SQL Driver]
+    Adapter -->|Compiler| Mongo[Mongo Driver]
+    Adapter -->|Compiler| SQL[Knex SQL Driver]
     end
     
     Mongo -->|Aggregation| DB_NoSQL[(MongoDB)]
@@ -119,15 +132,15 @@ graph TD
 
 ## 🛣 Roadmap
 
-* [ ] **Phase 1: Core Protocol:** Define `UnifiedQuery` types and AST parser.
-* [ ] **Phase 2: Mongo Driver:** Parity with basic Steedos functionality.
-* [ ] **Phase 3: SQL Driver:** Implement "Core Columns + JSONB" strategy via Knex.js.
-* [ ] **Phase 4: CLI Tools:** Schema sync and TypeScript type generation (`b6 generate`).
+* [ ] **Phase 1: Core Protocol:** Define stable `UnifiedQuery` types and AST parser.
+* [ ] **Phase 2: Mongo Driver:** Implement full CRUD and Aggregation support.
+* [ ] **Phase 3: SQL Driver:** Implement the "Hybrid Storage" strategy (Relational Columns + JSONB).
+* [ ] **Phase 4: CLI Tools:** Schema synchronization and TypeScript type generation (`objectql generate`).
 
 ## 🤝 Contributing
 
-We welcome contributions! This project is intended to be the foundation for the next generation of open-source low-code platforms.
+We welcome contributions! This project is intended to be the foundation for the next generation of data-driven applications.
 
 ## 📄 License
 
-MIT © [Builder6 Inc.](https://builder6.com)
+MIT © [ObjectQL Contributors](https://github.com/objectql)
