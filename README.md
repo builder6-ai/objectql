@@ -1,8 +1,6 @@
 # Builder6 ObjectQL
 
-<div align="center">
-
-![Builder6 ObjectQL](https://via.placeholder.com/128x128.png?text=B6) **One Protocol, Any Database, AI-Ready.**
+**One Protocol, Any Database, AI-Ready.**
 
 A modern, dual-stack data query engine designed for the AI era.  
 Write your logic once in JSON-DSL, run it seamlessly on MongoDB (for flexible design) or PostgreSQL (for strict production).
@@ -10,8 +8,6 @@ Write your logic once in JSON-DSL, run it seamlessly on MongoDB (for flexible de
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-blue.svg)](http://www.typescriptlang.org/)
 [![Status](https://img.shields.io/badge/status-alpha-orange.svg)]()
-
-</div>
 
 ---
 
