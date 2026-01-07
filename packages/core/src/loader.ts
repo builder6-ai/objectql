@@ -114,6 +114,46 @@ export function loadObjectConfigs(dir: string): Record<string, ObjectConfig> {
             console.error(`Error loading hook from ${file}:`, e);
         }
     }
+
+    // 3. Load Actions (.action.js, .action.ts)
+    const actionFiles = glob.sync(['**/*.action.{js,ts}'], {
+        cwd: dir,
+        absolute: true
+    });
+
+    for (const file of actionFiles) {
+        try {
+            const actionModule = require(file);
+            let objectName = actionModule.listenTo;
+            
+            if (!objectName) {
+                const basename = path.basename(file);
+                const match = basename.match(/^(.+)\.action\.(ts|js)$/);
+                if (match) {
+                    objectName = match[1];
+                }
+            }
+
+            if (objectName && configs[objectName]) {
+                 if (!configs[objectName].actions) {
+                     configs[objectName].actions = {};
+                 }
+                 
+                 // Treat all exported functions as actions
+                 for (const [key, value] of Object.entries(actionModule)) {
+                     if (key === 'listenTo') continue;
+                     if (typeof value === 'function') {
+                         if (!configs[objectName].actions![key]) {
+                             configs[objectName].actions![key] = {};
+                         }
+                         configs[objectName].actions![key].handler = value as any;
+                     }
+                 }
+            }
+        } catch (e) {
+            console.error(`Error loading action from ${file}:`, e);
+        }
+    }
     
     return configs;
 }
