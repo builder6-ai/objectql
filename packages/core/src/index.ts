@@ -2,6 +2,7 @@ export * from './metadata';
 export * from './types';
 export * from './driver';
 export * from './repository';
+export * from './query';
 
 import { ObjectConfig } from './metadata';
 import { ObjectQLContext, ObjectQLContextOptions, IObjectQL } from './types';

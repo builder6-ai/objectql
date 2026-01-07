@@ -1,11 +1,47 @@
 import { ObjectRepository } from "./repository";
 import { ObjectConfig } from "./metadata";
 import { Driver } from "./driver";
+import { UnifiedQuery, FilterCriterion } from "./query";
 
 export interface IObjectQL {
     getObject(name: string): ObjectConfig | undefined;
     datasource(name: string): Driver;
 }
+
+export interface HookContext<T = any> {
+  // === 1. The Session Context ===
+  // Automatically propagates userId, spaceId, and Transaction.
+  ctx: ObjectQLContext;
+
+  // === 2. Operational Info ===
+  entity: string;
+  op: 'find' | 'create' | 'update' | 'delete' | 'count' | 'aggregate';
+  
+  // === 3. Data Payload (Mutable) ===
+  // - In beforeCreate/Update: The data to be written. 
+  // - In afterCreate/Update: The result record returned from DB.
+  doc?: T;              
+
+  // === 4. Query Context (Mutable, for 'find' only) ===
+  // Complies strictly with the UnifiedQuery JSON-DSL (AST).
+  // Developers can modify 'fields', 'sort', or wrap 'filters'.
+  query?: UnifiedQuery;
+  
+  // === 5. Helpers ===
+  getPreviousDoc: () => Promise<T | undefined>;
+  
+  // AST Manipulation Utilities
+  utils: {
+    /**
+     * Safely injects a new filter criterion into the existing AST.
+     * It wraps existing filters in a new group to preserve operator precedence.
+     * * Logic: (Existing_Filters) AND (New_Filter)
+     */
+    restrict: (criterion: FilterCriterion) => void;
+  };
+}
+
+export type HookFunction = (context: HookContext) => Promise<void>;
 
 export interface ObjectQLContext {
     // === Identity & Isolation ===

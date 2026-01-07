@@ -1,4 +1,4 @@
-import { ObjectQL, ObjectConfig } from '@objectql/core';
+import { ObjectQL, ObjectConfig, UnifiedQuery } from '@objectql/core';
 import { MockDriver } from './mock-driver';
 
 const projectObj: ObjectConfig = {
@@ -43,8 +43,7 @@ const app = new ObjectQL({
 });
 
 // Example: Find orders with amount > 1000 and expand customer details
-const query = {
-  entity: 'projects',
+const query: UnifiedQuery = {
   fields: ['name', 'status', 'priority'],
   filters: [
     ['status', '=', 'in_progress'],
@@ -58,6 +57,7 @@ const query = {
     }
   }
 };
+
 
 (async () => {
     // 1. Create some dummy data

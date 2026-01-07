@@ -107,15 +107,17 @@ export interface ActionConfig {
     handler?: (ctx: any, params: any) => Promise<any>;
 }
 
-export type TriggerHook = (ctx: any, doc: any) => Promise<void | boolean>;
+import { HookFunction } from './types';
 
 export interface ObjectListeners {
-    beforeCreate?: TriggerHook;
-    afterCreate?: TriggerHook;
-    beforeUpdate?: TriggerHook;
-    afterUpdate?: TriggerHook;
-    beforeDelete?: TriggerHook;
-    afterDelete?: TriggerHook;
+    beforeCreate?: HookFunction;
+    afterCreate?: HookFunction;
+    beforeUpdate?: HookFunction;
+    afterUpdate?: HookFunction;
+    beforeDelete?: HookFunction;
+    afterDelete?: HookFunction;
+    beforeFind?: HookFunction;
+    afterFind?: HookFunction;
 }
 
 /**
