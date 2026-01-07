@@ -3,8 +3,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "examples/apps/*",
-    "examples/servers/*"
+    "examples/modules/*",
+    "examples/apps/*"
   ],
   "scripts": {
     "start": "npm run build --workspaces && npm start --workspace=@example/express",

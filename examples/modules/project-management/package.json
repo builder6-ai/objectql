@@ -7,7 +7,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && cp src/*.yml dist/"
+    "build": "tsc && cp src/*.yml dist/",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "@objectql/core": "^0.1.0"
