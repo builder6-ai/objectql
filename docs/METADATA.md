@@ -1,7 +1,6 @@
-# ObjectQL Core Specification
+# ObjectQL Metadata Specification
 
 **Version:** 1.0.0
-**Target:** Core Engine & Driver Developers
 
 ## 1. Architecture Overview
 
@@ -89,43 +88,5 @@ fields:
   # Dynamic Types (Stored as JSONB in SQL)
   metadata:
     type: object
-
-```
-
-**SQL Hybrid Storage Strategy:**
-
-* Fields defined in `fields` map to physical columns if they exist.
-* New/Dynamic fields map to `_extra_data->>'field_name'` automatically by the Knex Driver.
-
-## 4. The Unified Query Protocol (JSON-DSL)
-
-All internal communication uses the Unified Query Protocol (JSON-DSL).
-
-> **Full Specification:** Please refer to [QUERY_PROTOCOL.md](./QUERY_PROTOCOL.md) for the complete TypeScript interface and examples.
-
-## 5. Security Model (Modern RBAC)
-
-* **Philosophy:** Additive Permissions (Union Strategy).
-* **Mechanism:** Predicate Pushdown (Injects filters into AST before execution).
-
-### 5.1 Role Definition (`/roles/*.yml`)
-
-```yaml
-kind: Role
-name: sales_rep
-description: Access to own data only
-
-policies:
-  - resource: contracts
-    actions: [read, update, create] # No delete
-    
-    # Row Level Security (RLS)
-    # Injected into the Query AST as an 'AND' condition
-    filters: 
-      - ['owner', '=', '$user.id']
-
-    # Field Level Security (FLS)
-    # Whitelist approach
-    fields: ['*'] 
 
 ```

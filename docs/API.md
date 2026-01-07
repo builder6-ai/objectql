@@ -138,6 +138,16 @@ const stats = await ctx.object('orders').aggregate({
 
 ```
 
+### 3.5 `distinct(field, filters)`
+
+Retrieves a list of unique values for a specific field, optionally filtered.
+
+```typescript
+// Get all unique cities from customers in the 'US'
+const cities = await ctx.object('customers').distinct('billing_city', [['country', '=', 'US']]);
+// Result: ['New York', 'San Francisco', 'Chicago']
+```
+
 ## 4. Mutation API (Write)
 
 ### 4.1 `create(doc)`
@@ -185,6 +195,39 @@ Deletes a record.
 ```typescript
 await ctx.object('orders').delete('o-123');
 
+```
+
+### 4.4 `findOneAndUpdate(query, update, options)`
+
+Atomically finds a record, modifies it, and returns the document. Useful for job queues, counters, and state machines.
+
+*   **options.returnNew**: If `true`, returns the document *after* the update. If `false` (default), returns the document *before* the update.
+*   **options.upsert**: If `true`, creates a new record if no match is found.
+
+```typescript
+// Assignment: Find the oldest unassigned task and assign it to me
+const task = await ctx.object('tasks').findOneAndUpdate(
+    // Filters
+    [['status', '=', 'pending'], 'and', ['assignee', '=', null]], 
+    // Update
+    { assignee: ctx.userId, status: 'in_progress' },
+    // Sort & Options
+    { 
+        sort: [['created_at', 'asc']],
+        returnNew: true 
+    }
+);
+```
+
+### 4.5 `update(id, doc, options)` with Upsert
+
+The standard update can also support `upsert` semantics if supported by the driver.
+
+```typescript
+// Update setting if exists, otherwise create it with specific ID
+await ctx.object('user_settings').update('setting-key-001', {
+  theme: 'dark'
+}, { upsert: true });
 ```
 
 ## 5. Advanced Features
