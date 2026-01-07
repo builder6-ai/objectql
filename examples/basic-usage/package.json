@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "build": "rm -rf dist && tsc -b && mkdir -p dist/objects && cp src/objects/*.yml dist/objects/",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
     "@objectql/core": "^0.1.0",
