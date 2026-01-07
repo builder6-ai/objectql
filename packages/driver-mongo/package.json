@@ -1,6 +1,6 @@
 {
   "name": "@objectql/driver-mongo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -8,7 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@objectql/core": "^0.1.0",
+    "@objectql/core": "^1.0.0",
     "mongodb": "^5.9.2"
   }
 }
