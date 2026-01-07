@@ -1,4 +1,4 @@
-# ObjectQL Client API
+# ObjectQL API
 
 **Version:** 1.0.0
 
@@ -27,6 +27,12 @@ interface ObjectQLContext {
    * All operations performed via this proxy inherit userId, spaceId, and transaction.
    */
   object(entityName: string): ObjectRepository;
+
+  /**
+   * Execute a function within a transaction.
+   * The callback receives a new context 'trxCtx' which inherits userId and spaceId from this context.
+   */
+  transaction(callback: (trxCtx: ObjectQLContext) => Promise<any>): Promise<any>;
 }
 
 ```
@@ -199,9 +205,10 @@ await systemCtx.object('audit_logs').delete('log-old-001');
 The `ctx` pattern makes transaction management seamless. You don't need to pass `trx` handles manually; they are encapsulated within a new transaction-bound context.
 
 ```typescript
-await objectql.transaction(async (trxCtx) => {
+// Assume 'ctx' is already initialized with user identity
+await ctx.transaction(async (trxCtx) => {
   // 'trxCtx' is a special context bound to the transaction.
-  // Any operation called on 'trxCtx' joins the transaction automatically.
+  // It inherits userId, spaceId from 'ctx'.
 
   // 1. Create Invoice
   const invoice = await trxCtx.object('invoices').create({
