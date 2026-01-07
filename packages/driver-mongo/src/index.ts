@@ -185,5 +185,10 @@ export class MongoDriver implements Driver {
         const result = await collection.deleteMany(filter);
         return result.deletedCount;
     }
+
+    async aggregate(objectName: string, pipeline: any[], options?: any): Promise<any[]> {
+        const collection = await this.getCollection(objectName);
+        return await collection.aggregate(pipeline).toArray();
+    }
 }
 

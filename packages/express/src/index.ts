@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { IObjectQL, ObjectQLContext } from '@objectql/core';
+import { IObjectQL, ObjectQLContext, UnifiedQuery } from '@objectql/core';
 
 export interface ObjectQLServerOptions {
     objectql: IObjectQL;
-    // Function to extract context from request (e.g. auth user)
     getContext?: (req: Request, res: Response) => Promise<ObjectQLContext> | ObjectQLContext;
 }
 
@@ -15,8 +14,6 @@ export function createObjectQLRouter(options: ObjectQLServerOptions): Router {
         if (getContext) {
             return await getContext(req, res);
         }
-        // Default context if none provided (e.g. anonymous/system or just empty)
-        // Ideally the user should provide valid context.
         return {
             roles: [],
             object: (name: string) => { throw new Error("Not implemented in default context stub"); },
@@ -25,53 +22,219 @@ export function createObjectQLRouter(options: ObjectQLServerOptions): Router {
         } as unknown as ObjectQLContext;
     };
 
-    // Helper to get object repo with context
     const getRepo = async (req: Request, res: Response, objectName: string) => {
         const ctx = await getCtx(req, res);
-        // We need to use the context to get an object repository instance.
-        // However, IObjectQL interface currently has `getObject` (metadata) but not a method to get a repo with external context?
-        // Wait, ObjectQL.createContext returns a context which has `.object(name)`.
-        // So we need the `objectql` instance to CREATE the context, or we expect the user to pass a context creator?
-        
-        // Revised approach:
-        // The `IGenerateContext` logic usually resides in the ObjectQL core or app.
-        // If the user passes `getContext`, it returns an `ObjectQLContext` which HAS `.object(name)`.
-        
         return ctx.object(objectName);
     };
 
-    // List Handlers
-    router.get('/:objectName', async (req: Request, res: Response, next: NextFunction) => {
+    // Helper: Parse UnifiedQuery from Request
+    const parseQuery = (req: Request): UnifiedQuery => {
+        const query: UnifiedQuery = {};
+        const q = req.query;
+
+        // 1. Fields
+        if (q.fields) {
+            if (typeof q.fields === 'string') {
+                query.fields = q.fields.split(',');
+            }
+        }
+
+        // 2. Filters
+        if (q.filters) {
+            try {
+                if (typeof q.filters === 'string') {
+                    query.filters = JSON.parse(q.filters);
+                }
+            } catch (e) {
+                throw new Error("Invalid filters JSON");
+            }
+        }
+
+        // 3. Sort
+        // Format: ?sort=item1:asc,item2:desc  OR  ?sort=[["item1","asc"]]
+        if (q.sort) {
+            if (typeof q.sort === 'string') {
+                // Check if JSON
+                if (q.sort.startsWith('[')) {
+                    try {
+                        query.sort = JSON.parse(q.sort);
+                    } catch {}
+                } else {
+                    // split by comma
+                    query.sort = q.sort.split(',').map(part => {
+                        const [field, order] = part.split(':');
+                        return [field, (order || 'asc').toLowerCase() === 'desc' ? 'desc' : 'asc'];
+                    });
+                }
+            }
+        }
+
+        // 4. Pagination
+        if (q.top || q.limit) {
+            query.limit = parseInt((q.top || q.limit) as string);
+        }
+        if (q.skip || q.offset) {
+            query.skip = parseInt((q.skip || q.offset) as string);
+        }
+
+        // 5. Expand
+        // ?expand=items,details  OR ?expand={"items":{"fields":["name"]}}
+        if (q.expand) {
+            if (typeof q.expand === 'string') {
+                if (q.expand.startsWith('{')) {
+                    try {
+                        query.expand = JSON.parse(q.expand);
+                    } catch {}
+                } else {
+                    query.expand = {};
+                    q.expand.split(',').forEach(field => {
+                        // Simple expand implies selecting all or default fields
+                        // UnifiedQuery expects sub-query
+                        query.expand![field] = {}; 
+                    });
+                }
+            }
+        }
+
+        return query;
+    };
+
+    // === Special Endpoints (Must come before /:objectName) ===
+
+    // NONE for now, as :objectName is the root.
+    // However, we might want /:objectName/count or /:objectName/aggregate.
+
+
+    // === Collection Routes ===
+
+    // count
+    router.get('/:objectName/count', async (req: Request, res: Response) => {
         try {
             const { objectName } = req.params;
             const repo = await getRepo(req, res, objectName);
-            
-            // Simple query parsing
-            // ?fields=name,status&filters=[["status","=","open"]]
-            const fields = req.query.fields ? (req.query.fields as string).split(',') : undefined;
             let filters = undefined;
             if (req.query.filters) {
                 try {
                     filters = JSON.parse(req.query.filters as string);
-                } catch (e) {
-                   return res.status(400).json({ error: "Invalid filters JSON" });
+                } catch {
+                    return res.status(400).json({ error: "Invalid filters JSON" });
                 }
             }
+            const count = await repo.count(filters);
+            res.json({ count });
+        } catch (e: any) {
+             res.status(500).json({ error: e.message });
+        }
+    });
 
-            const results = await repo.find({
-                fields,
-                filters
-            });
+    // aggregate
+    router.post('/:objectName/aggregate', async (req: Request, res: Response) => {
+        try {
+            const { objectName } = req.params;
+            const repo = await getRepo(req, res, objectName);
+            const pipeline = req.body;
+            if (!Array.isArray(pipeline)) {
+                return res.status(400).json({ error: "Pipeline must be an array" });
+            }
+            const result = await repo.aggregate(pipeline);
+            res.json(result);
+        } catch (e: any) {
+             res.status(500).json({ error: e.message });
+        }
+    });
+
+    // delete many
+    router.delete('/:objectName', async (req: Request, res: Response) => {
+        try {
+            const { objectName } = req.params;
+            if (!req.query.filters) {
+                return res.status(400).json({ error: "filters parameter is required for bulk delete" });
+            }
+            const repo = await getRepo(req, res, objectName);
+            let filters;
+             try {
+                filters = JSON.parse(req.query.filters as string);
+            } catch {
+                return res.status(400).json({ error: "Invalid filters JSON" });
+            }
+            const result = await repo.deleteMany(filters);
+            res.json(result);
+        } catch (e: any) {
+             res.status(500).json({ error: e.message });
+        }
+    });
+
+    // list
+    router.get('/:objectName', async (req: Request, res: Response) => {
+        try {
+            const { objectName } = req.params;
+            const repo = await getRepo(req, res, objectName);
+            const query = parseQuery(req);
+            const results = await repo.find(query);
             res.json(results);
         } catch (e: any) {
             res.status(500).json({ error: e.message });
         }
     });
 
-    router.get('/:objectName/:id', async (req: Request, res: Response, next: NextFunction) => {
+    // create (one or many)
+    router.post('/:objectName', async (req: Request, res: Response) => {
+        try {
+            const { objectName } = req.params;
+            const repo = await getRepo(req, res, objectName);
+            if (Array.isArray(req.body)) {
+                const results = await repo.createMany(req.body);
+                res.status(201).json(results);
+            } else {
+                const result = await repo.create(req.body);
+                res.status(201).json(result);
+            }
+        } catch (e: any) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    // === Item Routes ===
+
+    // run action
+    router.post('/:objectName/:id/:actionName', async (req: Request, res: Response) => {
+         try {
+            const { objectName, id, actionName } = req.params;
+            const repo = await getRepo(req, res, objectName);
+            // Params merging body and id? Usually action needs specific params.
+            // Let's pass body as params.
+            const params = {
+                id,
+                ...req.body
+            };
+            const result = await repo.call(actionName, params);
+            res.json(result);
+        } catch (e: any) {
+            res.status(500).json({ error: e.message });
+        }
+    });
+
+    router.get('/:objectName/:id', async (req: Request, res: Response) => {
         try {
             const { objectName, id } = req.params;
             const repo = await getRepo(req, res, objectName);
+            
+            // Allow expand here too?
+            // findOne takes id or query.
+            // If expand is needed, we should construct a query with filters: {_id: id}
+            
+            if (req.query.expand || req.query.fields) {
+                const query = parseQuery(req);
+                // Force filter by ID
+                // Note: normalized ID vs string ID.
+                query.filters = [['_id', '=', id]]; // or 'id' depending on driver
+                const results = await repo.find(query);
+                if (!results.length) {
+                    return res.status(404).json({ error: "Not found" });
+                }
+                return res.json(results[0]);
+            }
+
             const result = await repo.findOne(id);
             if (!result) {
                 return res.status(404).json({ error: "Not found" });
@@ -82,18 +245,7 @@ export function createObjectQLRouter(options: ObjectQLServerOptions): Router {
         }
     });
 
-    router.post('/:objectName', async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const { objectName } = req.params;
-            const repo = await getRepo(req, res, objectName);
-            const result = await repo.create(req.body);
-            res.status(201).json(result);
-        } catch (e: any) {
-            res.status(500).json({ error: e.message });
-        }
-    });
-
-    router.put('/:objectName/:id', async (req: Request, res: Response, next: NextFunction) => {
+    router.put('/:objectName/:id', async (req: Request, res: Response) => {
         try {
             const { objectName, id } = req.params;
             const repo = await getRepo(req, res, objectName);
@@ -104,7 +256,7 @@ export function createObjectQLRouter(options: ObjectQLServerOptions): Router {
         }
     });
 
-    router.delete('/:objectName/:id', async (req: Request, res: Response, next: NextFunction) => {
+    router.delete('/:objectName/:id', async (req: Request, res: Response) => {
         try {
             const { objectName, id } = req.params;
             const repo = await getRepo(req, res, objectName);
