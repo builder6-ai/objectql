@@ -7,9 +7,7 @@ import { ObjectQLConfig, ObjectConfig } from './types';
 export function loadObjectConfigs(dir: string): Record<string, ObjectConfig> {
     const configs: Record<string, ObjectConfig> = {};
     
-    // Convert to absolute path if strictly necessary, but fast-glob handles relative paths too.
-    // However, it's safer to work with what we are given or resolve it.
-    
+    // 1. Load YAML Configs
     const files = glob.sync(['**/*.object.yml', '**/*.object.yaml'], {
         cwd: dir,
         absolute: true
@@ -20,21 +18,13 @@ export function loadObjectConfigs(dir: string): Record<string, ObjectConfig> {
             const content = fs.readFileSync(file, 'utf8');
             const doc = yaml.load(content) as any;
             
-            // Handle single object or map of objects if structure varies
-            // For now assume each .object.yml describes one object or a map of objects by name
-            
             if (doc.name && doc.fields) {
-                // Single object definition
                 configs[doc.name] = doc as ObjectConfig;
             } else {
-                // Check if it's a map of objects
                 for (const [key, value] of Object.entries(doc)) {
                     if (typeof value === 'object' && (value as any).fields) {
                          configs[key] = value as ObjectConfig;
-                         // Ensure name is set
-                         if (!configs[key].name) {
-                             configs[key].name = key;
-                         }
+                         if (!configs[key].name) configs[key].name = key;
                     }
                 }
             }
@@ -42,6 +32,69 @@ export function loadObjectConfigs(dir: string): Record<string, ObjectConfig> {
             console.error(`Error loading object config from ${file}:`, e);
         }
     }
+
+    // 2. Load Hooks (.hook.js, .hook.ts)
+    // We only load .js if running in node, or .ts if ts-node/register is present.
+    // simpler: look for both, require will handle extension resolution if we are careful.
+    // Actually, in `dist` we only find .js. In `src` (test) we find .ts.
+    const hookFiles = glob.sync(['**/*.hook.{js,ts}'], {
+        cwd: dir,
+        absolute: true
+    });
+
+    for (const file of hookFiles) {
+        try {
+            // Check if we should ignore .ts if .js exists? 
+            // Or assume env handles it.
+            // If we are in `dist`, `src` shouldn't be there usually.
+            
+            const hookModule = require(file);
+            // Default export or named exports?
+            // Convention: export const listenTo = 'objectName';
+            // or filename based: 'project.hook.js' -> 'project' (flaky)
+            
+            let objectName = hookModule.listenTo;
+            
+            if (!objectName) {
+                // Try to guess from filename? 
+                // project.hook.ts -> project
+                const basename = path.basename(file);
+                const match = basename.match(/^(.+)\.hook\.(ts|js)$/);
+                if (match) {
+                    objectName = match[1];
+                }
+            }
+
+            if (objectName && configs[objectName]) {
+                 if (!configs[objectName].listeners) {
+                     configs[objectName].listeners = {};
+                 }
+                 const listeners = configs[objectName].listeners!;
+                 
+                 // Merge exported functions into listeners
+                 // Common hooks: beforeFind, afterFind, beforeCreate, etc.
+                 const hookNames = [
+                     'beforeFind', 'afterFind',
+                     'beforeCreate', 'afterCreate',
+                     'beforeUpdate', 'afterUpdate',
+                     'beforeDelete', 'afterDelete'
+                 ];
+
+                 for (const name of hookNames) {
+                     if (typeof hookModule[name] === 'function') {
+                         listeners[name as keyof typeof listeners] = hookModule[name];
+                     }
+                 }
+                 // Support default export having listeners object?
+                 if (hookModule.default && typeof hookModule.default === 'object') {
+                      Object.assign(listeners, hookModule.default);
+                 }
+            }
+        } catch (e) {
+            console.error(`Error loading hook from ${file}:`, e);
+        }
+    }
     
     return configs;
 }
+

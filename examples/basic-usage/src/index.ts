@@ -14,32 +14,13 @@ const app = new ObjectQL({
   }
 });
 
-// Load objects from directory
+// Load objects from directory (includes .object.yml and .hook.js)
 const objectsDir = path.join(__dirname, 'objects');
 console.log(`Loading objects from ${objectsDir}...`);
 app.loadFromDirectory(objectsDir);
 
-// Attach Listeners to 'projects' object
 const projectObj = app.getObject('projects');
-if (projectObj) {
-    projectObj.listeners = {
-        beforeFind: async (context) => {
-            // Row Level Security: simple filter by owner if not system
-            if (!context.ctx.isSystem && context.ctx.userId) {
-                console.log(`[Hook] Restricting access for user: ${context.ctx.userId}`);
-                context.utils.restrict(['owner', '=', context.ctx.userId]);
-            }
-        },
-        beforeCreate: async (context) => {
-            if (context.doc) {
-                // Auto-assign owner if missing
-                if (!context.doc.owner && context.ctx.userId) {
-                    context.doc.owner = context.ctx.userId;
-                }
-            }
-        }
-    };
-} else {
+if (!projectObj) {
     console.error("Project object not found after loading!");
 }
 
