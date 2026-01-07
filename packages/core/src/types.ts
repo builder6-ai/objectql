@@ -8,6 +8,7 @@ export { ObjectConfig } from "./metadata";
 export { MetadataRegistry } from "./registry";
 
 export interface ObjectQLConfig {
+    registry?: MetadataRegistry;
     datasources: Record<string, Driver>;
     objects?: Record<string, ObjectConfig>;
     packages?: string[];

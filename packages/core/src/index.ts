@@ -21,7 +21,7 @@ export class ObjectQL implements IObjectQL {
     private datasources: Record<string, Driver> = {};
 
     constructor(config: ObjectQLConfig) {
-        this.metadata = new MetadataRegistry();
+        this.metadata = config.registry || new MetadataRegistry();
         this.loader = new MetadataLoader(this.metadata);
         this.datasources = config.datasources;
 

@@ -54,4 +54,31 @@ describe('MetadataLoader', () => {
         expect(item).toBeDefined();
         expect(item.value).toBe(123);
     });
+
+    it('should load package (fallback to directory)', () => {
+        const registry = new MetadataRegistry();
+        const loader = new MetadataLoader(registry);
+        
+        loader.use({
+            name: 'test-plugin',
+            glob: ['**/*.test.yml'],
+            handler: (ctx) => {
+                const doc = yaml.load(ctx.content) as any;
+                ctx.registry.register('test', {
+                    type: 'test',
+                    id: doc.name,
+                    path: ctx.file,
+                    content: doc
+                });
+            }
+        });
+
+        const fixturesDir = path.join(__dirname, 'fixtures');
+        // mocked package load pointing to a directory
+        loader.loadPackage(fixturesDir);
+
+        const item = registry.get('test', 'test-item');
+        expect(item).toBeDefined();
+        expect(item.value).toBe(123);
+    });
 });

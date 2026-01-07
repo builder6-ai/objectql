@@ -1,0 +1,56 @@
+export type FieldType = 
+    | 'text' 
+    | 'textarea' 
+    | 'html' 
+    | 'select' 
+    | 'multiselect' 
+    | 'date' 
+    | 'datetime' 
+    | 'number' 
+    | 'currency' 
+    | 'boolean' 
+    | 'lookup' 
+    | 'master_detail' 
+    | 'password'
+    | 'object'
+    | 'grid';
+
+export interface FieldOption {
+    label: string;
+    value: string | number;
+}
+
+export interface FieldConfig {
+    name?: string;
+    label?: string;
+    type: FieldType;
+    required?: boolean;
+    defaultValue?: any;
+    options?: FieldOption[] | string[];
+    scale?: number;
+    precision?: number;
+    reference_to?: string;
+    searchable?: boolean;
+    sortable?: boolean;
+    index?: boolean;
+    description?: string;
+}
+
+export interface ActionConfig {
+    label?: string;
+    description?: string;
+    handler?: Function;
+    result?: unknown;
+}
+
+export interface ObjectConfig {
+    name: string;
+    label?: string;
+    description?: string;
+    icon?: string;
+    fields?: Record<string, FieldConfig>;
+    methods?: Record<string, Function>;
+    listeners?: Record<string, Function>;
+    actions?: Record<string, ActionConfig>;
+    data?: any[];
+}
