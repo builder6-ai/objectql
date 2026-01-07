@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "npm run start --workspace=@example/nestjs",
-    "start:express": "npm run build --workspaces && npm start --workspace=@example/express",
+    "express": "npm run build --workspaces && npm start --workspace=@example/express",
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
     "changeset": "changeset",

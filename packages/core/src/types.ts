@@ -2,8 +2,10 @@ import { ObjectRepository } from "./repository";
 import { ObjectConfig } from "./metadata";
 import { Driver } from "./driver";
 import { UnifiedQuery, FilterCriterion } from "./query";
+import { MetadataRegistry } from "./registry";
 
 export { ObjectConfig } from "./metadata";
+export { MetadataRegistry } from "./registry";
 
 export interface ObjectQLConfig {
     datasources: Record<string, Driver>;
@@ -18,6 +20,7 @@ export interface IObjectQL {
     init(): Promise<void>;
     addPackage(name: string): void;
     removePackage(name: string): void;
+    metadata: MetadataRegistry; 
 }
 
 export interface HookContext<T = any> {

@@ -5,20 +5,26 @@ export * from './types';
 export * from './driver';
 export * from './repository';
 export * from './query';
+export * from './registry';
+export * from './loader';
 
 import { ObjectConfig } from './metadata';
 import { ObjectQLContext, ObjectQLContextOptions, IObjectQL, ObjectQLConfig } from './types';
 import { ObjectRepository } from './repository';
 import { Driver } from './driver';
-import { loadObjectConfigs } from './loader';
+import { MetadataLoader } from './loader';
+import { MetadataRegistry } from './registry';
 
 export class ObjectQL implements IObjectQL {
-    private objects: Record<string, ObjectConfig> = {};
+    public metadata: MetadataRegistry;
+    private loader: MetadataLoader;
     private datasources: Record<string, Driver> = {};
-    private packageObjects: Record<string, string[]> = {};
 
     constructor(config: ObjectQLConfig) {
+        this.metadata = new MetadataRegistry();
+        this.loader = new MetadataLoader(this.metadata);
         this.datasources = config.datasources;
+
         if (config.objects) {
             for (const [key, obj] of Object.entries(config.objects)) {
                 this.registerObject(obj);
@@ -27,9 +33,10 @@ export class ObjectQL implements IObjectQL {
         if (config.packages) {
             for (const name of config.packages) {
                 try {
-                    this.loadFromPackage(name);
+                    this.addPackage(name);
                 } catch (e) {
-                    this.loadFromDirectory(name); // Directory logic doesn't register to a "package name" grouping by default unless we pass it, but legacy handled it as pure dir loading.
+                    // Fallback to directory loading if not a package module
+                    this.loadFromDirectory(name);
                 }
             }
         }
@@ -41,41 +48,25 @@ export class ObjectQL implements IObjectQL {
             const entryPath = require.resolve(name, { paths: [process.cwd()] });
             delete require.cache[entryPath];
         } catch (e) {
-            // ignore if not found
+            // ignore
         }
-        this.loadFromPackage(name);
+        
+        try {
+            const entryPath = require.resolve(name, { paths: [process.cwd()] });
+            const packageDir = path.dirname(entryPath);
+            this.loadFromDirectory(packageDir, name);
+        } catch (e) {
+             // If require resolve fails, try relative path
+             this.loadFromDirectory(name, name);
+        }
     }
 
     removePackage(name: string) {
-        const objects = this.packageObjects[name];
-        if (objects) {
-            for (const objName of objects) {
-                delete this.objects[objName];
-            }
-            delete this.packageObjects[name];
-        }
-    }
-
-    loadFromPackage(name: string) {
-        const entryPath = require.resolve(name, { paths: [process.cwd()] });
-        const packageDir = path.dirname(entryPath);
-        this.loadFromDirectory(packageDir, name);
+        this.metadata.unregisterPackage(name);
     }
 
     loadFromDirectory(dir: string, packageName?: string) {
-        const objects = loadObjectConfigs(dir);
-        
-        if (packageName) {
-            // Initialize or clear package group
-            this.packageObjects[packageName] = [];
-        }
-
-        for (const obj of Object.values(objects)) {
-            this.registerObject(obj);
-            if (packageName) {
-                this.packageObjects[packageName].push(obj.name);
-            }
-        }
+        this.loader.load(dir, packageName);
     }
 
     createContext(options: ObjectQLContextOptions): ObjectQLContext {
@@ -98,14 +89,12 @@ export class ObjectQL implements IObjectQL {
                  try {
                      trx = await driver.beginTransaction();
                  } catch (e) {
-                     // If beginTransaction fails, fail.
                      throw e;
                  }
 
                  const trxCtx: ObjectQLContext = {
                      ...ctx,
                      transactionHandle: trx,
-                     // Nested transaction simply reuses the current one (flat transaction)
                      transaction: async (cb) => cb(trxCtx)
                  };
 
@@ -134,15 +123,24 @@ export class ObjectQL implements IObjectQL {
                 }
             }
         }
-        this.objects[object.name] = object;
+        this.metadata.register('object', {
+            type: 'object',
+            id: object.name,
+            content: object
+        });
     }
 
     getObject(name: string): ObjectConfig | undefined {
-        return this.objects[name];
+        return this.metadata.get<ObjectConfig>('object', name);
     }
 
     getConfigs(): Record<string, ObjectConfig> {
-        return this.objects;
+        const result: Record<string, ObjectConfig> = {};
+        const objects = this.metadata.list<ObjectConfig>('object');
+        for (const obj of objects) {
+            result[obj.name] = obj;
+        }
+        return result;
     }
 
     datasource(name: string): Driver {
@@ -155,11 +153,11 @@ export class ObjectQL implements IObjectQL {
 
     async init() {
         const ctx = this.createContext({ isSystem: true });
-        for (const objectName in this.objects) {
-            const obj = this.objects[objectName];
+        const objects = this.metadata.list<ObjectConfig>('object');
+        for (const obj of objects) {
             if (obj.data && obj.data.length > 0) {
-                console.log(`Initializing data for object ${objectName}...`);
-                const repo = ctx.object(objectName);
+                console.log(`Initializing data for object ${obj.name}...`);
+                const repo = ctx.object(obj.name);
                 for (const record of obj.data) {
                     try {
                         if (record._id) {
@@ -169,9 +167,9 @@ export class ObjectQL implements IObjectQL {
                              }
                         }
                         await repo.create(record);
-                        console.log(`Inserted init data for ${objectName}: ${record._id || 'unknown id'}`);
+                        console.log(`Inserted init data for ${obj.name}: ${record._id || 'unknown id'}`);
                     } catch (e) {
-                        console.error(`Failed to insert init data for ${objectName}:`, e);
+                        console.error(`Failed to insert init data for ${obj.name}:`, e);
                     }
                 }
             }
