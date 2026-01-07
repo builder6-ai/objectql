@@ -32,34 +32,15 @@ export class ObjectQL implements IObjectQL {
         }
         if (config.packages) {
             for (const name of config.packages) {
-                try {
-                    this.addPackage(name);
-                } catch (e) {
-                    // Fallback to directory loading if not a package module
-                    this.loadFromDirectory(name);
-                }
+                this.addPackage(name);
             }
         }
     }
 
     addPackage(name: string) {
-        // Clear require cache to ensure fresh load if re-installing
-        try {
-            const entryPath = require.resolve(name, { paths: [process.cwd()] });
-            delete require.cache[entryPath];
-        } catch (e) {
-            // ignore
-        }
-        
-        try {
-            const entryPath = require.resolve(name, { paths: [process.cwd()] });
-            const packageDir = path.dirname(entryPath);
-            this.loadFromDirectory(packageDir, name);
-        } catch (e) {
-             // If require resolve fails, try relative path
-             this.loadFromDirectory(name, name);
-        }
+        this.loader.loadPackage(name);
     }
+
 
     removePackage(name: string) {
         this.metadata.unregisterPackage(name);

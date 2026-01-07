@@ -35,6 +35,19 @@ export class MetadataLoader {
         }
     }
 
+    loadPackage(packageName: string) {
+        try {
+            const entryPath = require.resolve(packageName, { paths: [process.cwd()] });
+            // clean cache
+            delete require.cache[entryPath];
+            const packageDir = path.dirname(entryPath);
+            this.load(packageDir, packageName);
+        } catch (e) {
+            // fallback to directory
+            this.load(packageName, packageName);
+        }
+    }
+
     private runPlugin(plugin: LoaderPlugin, dir: string, packageName?: string) {
         const files = glob.sync(plugin.glob, {
             cwd: dir,
