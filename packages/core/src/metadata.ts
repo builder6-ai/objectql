@@ -92,6 +92,20 @@ export interface FieldConfig {
 }
 
 /**
+ * Configuration for a custom action (RPC).
+ */
+export interface ActionConfig {
+    label?: string;
+    description?: string;
+    /** Output/Result type definition. */
+    result?: {
+        type: FieldType;
+    };
+    /** Input parameters schema. */
+    params?: Record<string, FieldConfig>;
+}
+
+/**
  * Configuration for a business object (Entity).
  * Analogous to a Database Table or MongoDB Collection.
  */
@@ -103,4 +117,6 @@ export interface ObjectConfig {
     
     fields: Record<string, FieldConfig>;
     
+    /** Custom Actions (RPC) defined on this object. */
+    actions?: Record<string, ActionConfig>;
 }
