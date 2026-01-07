@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/objects dist/objects",
     "start": "node dist/index.js"
   },
   "dependencies": {

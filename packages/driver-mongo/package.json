@@ -8,6 +8,6 @@
   },
   "dependencies": {
     "@objectql/core": "^0.1.0",
-    "mongodb": "^6.3.0"
+    "mongodb": "^5.9.2"
   }
 }

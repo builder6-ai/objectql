@@ -1,0 +1,25 @@
+name: projects
+label: Project
+fields:
+  name:
+    type: text
+    required: true
+    label: Name
+  status:
+    type: select
+    options:
+      - planned
+      - in_progress
+      - completed
+    defaultValue: planned
+  priority:
+    type: select
+    options:
+      - low
+      - normal
+      - high
+    defaultValue: normal
+  description:
+    type: textarea
+  owner:
+    type: text
