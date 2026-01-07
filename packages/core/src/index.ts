@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 export * from './metadata';
 export * from './types';
 export * from './driver';
@@ -29,7 +31,16 @@ export class ObjectQL implements IObjectQL {
     }
 
     loadFromDirectory(dir: string) {
-        const objects = loadObjectConfigs(dir);
+        let packageDir = dir;
+        try {
+            // Try to resolve as a module
+            const entryPath = require.resolve(dir, { paths: [process.cwd()] });
+            packageDir = path.dirname(entryPath);
+        } catch (e) {
+            // Ignore error, assume it is a path
+        }
+
+        const objects = loadObjectConfigs(packageDir);
         for (const obj of Object.values(objects)) {
             this.registerObject(obj);
         }
