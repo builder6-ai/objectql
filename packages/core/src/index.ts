@@ -17,8 +17,13 @@ export class ObjectQL implements IObjectQL {
     constructor(config: ObjectQLConfig) {
         this.datasources = config.datasources;
         if (config.objects) {
-            for (const obj of Object.values(config.objects)) {
+            for (const [key, obj] of Object.entries(config.objects)) {
                 this.registerObject(obj);
+            }
+        }
+        if (config.packages) {
+            for (const dir of config.packages) {
+                this.loadFromDirectory(dir);
             }
         }
     }

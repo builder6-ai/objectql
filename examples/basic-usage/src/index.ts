@@ -6,12 +6,11 @@ import * as path from 'path';
 import config from './objectql.config';
 
 const app = new ObjectQL({
-  datasources: config.datasources
+  datasources: config.datasources,
+  packages: config.packages
 });
 
-// Load objects from directory (includes .object.yml and .hook.js)
-console.log(`Loading objects from ${config.objectsDir}...`);
-app.loadFromDirectory(config.objectsDir);
+console.log(`ObjectQL Server started with ${config.packages.length} packages.`);
 
 const projectObj = app.getObject('projects');
 if (!projectObj) {

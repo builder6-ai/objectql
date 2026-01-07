@@ -8,6 +8,7 @@ export { ObjectConfig } from "./metadata";
 export interface ObjectQLConfig {
     datasources: Record<string, Driver>;
     objects?: Record<string, ObjectConfig>;
+    packages?: string[];
 }
 
 export interface IObjectQL {

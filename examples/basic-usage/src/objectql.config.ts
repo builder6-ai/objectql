@@ -8,5 +8,7 @@ export default {
             dbName: 'objectql_example'
         })
     },
-    objectsDir: path.join(__dirname, 'objects')
+    packages: [
+        path.join(__dirname, 'packages/project-management')
+    ]
 };
