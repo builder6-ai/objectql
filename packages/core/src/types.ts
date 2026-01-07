@@ -3,6 +3,13 @@ import { ObjectConfig } from "./metadata";
 import { Driver } from "./driver";
 import { UnifiedQuery, FilterCriterion } from "./query";
 
+export { ObjectConfig } from "./metadata";
+
+export interface ObjectQLConfig {
+    datasources: Record<string, Driver>;
+    objects?: Record<string, ObjectConfig>;
+}
+
 export interface IObjectQL {
     getObject(name: string): ObjectConfig | undefined;
     datasource(name: string): Driver;

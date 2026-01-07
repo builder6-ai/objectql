@@ -5,14 +5,10 @@ export * from './repository';
 export * from './query';
 
 import { ObjectConfig } from './metadata';
-import { ObjectQLContext, ObjectQLContextOptions, IObjectQL } from './types';
+import { ObjectQLContext, ObjectQLContextOptions, IObjectQL, ObjectQLConfig } from './types';
 import { ObjectRepository } from './repository';
 import { Driver } from './driver';
-
-export interface ObjectQLConfig {
-    datasources: Record<string, Driver>;
-    objects?: Record<string, ObjectConfig>;
-}
+import { loadObjectConfigs } from './loader';
 
 export class ObjectQL implements IObjectQL {
     private objects: Record<string, ObjectConfig> = {};
@@ -24,6 +20,13 @@ export class ObjectQL implements IObjectQL {
             for (const obj of Object.values(config.objects)) {
                 this.registerObject(obj);
             }
+        }
+    }
+
+    loadFromDirectory(dir: string) {
+        const objects = loadObjectConfigs(dir);
+        for (const obj of Object.values(objects)) {
+            this.registerObject(obj);
         }
     }
 
