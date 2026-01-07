@@ -242,6 +242,53 @@ await importCtx.object('orders').create({
 });
 ```
 
+### 5.3 Batch Operations (Bulk)
+
+Efficiently handle large datasets in a single database request.
+
+*   **Atomicity:** Depends on the underlying driver. (MongoDB/SQL usually support atomic transactions).
+*   **Triggers:** Hooks are executed for *each* record (unless `ignoreTriggers: true`).
+
+```typescript
+// Bulk Create
+await ctx.object('line_items').createMany([
+  { product: 'p-1', quantity: 10 },
+  { product: 'p-2', quantity: 5 }
+]);
+
+// Bulk Update (Criteria-based)
+// Updates ALL records matching the filter.
+await ctx.object('tasks').updateMany(
+  [['status', '=', 'pending'], 'and', ['due_date', '<', '2023-01-01']], // Filter
+  { status: 'overdue' } // Patch
+);
+
+// Bulk Delete
+await ctx.object('logs').deleteMany([['created_at', '<', '2022-01-01']]);
+```
+
+### 5.4 Metadata Introspection
+
+Access object definitions at runtime. Essential for building dynamic UIs or validation layers.
+
+```typescript
+const schema = await ctx.object('orders').getSchema();
+console.log(schema.label); // "Sales Order"
+console.log(schema.fields['amount'].type); // "currency"
+```
+
+### 5.5 Custom Actions (RPC)
+
+Execute complex server-side business logic that doesn't fit into standard CRUD operations. Actions are defined in the object's metadata.
+
+```typescript
+// Call a custom 'approve' action defined on the 'contracts' object
+const result = await ctx.object('contracts').call('approve', {
+  contractId: 'c-100',
+  comments: 'LGTM'
+});
+```
+
 ## 6. Transaction Management
 
 The `ctx` pattern makes transaction management seamless. You don't need to pass `trx` handles manually; they are encapsulated within a new transaction-bound context.
