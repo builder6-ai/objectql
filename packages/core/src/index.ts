@@ -15,6 +15,7 @@ import { loadObjectConfigs } from './loader';
 export class ObjectQL implements IObjectQL {
     private objects: Record<string, ObjectConfig> = {};
     private datasources: Record<string, Driver> = {};
+    private packageObjects: Record<string, string[]> = {};
 
     constructor(config: ObjectQLConfig) {
         this.datasources = config.datasources;
@@ -28,22 +29,52 @@ export class ObjectQL implements IObjectQL {
                 try {
                     this.loadFromPackage(name);
                 } catch (e) {
-                    this.loadFromDirectory(name);
+                    this.loadFromDirectory(name); // Directory logic doesn't register to a "package name" grouping by default unless we pass it, but legacy handled it as pure dir loading.
                 }
             }
+        }
+    }
+
+    addPackage(name: string) {
+        // Clear require cache to ensure fresh load if re-installing
+        try {
+            const entryPath = require.resolve(name, { paths: [process.cwd()] });
+            delete require.cache[entryPath];
+        } catch (e) {
+            // ignore if not found
+        }
+        this.loadFromPackage(name);
+    }
+
+    removePackage(name: string) {
+        const objects = this.packageObjects[name];
+        if (objects) {
+            for (const objName of objects) {
+                delete this.objects[objName];
+            }
+            delete this.packageObjects[name];
         }
     }
 
     loadFromPackage(name: string) {
         const entryPath = require.resolve(name, { paths: [process.cwd()] });
         const packageDir = path.dirname(entryPath);
-        this.loadFromDirectory(packageDir);
+        this.loadFromDirectory(packageDir, name);
     }
 
-    loadFromDirectory(dir: string) {
+    loadFromDirectory(dir: string, packageName?: string) {
         const objects = loadObjectConfigs(dir);
+        
+        if (packageName) {
+            // Initialize or clear package group
+            this.packageObjects[packageName] = [];
+        }
+
         for (const obj of Object.values(objects)) {
             this.registerObject(obj);
+            if (packageName) {
+                this.packageObjects[packageName].push(obj.name);
+            }
         }
     }
 

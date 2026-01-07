@@ -16,6 +16,8 @@ export interface IObjectQL {
     getConfigs(): Record<string, ObjectConfig>;
     datasource(name: string): Driver;
     init(): Promise<void>;
+    addPackage(name: string): void;
+    removePackage(name: string): void;
 }
 
 export interface HookContext<T = any> {
