@@ -1,5 +1,6 @@
 import { ObjectQL, ObjectConfig, UnifiedQuery } from '@objectql/core';
-import { MockDriver } from './mock-driver';
+import { MongoDriver } from '@objectql/driver-mongo';
+// import { MockDriver } from './mock-driver';
 
 const projectObj: ObjectConfig = {
   name: 'projects',
@@ -55,8 +56,11 @@ const app = new ObjectQL({
     tasks: taskObj
   },
   datasources: {
-    // default: new MongoDriver({ url: process.env.MONGO_URL }),
-    default: new MockDriver()
+    default: new MongoDriver({ 
+        url: process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/objectql_example',
+        dbName: 'objectql_example'
+    }),
+    // default: new MockDriver()
   }
 });
 
