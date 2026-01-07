@@ -77,11 +77,13 @@ describe('ObjectQL Repository', () => {
 
         // Register listeners
         todoObject.listeners = {
-            beforeCreate: async (context, doc) => {
+            beforeCreate: async (context) => {
                 beforeCalled = true;
-                doc.title = doc.title + ' (checked)';
+                if (context.doc) {
+                    context.doc.title = context.doc.title + ' (checked)';
+                }
             },
-            afterCreate: async (context, result) => {
+            afterCreate: async (context) => {
                 afterCalled = true;
             }
         };
@@ -91,6 +93,35 @@ describe('ObjectQL Repository', () => {
         expect(beforeCalled).toBe(true);
         expect(afterCalled).toBe(true);
         expect(created.title).toBe('Test hooks (checked)');
+    });
+
+    it('should support beforeFind hook for Row Level Security', async () => {
+        // 1. Setup data
+        const adminCtx = app.createContext({ isSystem: true });
+        await adminCtx.object('todo').create({ title: 'My Task', owner: 'u1' });
+        await adminCtx.object('todo').create({ title: 'Other Task', owner: 'u2' });
+        
+        // 2. Setup Hook to filter by owner
+        todoObject.listeners = {
+            beforeFind: async (context) => {
+                // Ignore for admin/system
+                if (context.ctx.isSystem) return;
+                
+                // RLS: Only see own tasks
+                context.utils.restrict(['owner', '=', context.ctx.userId]);
+            }
+        };
+
+        // 3. User u1 Query
+        const userCtx = app.createContext({ userId: 'u1' });
+        const userResults = await userCtx.object('todo').find();
+        
+        expect(userResults).toHaveLength(1);
+        expect(userResults[0].title).toBe('My Task');
+
+        // 4. System Query (Bypass)
+        const sysResults = await adminCtx.object('todo').find();
+        expect(sysResults).toHaveLength(2);
     });
 
     it('should support transactions', async () => {

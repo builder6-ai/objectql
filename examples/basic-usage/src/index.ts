@@ -16,7 +16,25 @@ const projectObj: ObjectConfig = {
       options: ['low', 'normal', 'high'],
       defaultValue: 'normal'
     },
-    description: { type: 'textarea' }
+    description: { type: 'textarea' },
+    owner: { type: 'text' }
+  },
+  listeners: {
+      beforeFind: async (context) => {
+          // Row Level Security: simple filter by owner if not system
+          if (!context.ctx.isSystem && context.ctx.userId) {
+              console.log(`[Hook] Restricting access for user: ${context.ctx.userId}`);
+              context.utils.restrict(['owner', '=', context.ctx.userId]);
+          }
+      },
+      beforeCreate: async (context) => {
+          if (context.doc) {
+              // Auto-assign owner if missing
+              if (!context.doc.owner && context.ctx.userId) {
+                  context.doc.owner = context.ctx.userId;
+              }
+          }
+      }
   }
 };
 
@@ -60,25 +78,35 @@ const query: UnifiedQuery = {
 
 
 (async () => {
-    // 1. Create some dummy data
+    // 1. Create some dummy data (System context to bypass hooks/setup data)
     const systemCtx = app.createContext({ isSystem: true });
+    // User 123's project
     await systemCtx.object('projects').create({
         name: 'Website Redesign',
         status: 'in_progress',
-        priority: 'high'
+        priority: 'high',
+        owner: 'u-123'
     });
+    // Another user's project
     await systemCtx.object('projects').create({
         name: 'Mobile App',
         status: 'planned',
-        priority: 'high'
+        priority: 'high',
+        owner: 'u-999'
     });
 
-    // 2. Query
-    // Option A: Execute on MongoDB
-    // ObjectQL compiles this to an Aggregation Pipeline
+    // 2. Query as u-123
+    console.log('\n--- Querying as user u-123 ---');
     const ctx = app.createContext({
       userId: 'u-123'
     });
+    // The query itself doesn't have an owner filter, but the Hook will inject it.
     const resultsMongo = await ctx.object('projects').find(query);
-    console.log('Query Results:', JSON.stringify(resultsMongo, null, 2));
+    console.log('Query Results (Should only see Website Redesign):', JSON.stringify(resultsMongo, null, 2));
+    
+    // 3. Query as System (Bypass RLS)
+    console.log('\n--- Querying as System (Admin) ---');
+    const allResults = await systemCtx.object('projects').find({ fields: ['name', 'owner'] });
+    console.log('System Results (Should see all):', JSON.stringify(allResults, null, 2));
+
 })();
