@@ -63,6 +63,42 @@ export function generateOpenApiSpec(objectql: IObjectQL) {
       }
   };
 
+  paths['/api/_schema/{type}/{id}'] = {
+      get: {
+          summary: "Get Single Metadata",
+          tags: ["System"],
+          parameters: [
+              {
+                  name: "type",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                  description: "Metadata type"
+              },
+              {
+                  name: "id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                  description: "Metadata ID"
+              }
+          ],
+          responses: {
+              200: {
+                  description: "Metadata content",
+                  content: {
+                      'application/json': {
+                          schema: { type: 'object' }
+                      }
+                  }
+              },
+              404: {
+                  description: "Metadata not found"
+              }
+          }
+      }
+  };
+
   Object.values(configs).forEach((config) => {
     const objectName = config.name;
     const schemaName = objectName;

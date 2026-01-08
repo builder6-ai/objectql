@@ -14,6 +14,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@objectql/core": "*",
     "@objectql/driver-mongo": "*",
+    "@objectql/driver-knex": "*",
+    "pg": "^8.11.3",
     "@objectql/api": "*",
     "@example/project-management": "*",
     "reflect-metadata": "^0.1.13",

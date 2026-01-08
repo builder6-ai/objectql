@@ -143,6 +143,19 @@ export function createObjectQLRouter(options: ObjectQLServerOptions): Router {
         }
     });
 
+    router.get('/_schema/:type/:id', async (req: Request, res: Response) => {
+        try {
+            const { type, id } = req.params;
+            const item = objectql.metadata.get(type, id);
+            if (!item) {
+                return res.status(404).json({ error: "Metadata not found" });
+            }
+            res.json(item);
+        } catch (e: any) {
+             res.status(500).json({ error: e.message });
+        }
+    });
+
     // NONE for now, as :objectName is the root.
     // However, we might want /:objectName/count or /:objectName/aggregate.
 
