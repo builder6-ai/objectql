@@ -3,8 +3,7 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "examples/modules/*",
-    "examples/apps/*"
+    "examples/*"
   ],
   "scripts": {
     "dev": "npm run start:dev --workspace=@objectql/server",

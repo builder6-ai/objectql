@@ -6,8 +6,7 @@
     { "path": "./packages/api" },
     { "path": "./packages/driver-mongo" },
     { "path": "./packages/driver-knex" },
-    { "path": "./examples/apps/express" },
-    { "path": "./examples/apps/nestjs" },
-    { "path": "./examples/modules/project-management" }
+    { "path": "./packages/server" },
+    { "path": "./examples/project-management" }
   ]
 }
