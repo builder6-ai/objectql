@@ -6,6 +6,30 @@ export function generateOpenApiSpec(objectql: IObjectQL) {
   const paths: any = {};
   const schemas: any = {};
 
+  // 0. Metadata Endpoint
+  paths['/api/_schema'] = {
+      get: {
+          summary: "Get Full Schema Metadata",
+          tags: ["System"],
+          responses: {
+              200: {
+                  description: "Full configuration of all objects",
+                  content: {
+                      'application/json': {
+                          schema: {
+                              type: 'object',
+                              additionalProperties: {
+                                  type: 'object',
+                                  description: 'Object Configuration'
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  };
+
   Object.values(configs).forEach((config) => {
     const objectName = config.name;
     const schemaName = objectName;
