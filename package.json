@@ -6,7 +6,7 @@
     "examples/*"
   ],
   "scripts": {
-    "dev": "npm run start:dev --workspace=@objectql/server",
+    "dev": "npm run dev --workspace=@objectql/server",
     "start": "npm run start --workspace=@objectql/server",
     "build": "tsc -b && npm run build --workspaces",
     "test": "npm run test --workspaces",
