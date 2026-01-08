@@ -100,7 +100,7 @@ export function AutoForm({ schema, initialValues, onSubmit, onCancel, readonly =
                     );
                 }
 
-                if (field.type === 'text' || field.type === 'textarea' || (field.type === 'string' && field.length > 255)) {
+                if (field.type === 'textarea' || (field.type === 'string' && field.length > 255)) {
                     return (
                         <div key={key} className="space-y-1.5">
                             <Label htmlFor={key} className="font-semibold text-gray-500 text-xs uppercase tracking-wide">{label}</Label>
