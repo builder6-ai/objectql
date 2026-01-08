@@ -31,7 +31,12 @@ export class ObjectQLModule implements OnModuleInit {
         });
 
         consumer
-            .apply(router)
-            .forRoutes({ path: 'api', method: RequestMethod.ALL });
+            .apply((req: any, res: any, next: any) => {
+                if (req.url.startsWith('/api')) {
+                    req.url = req.url.replace(/^\/api/, '') || '/';
+                }
+                router(req, res, next);
+            })
+            .forRoutes('api');
     }
 }
