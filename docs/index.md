@@ -2,7 +2,7 @@
 
 We have organized the documentation into two main categories:
 
-## 1. [User & Developer Guide](./guide/README.md)
+## 1. [User & Developer Guide](./guide/)
 **Target Audience**: Application Developers, Customer Success, End Users.
 **Content**:
 *   How to model data (Objects, Fields, Relationships).
@@ -10,7 +10,7 @@ We have organized the documentation into two main categories:
 *   Using the Node.js SDK.
 *   Security configuration.
 
-## 2. [Protocol Specifications](./spec/README.md)
+## 2. [Protocol Specifications](./spec/)
 **Target Audience**: System Architects, Driver Contributors, Integrators.
 **Content**:
 *   Metadata File Format Specification (YAML/JSON schema).
