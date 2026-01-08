@@ -15,4 +15,9 @@ export * from './components/fields/BooleanField';
 export * from './components/Form';
 export * from './components/Table';
 export * from './components/grid/DataTable';
+export * from './components/AutoForm';
+
+export * from './components/Modal';
+export * from './components/Card';
+export * from './components/Spinner';
 

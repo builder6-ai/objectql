@@ -19,4 +19,10 @@ export class ViewsController {
   dashboard() {
     return { title: 'Dashboard - ObjectQL' };
   }
+
+  @Get('dashboard/*')
+  @Render('dashboard')
+  dashboardWildcard() {
+    return { title: 'Dashboard - ObjectQL' };
+  }
 }
