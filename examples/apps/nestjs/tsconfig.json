@@ -19,5 +19,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../../packages/core" },
+    { "path": "../../../packages/api" },
+    { "path": "../../../packages/driver-mongo" },
+    { "path": "../../../packages/driver-knex" },
+    { "path": "../../modules/project-management" }
+  ]
 }

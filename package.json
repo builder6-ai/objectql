@@ -10,7 +10,7 @@
     "dev": "npm run start:dev --workspace=@example/nestjs",
     "nestjs": "npm run start --workspace=@example/nestjs",
     "express": "npm run build --workspaces && npm start --workspace=@example/express",
-    "build": "npm run build --workspaces",
+    "build": "tsc -b && npm run build --workspaces",
     "test": "npm run test --workspaces",
     "changeset": "changeset",
     "version": "changeset version",

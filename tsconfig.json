@@ -1,9 +1,13 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/metadata" },
     { "path": "./packages/core" },
+    { "path": "./packages/api" },
     { "path": "./packages/driver-mongo" },
     { "path": "./packages/driver-knex" },
-    { "path": "./examples/basic-usage" }
+    { "path": "./examples/apps/express" },
+    { "path": "./examples/apps/nestjs" },
+    { "path": "./examples/modules/project-management" }
   ]
 }
