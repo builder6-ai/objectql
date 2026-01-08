@@ -133,8 +133,23 @@ export class ObjectQL implements IObjectQL {
     }
 
     async init() {
-        const ctx = this.createContext({ isSystem: true });
         const objects = this.metadata.list<ObjectConfig>('object');
+        
+        // 1. Init Drivers (e.g. Sync Schema)
+        // We probably should pass all objects to all drivers, or split them by datasource if objects were assigned to specific DS.
+        // For now, assume all objects go to default driver or driver handles filtering if needed (but driver doesn't know mapping usually).
+        // Actually, ObjectQL currently doesn't seem to support multiple datasources per object mapping strictly yet (default is used).
+        // Let's pass all objects to all configured drivers.
+        for (const [name, driver] of Object.entries(this.datasources)) {
+            if (driver.init) {
+                console.log(`Initializing driver '${name}'...`);
+                await driver.init(objects);
+            }
+        }
+
+        const ctx = this.createContext({ isSystem: true });
+        
+        // 2. Init Data
         for (const obj of objects) {
             if (obj.data && obj.data.length > 0) {
                 console.log(`Initializing data for object ${obj.name}...`);

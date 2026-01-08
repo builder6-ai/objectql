@@ -3,8 +3,10 @@ import knex, { Knex } from 'knex';
 
 export class KnexDriver implements Driver {
     private knex: Knex;
+    private config: any;
 
     constructor(config: any) {
+        this.config = config;
         this.knex = knex(config);
     }
 
@@ -166,6 +168,107 @@ export class KnexDriver implements Driver {
         const builder = this.getBuilder(objectName, options);
         if(filters) this.applyFilters(builder, filters);
         return await builder.delete();
+    }
+
+    async init(objects: any[]): Promise<void> {
+        await this.ensureDatabaseExists();
+
+        for (const obj of objects) {
+            const tableName = obj.name;
+            const exists = await this.knex.schema.hasTable(tableName);
+            
+            if (!exists) {
+                await this.knex.schema.createTable(tableName, (table) => {
+                    table.string('id').primary(); 
+                    table.timestamp('created_at').defaultTo(this.knex.fn.now());
+                    table.timestamp('updated_at').defaultTo(this.knex.fn.now());
+                    if (obj.fields) {
+                        for (const [name, field] of Object.entries(obj.fields)) {
+                            this.createColumn(table, name, field);
+                        }
+                    }
+                });
+                console.log(`[KnexDriver] Created table '${tableName}'`);
+            } else {
+                 const columnInfo = await this.knex(tableName).columnInfo();
+                 const existingColumns = Object.keys(columnInfo);
+                 
+                 await this.knex.schema.alterTable(tableName, (table) => {
+                     if (obj.fields) {
+                         for (const [name, field] of Object.entries(obj.fields)) {
+                             if (!existingColumns.includes(name)) {
+                                 this.createColumn(table, name, field);
+                                 console.log(`[KnexDriver] Added column '${name}' to '${tableName}'`);
+                             }
+                         }
+                     }
+                 });
+            }
+        }
+    }
+
+    private createColumn(table: Knex.CreateTableBuilder, name: string, field: any) {
+        const type = field.type || 'string';
+        let col;
+        switch(type) {
+            case 'string': col = table.string(name); break;
+            case 'text': col = table.text(name); break;
+            case 'integer': 
+            case 'int': col = table.integer(name); break;
+            case 'float': 
+            case 'number': col = table.float(name); break;
+            case 'boolean': col = table.boolean(name); break;
+            case 'date': col = table.date(name); break;
+            case 'datetime': col = table.timestamp(name); break;
+            case 'json': 
+            case 'object':
+            case 'array': col = table.json(name); break;
+            default: col = table.string(name);
+        }
+    }
+
+    private async ensureDatabaseExists() {
+        if (this.config.client !== 'pg' && this.config.client !== 'postgresql') return;
+        
+        try {
+            await this.knex.raw('SELECT 1');
+        } catch (e: any) {
+            if (e.code === '3D000') { // Database does not exist
+                 await this.createDatabase();
+            } else {
+                throw e;
+            }
+        }
+    }
+
+    private async createDatabase() {
+        const config = this.config;
+        const connection = config.connection;
+        let dbName = '';
+        let adminConfig = { ...config };
+
+        if (typeof connection === 'string') {
+            const url = new URL(connection);
+            dbName = url.pathname.slice(1);
+            url.pathname = '/postgres';
+            adminConfig.connection = url.toString();
+        } else {
+            dbName = connection.database;
+            adminConfig.connection = { ...connection, database: 'postgres' };
+        }
+
+        console.log(`[KnexDriver] Database '${dbName}' does not exist. Creating...`);
+
+        const adminKnex = knex(adminConfig);
+        try {
+            await adminKnex.raw(`CREATE DATABASE "${dbName}"`);
+            console.log(`[KnexDriver] Database '${dbName}' created successfully.`);
+        } catch (e: any) {
+             console.error(`[KnexDriver] Failed to create database '${dbName}':`, e.message);
+             throw e;
+        } finally {
+            await adminKnex.destroy();
+        }
     }
 }
 

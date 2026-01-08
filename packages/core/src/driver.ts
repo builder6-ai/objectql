@@ -6,6 +6,9 @@ export interface Driver {
     delete(objectName: string, id: string | number, options?: any): Promise<any>;
     count(objectName: string, filters: any, options?: any): Promise<number>;
     
+    // Schema / Lifecycle
+    init?(objects: any[]): Promise<void>;
+
     // Advanced
     aggregate?(objectName: string, query: any, options?: any): Promise<any>;
     distinct?(objectName: string, field: string, filters?: any, options?: any): Promise<any[]>;

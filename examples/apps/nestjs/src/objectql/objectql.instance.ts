@@ -5,7 +5,7 @@ export const objectql = new ObjectQL({
   datasources: {
       default: new KnexDriver({ 
           client: 'pg',
-          connection: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/objectql_example'
+          connection: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/objectql'
       })
   },
   packages: [
