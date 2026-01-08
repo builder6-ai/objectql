@@ -5,7 +5,7 @@ import { Response } from 'express';
 export class ViewsController {
   @Get()
   root(@Res() res: Response) {
-    return res.redirect('/dashboard');
+    return res.redirect('/object/projects/PROJ-001');
   }
 
   @Get('login')
@@ -14,15 +14,9 @@ export class ViewsController {
     return { title: 'Sign In - ObjectQL' };
   }
 
-  @Get('dashboard')
+  @Get(['object/*', 'settings'])
   @Render('dashboard')
   dashboard() {
-    return { title: 'Dashboard - ObjectQL' };
-  }
-
-  @Get('dashboard/*')
-  @Render('dashboard')
-  dashboardWildcard() {
-    return { title: 'Dashboard - ObjectQL' };
+    return { title: 'ObjectQL' };
   }
 }
