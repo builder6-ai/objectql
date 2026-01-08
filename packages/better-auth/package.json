@@ -1,0 +1,17 @@
+{
+  "name": "@objectql/better-auth",
+  "version": "0.1.0",
+  "description": "Better-Auth integration for ObjectQL",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@objectql/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

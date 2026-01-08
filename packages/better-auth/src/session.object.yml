@@ -1,0 +1,28 @@
+name: session
+description: User authentication session
+fields:
+  userId:
+    type: string
+    description: ID of the user
+    required: true
+  token:
+    type: string
+    description: Session token
+    unique: true
+    required: true
+  expiresAt:
+    type: datetime
+    description: When the session expires
+    required: true
+  ipAddress:
+    type: string
+    description: IP Address of the client
+  userAgent:
+    type: string
+    description: User Agent of the client
+  createdAt:
+    type: datetime
+    default: now()
+  updatedAt:
+    type: datetime
+    default: now()

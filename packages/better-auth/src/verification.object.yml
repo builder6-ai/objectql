@@ -1,0 +1,21 @@
+name: verification
+description: Verification tokens for email etc
+fields:
+  identifier:
+    type: string
+    description: Email or phone number
+    required: true
+  value:
+    type: string
+    description: Verification token
+    required: true
+  expiresAt:
+    type: datetime
+    description: Expiration time
+    required: true
+  createdAt:
+    type: datetime
+    default: now()
+  updatedAt:
+    type: datetime
+    default: now()
