@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp src/*.yml dist/",
     "test": "jest"
   },
   "dependencies": {
-    "@objectql/core": "workspace:*"
+    "@objectql/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
