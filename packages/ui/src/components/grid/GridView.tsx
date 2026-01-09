@@ -63,9 +63,17 @@ export function GridView({
     setColumns(initialColumns)
   }, [initialColumns])
 
-  // Group data if grouping is enabled
-  const groupedData = React.useMemo(() => {
-    if (!enableGrouping || !groupByColumn) return { ungrouped: data }
+  // Group data if grouping is enabled and create index map for performance
+  const { groupedData, rowIndexMap } = React.useMemo(() => {
+    // Create a map for O(1) index lookups
+    const indexMap = new Map<any, number>()
+    data.forEach((row, index) => {
+      indexMap.set(row, index)
+    })
+
+    if (!enableGrouping || !groupByColumn) {
+      return { groupedData: { ungrouped: data }, rowIndexMap: indexMap }
+    }
     
     const groups: Record<string, any[]> = {}
     data.forEach(row => {
@@ -75,12 +83,17 @@ export function GridView({
       }
       groups[groupValue].push(row)
     })
-    return groups
+    return { groupedData: groups, rowIndexMap: indexMap }
   }, [data, enableGrouping, groupByColumn])
 
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(
     new Set(Object.keys(groupedData))
   )
+
+  // Update expanded groups when groupedData changes
+  React.useEffect(() => {
+    setExpandedGroups(new Set(Object.keys(groupedData)))
+  }, [groupedData])
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups(prev => {
@@ -139,7 +152,28 @@ export function GridView({
       .join('\n')
 
     const tsv = headers + '\n' + rows
-    navigator.clipboard.writeText(tsv)
+    
+    // Use modern clipboard API with error handling
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tsv).catch(err => {
+        console.error('Failed to copy to clipboard:', err)
+        // Fallback: show user a message or use document.execCommand as last resort
+      })
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = tsv
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+      } catch (err) {
+        console.error('Failed to copy to clipboard:', err)
+      }
+      document.body.removeChild(textArea)
+    }
   }
 
   // Column drag and drop handlers
@@ -404,8 +438,8 @@ export function GridView({
                     </td>
                   </tr>
                   {expandedGroups.has(groupKey) &&
-                    groupRows.map((row, rowIndex) => {
-                      const actualIndex = data.indexOf(row)
+                    groupRows.map((row) => {
+                      const actualIndex = rowIndexMap.get(row) ?? -1
                       return (
                         <tr
                           key={actualIndex}

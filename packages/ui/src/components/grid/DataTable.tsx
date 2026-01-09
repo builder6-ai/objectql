@@ -151,55 +151,47 @@ export function DataTable<TData, TValue>({
   }
 
   // Copy/Paste functionality
-  const handleCopy = React.useCallback((e: React.ClipboardEvent) => {
-    if (!enableCopyPaste) return
+  const handleCopy = React.useCallback(() => {
+    if (!enableCopyPaste || !hasSelection) return
+
+    const headers = enhancedColumns
+      .filter(col => col.id !== 'select')
+      .map(col => typeof col.header === 'string' ? col.header : col.id)
+      .join('\t')
     
-    const selection = window.getSelection()
-    if (selection && selection.toString()) {
-      // Let browser handle the copy
-      return
-    }
-
-    // Copy selected rows as TSV
-    if (hasSelection) {
-      e.preventDefault()
-      const headers = enhancedColumns
+    const rows = selectedRows.map(row => 
+      enhancedColumns
         .filter(col => col.id !== 'select')
-        .map(col => typeof col.header === 'string' ? col.header : col.id)
+        .map(col => {
+          const cell = row.getValue(col.id as string)
+          return cell !== null && cell !== undefined ? String(cell) : ''
+        })
         .join('\t')
-      
-      const rows = selectedRows.map(row => 
-        enhancedColumns
-          .filter(col => col.id !== 'select')
-          .map(col => {
-            const cell = row.getValue(col.id as string)
-            return cell !== null && cell !== undefined ? String(cell) : ''
-          })
-          .join('\t')
-      ).join('\n')
+    ).join('\n')
 
-      const tsv = headers + '\n' + rows
-      e.clipboardData.setData('text/plain', tsv)
+    const tsv = headers + '\n' + rows
+    
+    // Use modern clipboard API with error handling
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(tsv).catch(err => {
+        console.error('Failed to copy to clipboard:', err)
+      })
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = tsv
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+      } catch (err) {
+        console.error('Failed to copy to clipboard:', err)
+      }
+      document.body.removeChild(textArea)
     }
   }, [enableCopyPaste, hasSelection, selectedRows, enhancedColumns])
-
-  // Add keyboard shortcuts for copy
-  React.useEffect(() => {
-    if (!enableCopyPaste) return
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'c' && hasSelection) {
-        // Copy will be handled by the copy event
-        document.dispatchEvent(new ClipboardEvent('copy', {
-          clipboardData: new DataTransfer(),
-          bubbles: true
-        }))
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [enableCopyPaste, hasSelection])
 
   const renderFilters = () => {
     // If enableMultipleFilters is true and filterConfigs are provided
@@ -284,7 +276,7 @@ export function DataTable<TData, TValue>({
   }
 
   return (
-    <div onCopy={handleCopy}>
+    <div>
       {/* Bulk actions toolbar */}
       {enableRowSelection && hasSelection && (
         <div className="flex items-center gap-2 p-2 mb-2 bg-blue-50 border border-blue-200 rounded-md">
@@ -296,16 +288,7 @@ export function DataTable<TData, TValue>({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const event = new ClipboardEvent('copy', {
-                    clipboardData: new DataTransfer(),
-                    bubbles: true
-                  })
-                  handleCopy(event as any)
-                  if (event.clipboardData) {
-                    navigator.clipboard.writeText(event.clipboardData.getData('text/plain'))
-                  }
-                }}
+                onClick={handleCopy}
                 className="h-8"
               >
                 <Copy className="w-4 h-4 mr-1" />
