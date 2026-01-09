@@ -95,9 +95,9 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
                                 return (
                                 <SidebarMenuSubItem key={subIdx}>
                                     <SidebarMenuSubButton 
-                                        isActive={subItemType === 'object' ? path.includes(`/object/${subItem.object}`) : path.endsWith(subItem.url)}
+                                        isActive={subItemType === 'object' ? path.includes(`/object/${subItem.object_name}`) : path.endsWith(subItem.url)}
                                         onClick={() => {
-                                            if (subItemType === 'object') navigate(getObjectPath(subItem.object));
+                                            if (subItemType === 'object') navigate(getObjectPath(subItem.object_name));
                                             else if (subItemType === 'page') navigate(subItem.url);
                                             else if (subItemType === 'url') window.open(subItem.url, '_blank');
                                         }}
