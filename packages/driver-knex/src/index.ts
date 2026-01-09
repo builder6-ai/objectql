@@ -22,8 +22,6 @@ export class KnexDriver implements Driver {
     private applyFilters(builder: Knex.QueryBuilder, filters: any) {
         if (!filters || filters.length === 0) return;
 
-        // Simple linear parser handling [cond, 'or', cond, 'and', cond]
-        // Default join is AND.
         let nextJoin = 'and';
 
         for (const item of filters) {
@@ -34,36 +32,40 @@ export class KnexDriver implements Driver {
              }
 
              if (Array.isArray(item)) {
+                 // Heuristic to detect if it is a criterion [field, op, value] or a nested group
                  const [field, op, value] = item;
-                 
-                 // Handle specific operators that map to different knex methods
-                 const apply = (b: any) => {
-                     // b is the builder to apply on (could be root or a where clause)
-                     // But here we call directly on builder using 'where' or 'orWhere'
-                     
-                     // Method selection
-                     let method = nextJoin === 'or' ? 'orWhere' : 'where';
-                     let methodIn = nextJoin === 'or' ? 'orWhereIn' : 'whereIn';
-                     let methodNotIn = nextJoin === 'or' ? 'orWhereNotIn' : 'whereNotIn';
+                 const isCriterion = typeof field === 'string' && typeof op === 'string';
 
-                     switch (op) {
-                         case '=': b[method](field, value); break;
-                         case '!=': b[method](field, '<>', value); break;
-                         case 'in': b[methodIn](field, value); break;
-                         case 'nin': b[methodNotIn](field, value); break;
-                         case 'contains': b[method](field, 'like', `%${value}%`); break; // Simple LIKE
-                         default: b[method](field, op, value);
-                     }
-                 };
+                 if (isCriterion) {
+                     // Handle specific operators that map to different knex methods
+                     const apply = (b: any) => {
+                         let method = nextJoin === 'or' ? 'orWhere' : 'where';
+                         let methodIn = nextJoin === 'or' ? 'orWhereIn' : 'whereIn';
+                         let methodNotIn = nextJoin === 'or' ? 'orWhereNotIn' : 'whereNotIn';
+                         
+                         // Fix for 'contains' mapping
+                         if (op === 'contains') {
+                             b[method](field, 'like', `%${value}%`);
+                             return;
+                         }
 
-                 apply(builder);
+                         switch (op) {
+                             case '=': b[method](field, value); break;
+                             case '!=': b[method](field, '<>', value); break;
+                             case 'in': b[methodIn](field, value); break;
+                             case 'nin': b[methodNotIn](field, value); break;
+                             default: b[method](field, op, value);
+                         }
+                     };
+                     apply(builder);
+                 } else {
+                     // Recursive Group
+                     const method = nextJoin === 'or' ? 'orWhere' : 'where';
+                     builder[method]((qb) => {
+                         this.applyFilters(qb, item);
+                     });
+                 }
                  
-                 // Reset join to 'and' for subsequent terms unless strictly specified?
-                 // In SQL `A or B and C` means `A or (B and C)`.
-                 // If we chain `.where(A).orWhere(B).where(C)` in Knex:
-                 // It produces `... WHERE A OR B AND C`.
-                 // So linear application matches SQL precedence usually if implicit validation is ok.
-                 // But explicit AND after OR is necessary in our array format.
                  nextJoin = 'and'; 
              }
         }

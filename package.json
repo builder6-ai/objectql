@@ -6,9 +6,10 @@
     "examples/*"
   ],
   "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\" --kill-others --names \"SERVER,CLIENT\" -c \"magenta,blue\"",
     "start": "npm run start --workspace=@objectql/server",
-    "server": "npm run dev --workspace=@objectql/server",
-    "client": "npm run dev --workspace=@objectql/client",
+    "dev:server": "npm run dev --workspace=@objectql/server",
+    "dev:client": "npm run dev --workspace=@objectql/client",
     "build": "tsc -b && npm run build --workspaces",
     "test": "npm run test --workspaces",
     "changeset": "changeset",
@@ -24,6 +25,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.0",
     "@types/supertest": "^6.0.3",
+    "concurrently": "^9.2.1",
     "jest": "^30.2.0",
     "js-yaml": "^4.1.1",
     "supertest": "^7.2.2",

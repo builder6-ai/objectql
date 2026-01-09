@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Badge, Modal, Spinner, GridView } from '@objectql/ui';
+import { Button, Badge, Modal, Spinner, GridView, Input } from '@objectql/ui';
 import { ObjectForm } from './ObjectForm';
 import { cn } from '../../lib/utils';
 // import { useRouter } from ... passed as prop
@@ -12,13 +12,27 @@ interface ObjectListViewProps {
     objectSchema: any;
 }
 
+interface SortConfig {
+    columnId: string;
+    direction: 'asc' | 'desc';
+}
+
 export function ObjectListView({ objectName, user, isCreating, navigate, objectSchema }: ObjectListViewProps) {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+    const [sortConfig, setSortConfig] = useState<SortConfig[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
     
     const label = objectSchema?.label || objectSchema?.title || objectName;
+
+    // Debounce search term
+    const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchTerm), 500);
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
     
     const getFieldLabel = (key: string) => {
         if (!objectSchema || !objectSchema.fields) return key;
@@ -49,7 +63,35 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
         setLoading(true);
         setError(null);
         
-        fetch(`/api/object/${objectName}`, { headers: getHeaders() })
+        const params = new URLSearchParams();
+        if (sortConfig.length > 0) {
+            // API expects sort=field:order or multiple
+             const sortParam = sortConfig.map(s => `${s.columnId}:${s.direction}`).join(',');
+             params.append('sort', sortParam);
+        }
+        
+        if (debouncedSearch) {
+            // Simple search implementation: try to search in name or title or description fields
+            // Or search in all text fields
+            const textFields = objectSchema?.fields ? 
+                Object.entries(objectSchema.fields)
+                    .filter(([_, field]: [string, any]) => !field.type || field.type === 'string')
+                    .map(([key]) => key) 
+                : ['name', 'title', 'description', 'email'];
+                
+            if (textFields.length > 0) {
+                 // Construct array-based filters: [['field', 'contains', 'val'], 'or', ['field2', ...]]
+                 const searchFilters: any[] = [];
+                 textFields.forEach((field, index) => {
+                     if (index > 0) searchFilters.push('or');
+                     searchFilters.push([field, 'contains', debouncedSearch]);
+                 });
+                 // If sending strict JSON array for unified query
+                 params.append('filters', JSON.stringify(searchFilters));
+            }
+        }
+        
+        fetch(`/api/object/${objectName}?${params.toString()}`, { headers: getHeaders() })
             .then(async res => {
                 if (!res.ok) {
                     const contentType = res.headers.get("content-type");
@@ -75,7 +117,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
 
     useEffect(() => {
         if (user && objectName) fetchData();
-    }, [objectName, user]);
+    }, [objectName, user, sortConfig, debouncedSearch]);
 
     const handleCreate = (formData: any) => {
         fetch(`/api/object/${objectName}`, {
@@ -171,6 +213,14 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                          </h3>
                      </div>
                      <div className="flex items-center gap-2">
+                         <div className="w-64">
+                             <Input 
+                                 placeholder="Search..." 
+                                 value={searchTerm}
+                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                 className="h-9"
+                             />
+                         </div>
                          <div className="inline-flex rounded-lg border border-stone-200 bg-stone-50 p-1">
                              <button
                                  onClick={() => setViewMode('table')}
@@ -246,6 +296,8 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                         onCellEdit={handleCellEdit}
                         onDelete={handleDelete}
                         emptyMessage={`No ${label.toLowerCase()} found`}
+                        enableSorting={true}
+                        onSortChange={setSortConfig}
                     />
                 ) : (
                     <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
