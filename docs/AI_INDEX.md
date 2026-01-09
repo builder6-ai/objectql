@@ -11,6 +11,18 @@ Welcome to ObjectQL's AI capabilities documentation. This index provides an over
   - LLM prompt templates
   - Complete code examples
 
+- **[AI Metadata Quick Start](./guide/ai-metadata-quickstart.md)** - Quick start guide for using AI metadata
+  - Loading AI metadata
+  - Defining AI configurations
+  - Creating AI prompts
+  - TypeScript type usage examples
+
+- **[AI Metadata Reference](./spec/ai-metadata.md)** - Complete reference for AI metadata types and configurations
+  - AIConfig, AIModelConfig, AIPromptConfig
+  - AI object definitions (conversation, prompt, operation log)
+  - Application and dashboard configurations
+  - Best practices and validation
+
 ### Security & Safety
 - **[AI Safety Guidelines](./guide/ai-safety.md)** - Security best practices for AI operations
   - Core safety principles
