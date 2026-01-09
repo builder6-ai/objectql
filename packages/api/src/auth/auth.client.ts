@@ -61,10 +61,16 @@ export const getAuth = async () => {
                         enabled: true
                     },
                     // Define default organization roles with permissions
-                    creatorRole: 'admin',
+                    creatorRole: 'owner',
                     roles: {
-                        admin: role({
+                        owner: role({
                             organization: ['update', 'delete', 'read'],
+                            member: ['create', 'update', 'delete', 'read'],
+                            invitation: ['create', 'cancel', 'read'],
+                            team: ['create', 'update', 'delete', 'read']
+                        }),
+                        admin: role({
+                            organization: ['update', 'read'],
                             member: ['create', 'update', 'delete', 'read'],
                             invitation: ['create', 'cancel', 'read'],
                             team: ['create', 'update', 'delete', 'read']

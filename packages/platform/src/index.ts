@@ -18,6 +18,7 @@ import * as path from 'path';
  * 
  * Also includes standard Platform Roles:
  * - super_admin: System Administrator
+ * - owner: Organization Owner
  * - admin: Organization Administrator
  * - user: Standard Member
  * 
