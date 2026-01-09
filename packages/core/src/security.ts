@@ -173,7 +173,13 @@ export class SecurityEngine {
         let finalFilter = undefined;
         if (perm.filters && perm.filters.length > 0) {
             // Variable Substitution
-            const resolved = this.resolveFilters(perm.filters, ctx.user);
+            // Context only has userId, but variable substitution might need more info?
+            // Usually we only subst {userId} or {spaceId}
+            const contextData = {
+                id: ctx.userId,
+                spaceId: ctx.spaceId
+            };
+            const resolved = this.resolveFilters(perm.filters, contextData);
 
             if (resolved.length === 1) {
                 finalFilter = resolved[0];
