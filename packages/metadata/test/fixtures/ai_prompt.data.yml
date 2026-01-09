@@ -1,0 +1,146 @@
+- name: query_generator_v1
+  label: Natural Language Query Generator
+  description: Converts natural language requests into ObjectQL queries
+  category: query_generation
+  system_message: |
+    You are an expert in ObjectQL, a universal query language for databases.
+    Your task is to convert natural language requests into valid ObjectQL JSON queries.
+    Always generate syntactically correct queries that follow the ObjectQL specification.
+  template: |
+    Given this schema:
+    {{schema}}
+    
+    Generate a valid ObjectQL query for this request: "{{user_request}}"
+    
+    Available operators: =, !=, >, >=, <, <=, in, nin, contains
+    
+    Return ONLY the JSON query object, no explanation.
+    
+    Query format:
+    {
+      "entity": "object_name",
+      "fields": ["field1", "field2"],
+      "filters": [["field", "operator", "value"]],
+      "sort": [["field", "asc|desc"]],
+      "limit": number
+    }
+  variables:
+    - schema
+    - user_request
+  model_provider: openai
+  model_name: gpt-4
+  temperature: 0.1
+  max_tokens: 1000
+  version: "1.0"
+  active: true
+
+- name: schema_generator_v1
+  label: Schema Definition Generator
+  description: Creates object definitions from business requirements
+  category: schema_generation
+  system_message: |
+    You are an expert data modeler using ObjectQL.
+    Your task is to generate complete object schemas from business requirements.
+  template: |
+    Create an ObjectQL object definition for this requirement:
+    "{{requirement}}"
+    
+    Available field types: text, textarea, number, currency, date, datetime, boolean, 
+    select, email, phone, url, lookup, file, image
+    
+    Generate a YAML object definition with appropriate fields, types, and validations.
+    Include field labels, descriptions, and constraints.
+  variables:
+    - requirement
+  model_provider: openai
+  model_name: gpt-4
+  temperature: 0.3
+  max_tokens: 2000
+  version: "1.0"
+  active: true
+
+- name: data_analyzer_v1
+  label: Data Analysis Assistant
+  description: Analyzes data and provides insights
+  category: data_analysis
+  system_message: |
+    You are a data analysis expert. Analyze the provided data and generate insights,
+    trends, and actionable recommendations.
+  template: |
+    Analyze this data:
+    {{data}}
+    
+    Context: {{context}}
+    
+    Provide:
+    1. Key trends and patterns
+    2. Notable anomalies
+    3. Actionable insights
+    4. Recommendations
+    
+    Format your response as structured JSON.
+  variables:
+    - data
+    - context
+  model_provider: openai
+  model_name: gpt-4
+  temperature: 0.5
+  max_tokens: 2000
+  version: "1.0"
+  active: true
+
+- name: query_validator_v1
+  label: Query Validation Assistant
+  description: Validates AI-generated queries for safety and correctness
+  category: validation
+  system_message: |
+    You are a query validation expert. Check if queries are safe, correct, and follow best practices.
+  template: |
+    Validate this ObjectQL query:
+    {{query}}
+    
+    Schema context:
+    {{schema}}
+    
+    Check for:
+    1. Syntax correctness
+    2. Security issues
+    3. Performance concerns
+    4. Best practice violations
+    
+    Return validation result as JSON with fields: valid (boolean), errors (array), warnings (array)
+  variables:
+    - query
+    - schema
+  model_provider: openai
+  model_name: gpt-3.5-turbo
+  temperature: 0.1
+  max_tokens: 500
+  version: "1.0"
+  active: true
+
+- name: summarizer_v1
+  label: Data Summarization Assistant
+  description: Generates concise summaries of data and results
+  category: summarization
+  system_message: |
+    You are a summarization expert. Create clear, concise summaries of data and information.
+  template: |
+    Summarize this data in a clear, business-friendly way:
+    {{data}}
+    
+    Summary should include:
+    - Total count
+    - Key statistics
+    - Main highlights
+    
+    Keep it under {{max_length}} words.
+  variables:
+    - data
+    - max_length
+  model_provider: openai
+  model_name: gpt-3.5-turbo
+  temperature: 0.3
+  max_tokens: 500
+  version: "1.0"
+  active: true

@@ -1,0 +1,138 @@
+name: ai_prompt
+label: AI Prompt Template
+description: Reusable prompt templates for AI operations
+icon: ri-file-text-line
+
+fields:
+  name:
+    type: text
+    label: Name
+    required: true
+    unique: true
+    description: Unique identifier for the prompt template
+    
+  label:
+    type: text
+    label: Display Label
+    required: true
+    searchable: true
+    description: Human-readable label for the prompt
+    
+  description:
+    type: textarea
+    label: Description
+    rows: 3
+    description: Detailed description of what this prompt does
+    
+  category:
+    type: select
+    label: Category
+    options:
+      - query_generation
+      - schema_generation
+      - data_analysis
+      - validation
+      - summarization
+      - custom
+    required: true
+    description: Categorization of the prompt's purpose
+    
+  system_message:
+    type: textarea
+    label: System Message
+    rows: 5
+    description: System context and instructions for the AI
+    
+  template:
+    type: textarea
+    label: Prompt Template
+    required: true
+    rows: 10
+    description: Template with placeholders like {{variable}}
+    
+  variables:
+    type: grid
+    label: Variables
+    description: List of variables used in the template
+    
+  examples:
+    type: grid
+    label: Examples
+    description: Example inputs and expected outputs
+    
+  model_provider:
+    type: select
+    label: Default Model Provider
+    options:
+      - openai
+      - anthropic
+      - azure-openai
+      - google
+      - ollama
+      - custom
+    description: Preferred AI model provider
+    
+  model_name:
+    type: text
+    label: Default Model Name
+    description: Preferred model identifier
+    
+  temperature:
+    type: number
+    label: Temperature
+    min: 0.0
+    max: 1.0
+    precision: 1
+    scale: 1
+    defaultValue: 0.7
+    description: Controls randomness in AI responses
+    
+  max_tokens:
+    type: number
+    label: Max Tokens
+    min: 1
+    max: 100000
+    description: Maximum tokens in the AI response
+    
+  version:
+    type: text
+    label: Version
+    defaultValue: "1.0"
+    description: Version number for tracking prompt evolution
+    
+  active:
+    type: boolean
+    label: Active
+    defaultValue: true
+    description: Whether this prompt is currently in use
+    
+  usage_count:
+    type: number
+    label: Usage Count
+    defaultValue: 0
+    readonly: true
+    description: Number of times this prompt has been used
+    
+  success_rate:
+    type: percent
+    label: Success Rate
+    readonly: true
+    description: Percentage of successful executions
+    
+  created_by:
+    type: lookup
+    label: Created By
+    reference_to: users
+    readonly: true
+    
+  created_at:
+    type: datetime
+    label: Created At
+    defaultValue: now
+    readonly: true
+    
+  updated_at:
+    type: datetime
+    label: Updated At
+    defaultValue: now
+    readonly: true

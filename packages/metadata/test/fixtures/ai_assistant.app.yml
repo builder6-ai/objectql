@@ -1,0 +1,72 @@
+name: AI Assistant
+code: ai_assistant
+description: AI-powered assistant application for natural language queries and data analysis
+icon: ri-robot-line
+color: purple
+dark: false
+
+menu:
+  - label: Conversations
+    items:
+      - label: Active Chats
+        icon: ri-chat-3-line
+        type: object
+        object: ai_conversation
+        badge: new
+      - label: New Conversation
+        icon: ri-add-circle-line
+        type: page
+        url: /ai/chat/new
+      
+  - label: Prompts & Templates
+    collapsible: true
+    collapsed: false
+    items:
+      - label: Prompt Library
+        icon: ri-file-text-line
+        type: object
+        object: ai_prompt
+      - label: Query Templates
+        icon: ri-code-box-line
+        type: page
+        url: /ai/prompts/query
+      - label: Schema Templates
+        icon: ri-database-2-line
+        type: page
+        url: /ai/prompts/schema
+  
+  - label: Analytics & Insights
+    items:
+      - label: Usage Dashboard
+        icon: ri-dashboard-line
+        type: page
+        url: /ai/analytics/dashboard
+      - label: Cost Tracking
+        icon: ri-money-dollar-circle-line
+        type: page
+        url: /ai/analytics/costs
+      - label: Performance Metrics
+        icon: ri-line-chart-line
+        type: page
+        url: /ai/analytics/performance
+  
+  - label: Administration
+    collapsible: true
+    collapsed: true
+    items:
+      - label: Operation Logs
+        icon: ri-file-list-3-line
+        type: object
+        object: ai_operation_log
+      - label: Model Configuration
+        icon: ri-settings-3-line
+        type: page
+        url: /ai/settings/models
+      - label: Safety & Governance
+        icon: ri-shield-check-line
+        type: page
+        url: /ai/settings/safety
+      - label: API Keys
+        icon: ri-key-2-line
+        type: page
+        url: /ai/settings/keys

@@ -1,0 +1,17 @@
+name: ai_cost_trend
+label: AI Cost Trend Over Time
+description: Tracking AI operation costs over time
+type: line
+object: ai_operation_log
+xAxisKey: created_at
+yAxisKeys:
+  - cost
+height: 350
+colors:
+  - "#8b5cf6"
+showGrid: true
+showLegend: true
+showTooltip: true
+sort:
+  - - created_at
+    - asc

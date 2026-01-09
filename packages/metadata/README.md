@@ -141,3 +141,68 @@ function renderMenuItem(item: AppMenuItem) {
 - `use(plugin)`
 - `load(dir)`
 - `loadPackage(packageName)`
+
+## AI Metadata Support
+
+ObjectQL provides comprehensive AI metadata types for building intelligent applications. See the [AI Metadata Reference](../../docs/spec/ai-metadata.md) for complete documentation.
+
+### AI Configuration Types
+
+```typescript
+import { 
+    AIConfig, 
+    AIModelConfig, 
+    AIPromptConfig,
+    AISafetyConfig,
+    AIAnalyticsConfig,
+    AIConversationConfig
+} from '@objectql/metadata';
+```
+
+### AI Object Definitions
+
+ObjectQL includes pre-defined objects for AI features:
+
+- **`ai_conversation`**: Store conversation history and context
+- **`ai_prompt`**: Manage reusable prompt templates  
+- **`ai_operation_log`**: Audit log for AI operations
+
+### Example: AI Assistant App
+
+```typescript
+const registry = new MetadataRegistry();
+const loader = new MetadataLoader(registry);
+
+registerObjectQLPlugins(loader);
+loader.load('./ai-metadata');
+
+// Access AI configurations
+const aiApp = registry.get('app', 'ai_assistant') as AppConfig;
+const aiPrompts = registry.list('object').filter(o => o.name.startsWith('ai_'));
+
+// Get specific prompt template
+const queryPrompt = registry.get('object', 'ai_prompt');
+```
+
+### AI Model Configuration
+
+```yaml
+# ai-config.yml
+defaultModel:
+  provider: openai
+  model: gpt-4
+  temperature: 0.7
+  maxTokens: 2000
+
+safety:
+  enableValidation: true
+  enableRateLimit: true
+  rateLimit: 30
+  blockedFields:
+    - password
+    - api_key
+```
+
+For detailed examples and documentation, see:
+- [AI Metadata Reference](../../docs/spec/ai-metadata.md)
+- [AI Integration Guide](../../docs/guide/ai-integration.md)

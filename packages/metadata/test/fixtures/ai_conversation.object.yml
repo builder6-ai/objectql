@@ -1,0 +1,97 @@
+name: ai_conversation
+label: AI Conversation
+description: Stores AI conversation history and context for chat-based interactions
+icon: ri-message-3-line
+
+fields:
+  title:
+    type: text
+    label: Conversation Title
+    required: true
+    searchable: true
+    description: A descriptive title for the conversation
+    
+  session_id:
+    type: text
+    label: Session ID
+    required: true
+    unique: true
+    description: Unique identifier for the conversation session
+    
+  user_id:
+    type: lookup
+    label: User
+    reference_to: users
+    required: true
+    description: The user who initiated the conversation
+    
+  model_provider:
+    type: select
+    label: Model Provider
+    options:
+      - openai
+      - anthropic
+      - azure-openai
+      - google
+      - ollama
+      - custom
+    defaultValue: openai
+    description: AI model provider used for this conversation
+    
+  model_name:
+    type: text
+    label: Model Name
+    required: true
+    description: Specific model identifier (e.g., gpt-4, claude-3-opus)
+    
+  system_context:
+    type: textarea
+    label: System Context
+    rows: 5
+    description: System instructions and context for the AI
+    
+  messages:
+    type: grid
+    label: Messages
+    description: Array of conversation messages with role and content
+    
+  total_tokens:
+    type: number
+    label: Total Tokens
+    description: Cumulative token count for the conversation
+    readonly: true
+    
+  cost:
+    type: currency
+    label: Estimated Cost
+    description: Estimated cost of API calls in USD
+    readonly: true
+    precision: 4
+    
+  status:
+    type: select
+    label: Status
+    options:
+      - active
+      - completed
+      - failed
+      - archived
+    defaultValue: active
+    description: Current status of the conversation
+    
+  metadata:
+    type: object
+    label: Metadata
+    description: Additional metadata and configuration for the conversation
+    
+  created_at:
+    type: datetime
+    label: Created At
+    defaultValue: now
+    readonly: true
+    
+  updated_at:
+    type: datetime
+    label: Updated At
+    defaultValue: now
+    readonly: true

@@ -214,3 +214,189 @@ export interface PageConfig {
     components?: PageComponent[];
     settings?: Record<string, any>;
 }
+
+/**
+ * AI Model Provider types supported by ObjectQL
+ */
+export type AIModelProvider = 'openai' | 'anthropic' | 'azure-openai' | 'google' | 'cohere' | 'ollama' | 'custom';
+
+/**
+ * AI Model configuration for LLM integration
+ */
+export interface AIModelConfig {
+    /** Model provider (OpenAI, Anthropic, etc.) */
+    provider: AIModelProvider;
+    /** Model name/identifier (e.g., 'gpt-4', 'claude-3-opus') */
+    model: string;
+    /** API endpoint URL (optional for standard providers) */
+    endpoint?: string;
+    /** API key or authentication token */
+    apiKey?: string;
+    /** Temperature for response randomness (0.0-1.0) */
+    temperature?: number;
+    /** Maximum tokens in response */
+    maxTokens?: number;
+    /** Top-p sampling parameter */
+    topP?: number;
+    /** Frequency penalty */
+    frequencyPenalty?: number;
+    /** Presence penalty */
+    presencePenalty?: number;
+    /** Request timeout in milliseconds */
+    timeout?: number;
+    /** Additional model-specific parameters */
+    parameters?: Record<string, any>;
+}
+
+/**
+ * AI Prompt template configuration
+ */
+export interface AIPromptConfig {
+    /** Unique identifier for the prompt */
+    name: string;
+    /** Display label */
+    label?: string;
+    /** Description of prompt purpose */
+    description?: string;
+    /** Prompt category/type */
+    category?: 'query_generation' | 'schema_generation' | 'data_analysis' | 'validation' | 'summarization' | 'custom';
+    /** System message/context */
+    system?: string;
+    /** User message template (supports variables like {{variable}}) */
+    template: string;
+    /** List of variables used in template */
+    variables?: string[];
+    /** Example inputs for testing */
+    examples?: Array<{
+        input: Record<string, any>;
+        output?: string;
+    }>;
+    /** Model configuration override */
+    model?: AIModelConfig;
+    /** Version number for prompt versioning */
+    version?: string;
+}
+
+/**
+ * AI Query validation rules
+ */
+export interface AIQueryValidationRules {
+    /** Maximum number of filters allowed */
+    maxFilters?: number;
+    /** Maximum number of fields to return */
+    maxFields?: number;
+    /** Maximum result limit */
+    maxLimit?: number;
+    /** Allowed objects/entities */
+    allowedEntities?: string[];
+    /** Blocked objects/entities */
+    blockedEntities?: string[];
+    /** Allowed field types */
+    allowedFieldTypes?: FieldType[];
+    /** Enable aggregation queries */
+    allowAggregation?: boolean;
+    /** Enable join queries */
+    allowJoins?: boolean;
+}
+
+/**
+ * AI Safety and governance configuration
+ */
+export interface AISafetyConfig {
+    /** Enable query validation */
+    enableValidation?: boolean;
+    /** Enable permission checking */
+    enablePermissionCheck?: boolean;
+    /** Enable content sanitization */
+    enableSanitization?: boolean;
+    /** Enable rate limiting */
+    enableRateLimit?: boolean;
+    /** Rate limit: requests per minute */
+    rateLimit?: number;
+    /** Rate limit window in milliseconds */
+    rateLimitWindow?: number;
+    /** Enable audit logging */
+    enableAuditLog?: boolean;
+    /** Validation rules */
+    validationRules?: AIQueryValidationRules;
+    /** Blocked sensitive fields */
+    blockedFields?: string[];
+}
+
+/**
+ * AI Analytics configuration for data analysis features
+ */
+export interface AIAnalyticsConfig {
+    /** Enable trend detection */
+    enableTrendDetection?: boolean;
+    /** Enable anomaly detection */
+    enableAnomalyDetection?: boolean;
+    /** Enable automatic insights */
+    enableAutoInsights?: boolean;
+    /** Minimum confidence score (0.0-1.0) */
+    minConfidence?: number;
+    /** Data refresh interval in seconds */
+    refreshInterval?: number;
+}
+
+/**
+ * AI Conversation/Chat configuration
+ */
+export interface AIConversationConfig {
+    /** Conversation name/identifier */
+    name: string;
+    /** Display label */
+    label?: string;
+    /** Description */
+    description?: string;
+    /** Model configuration */
+    model?: AIModelConfig;
+    /** System context/instructions */
+    systemContext?: string;
+    /** Maximum conversation history length */
+    maxHistory?: number;
+    /** Enable context from schema */
+    includeSchemaContext?: boolean;
+    /** Objects to include in context */
+    contextObjects?: string[];
+    /** Enable function calling */
+    enableFunctionCalling?: boolean;
+    /** Available functions */
+    functions?: Array<{
+        name: string;
+        description: string;
+        parameters: Record<string, any>;
+    }>;
+}
+
+/**
+ * Main AI configuration for ObjectQL applications
+ */
+export interface AIConfig {
+    /** Enable AI features */
+    enabled?: boolean;
+    /** Default model configuration */
+    defaultModel?: AIModelConfig;
+    /** Available models */
+    models?: Record<string, AIModelConfig>;
+    /** Prompt templates */
+    prompts?: Record<string, AIPromptConfig>;
+    /** Safety and governance settings */
+    safety?: AISafetyConfig;
+    /** Analytics configuration */
+    analytics?: AIAnalyticsConfig;
+    /** Conversation configurations */
+    conversations?: Record<string, AIConversationConfig>;
+    /** Cache configuration */
+    cache?: {
+        enabled?: boolean;
+        ttl?: number;
+        maxSize?: number;
+    };
+    /** Cost tracking */
+    costTracking?: {
+        enabled?: boolean;
+        budgetLimit?: number;
+        alertThreshold?: number;
+    };
+}

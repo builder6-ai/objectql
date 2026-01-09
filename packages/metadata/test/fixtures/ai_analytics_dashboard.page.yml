@@ -1,0 +1,79 @@
+name: ai_analytics_dashboard
+label: AI Analytics Dashboard
+description: Comprehensive dashboard for AI operations monitoring and analytics
+icon: ri-dashboard-line
+layout: grid
+
+components:
+  - type: header
+    props:
+      title: AI Operations Dashboard
+      subtitle: Monitor AI usage, costs, and performance
+      
+  - type: metrics
+    props:
+      columns: 4
+      items:
+        - label: Total Operations
+          value: "{{total_operations}}"
+          icon: ri-function-line
+          color: blue
+        - label: Success Rate
+          value: "{{success_rate}}%"
+          icon: ri-check-line
+          color: green
+        - label: Total Cost
+          value: "${{total_cost}}"
+          icon: ri-money-dollar-circle-line
+          color: purple
+        - label: Avg Response Time
+          value: "{{avg_duration}}ms"
+          icon: ri-time-line
+          color: orange
+          
+  - type: chart
+    props:
+      name: ai_usage_by_type
+      height: 400
+      
+  - type: chart
+    props:
+      name: ai_cost_trend
+      height: 350
+      
+  - type: grid
+    props:
+      columns: 2
+      children:
+        - type: card
+          props:
+            title: Recent Operations
+            object: ai_operation_log
+            limit: 10
+            fields:
+              - operation_type
+              - status
+              - cost
+              - created_at
+            sort:
+              - - created_at
+                - desc
+                
+        - type: card
+          props:
+            title: Popular Prompts
+            object: ai_prompt
+            limit: 5
+            fields:
+              - label
+              - category
+              - usage_count
+              - success_rate
+            sort:
+              - - usage_count
+                - desc
+
+settings:
+  refreshInterval: 30
+  autoRefresh: true
+  exportable: true

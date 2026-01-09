@@ -1,0 +1,25 @@
+name: ai_usage_by_type
+label: AI Operations by Type
+description: Distribution of AI operations by type over time
+type: bar
+object: ai_operation_log
+xAxisKey: operation_type
+yAxisKeys:
+  - count
+height: 400
+colors:
+  - "#8b5cf6"
+  - "#06b6d4"
+  - "#10b981"
+  - "#f59e0b"
+  - "#ef4444"
+showGrid: true
+showLegend: true
+showTooltip: true
+filters:
+  - status
+  - "="
+  - "success"
+sort:
+  - - operation_type
+    - asc

@@ -1,0 +1,160 @@
+name: ai_operation_log
+label: AI Operation Log
+description: Audit log for all AI operations including queries, generations, and validations
+icon: ri-file-list-3-line
+
+fields:
+  operation_id:
+    type: text
+    label: Operation ID
+    required: true
+    unique: true
+    description: Unique identifier for this operation
+    
+  operation_type:
+    type: select
+    label: Operation Type
+    required: true
+    options:
+      - query_generation
+      - schema_generation
+      - data_analysis
+      - validation
+      - mutation
+      - conversation
+      - custom
+    description: Type of AI operation performed
+    
+  user_id:
+    type: lookup
+    label: User
+    reference_to: users
+    required: true
+    description: User who initiated the operation
+    
+  session_id:
+    type: text
+    label: Session ID
+    index: true
+    description: Associated session identifier
+    
+  input_text:
+    type: textarea
+    label: Input Text
+    rows: 5
+    description: The original user input or request
+    
+  input_context:
+    type: object
+    label: Input Context
+    description: Additional context provided for the operation
+    
+  output_data:
+    type: object
+    label: Output Data
+    description: Generated output from the AI operation
+    
+  model_provider:
+    type: select
+    label: Model Provider
+    options:
+      - openai
+      - anthropic
+      - azure-openai
+      - google
+      - ollama
+      - custom
+    description: AI model provider used
+    
+  model_name:
+    type: text
+    label: Model Name
+    description: Specific model used
+    
+  prompt_template:
+    type: lookup
+    label: Prompt Template
+    reference_to: ai_prompt
+    description: Reference to the prompt template used
+    
+  tokens_used:
+    type: number
+    label: Tokens Used
+    description: Total tokens consumed
+    
+  cost:
+    type: currency
+    label: Cost
+    precision: 4
+    description: Cost of this operation in USD
+    
+  duration_ms:
+    type: number
+    label: Duration (ms)
+    description: Processing time in milliseconds
+    
+  status:
+    type: select
+    label: Status
+    required: true
+    options:
+      - success
+      - failed
+      - partial
+      - timeout
+    description: Outcome of the operation
+    
+  error_message:
+    type: textarea
+    label: Error Message
+    rows: 3
+    description: Error details if operation failed
+    
+  validation_passed:
+    type: boolean
+    label: Validation Passed
+    description: Whether output passed validation checks
+    
+  permission_checked:
+    type: boolean
+    label: Permission Checked
+    defaultValue: true
+    description: Whether permission checks were performed
+    
+  confidence_score:
+    type: number
+    label: Confidence Score
+    min: 0.0
+    max: 1.0
+    precision: 2
+    scale: 2
+    description: AI confidence in the output
+    
+  feedback_rating:
+    type: select
+    label: User Feedback
+    options:
+      - excellent
+      - good
+      - acceptable
+      - poor
+      - very_poor
+    description: User satisfaction rating
+    
+  ip_address:
+    type: text
+    label: IP Address
+    description: Client IP address for security audit
+    
+  user_agent:
+    type: text
+    label: User Agent
+    description: Client user agent string
+    
+  created_at:
+    type: datetime
+    label: Created At
+    required: true
+    defaultValue: now
+    readonly: true
+    index: true
