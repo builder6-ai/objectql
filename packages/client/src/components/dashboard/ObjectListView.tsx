@@ -115,7 +115,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
         .catch(err => alert(err.message));
     };
 
-    const handleDelete = (row: any, index?: number) => {
+    const handleDelete = (row: any) => {
         if (!confirm('Are you sure you want to delete this record?')) return;
         const id = row.id || row._id;
         
@@ -138,7 +138,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
             .filter(key => !['_id', '__v', 'createdAt', 'updatedAt'].includes(key))
             .map(key => {
                 const field = objectSchema?.fields?.[key];
-                const type = getFieldType(key);
+                const type = getFieldType(key) as 'text' | 'number' | 'boolean' | 'date' | 'select' | 'badge';
                 
                 return {
                     id: key,
@@ -282,7 +282,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                                                 <button onClick={(e) => { e.stopPropagation(); navigate(`/object/${objectName}/${row.id || row._id}`); }} className="p-1 text-stone-400 hover:text-blue-600 transition-colors" title="View/Edit">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                                 </button>
-                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(row, idx); }} className="p-1 text-stone-400 hover:text-red-600 transition-colors" title="Delete">
+                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(row); }} className="p-1 text-stone-400 hover:text-red-600 transition-colors" title="Delete">
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                                                 </button>
                                             </div>
