@@ -47,7 +47,7 @@ This is a monorepo managed by npm workspaces:
    - Place tests in `test/` directory within each package
    - Use naming pattern `*.test.ts` for test files
    - Use Jest as the testing framework with `ts-jest` preset
-   - Test configuration: `testEnvironment: 'node'`, `testMatch: ['**/test/**/*.test.ts']`
+   - Standard Jest config in each package: preset `ts-jest`, testEnvironment `node`, testMatch pattern `**/test/**/*.test.ts`
    - Every new feature must include test cases
 
 4. **Follow metadata specifications**
