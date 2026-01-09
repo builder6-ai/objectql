@@ -176,4 +176,39 @@ export interface AppConfig {
      * Use the `isAppMenuSection()` type guard to distinguish between them at runtime.
      */
     menu?: AppMenuSection[] | AppMenuItem[];
+export type ChartType = 'bar' | 'line' | 'pie' | 'area';
+
+export interface ChartConfig {
+    name: string;
+    label?: string;
+    description?: string;
+    type: ChartType;
+    object: string;
+    xAxisKey: string;
+    yAxisKeys: string[];
+    height?: number;
+    colors?: string[];
+    showGrid?: boolean;
+    showLegend?: boolean;
+    showTooltip?: boolean;
+    filters?: any[];
+    sort?: [string, 'asc' | 'desc'][];
+}
+
+export type PageLayoutType = 'grid' | 'flex' | 'stack' | 'tabs';
+
+export interface PageComponent {
+    type: string;
+    props?: Record<string, any>;
+    children?: PageComponent[];
+}
+
+export interface PageConfig {
+    name: string;
+    label?: string;
+    description?: string;
+    icon?: string;
+    layout?: PageLayoutType;
+    components?: PageComponent[];
+    settings?: Record<string, any>;
 }

@@ -399,3 +399,268 @@ actions:
     result: 
       type: currency
 ```
+
+## 7. Chart Definition
+
+Chart files define data visualizations based on object data. They use the naming convention `*.chart.yml` or `*.chart.yaml`.
+
+### 7.1 Root Properties
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | **Required.** Unique API name of the chart. |
+| `label` | `string` | Human-readable label for the chart. |
+| `description` | `string` | Description of what the chart visualizes. |
+| `type` | `string` | **Required.** Chart type: `bar`, `line`, `pie`, or `area`. |
+| `object` | `string` | **Required.** The object/entity to visualize data from. |
+| `xAxisKey` | `string` | **Required.** Field name for X-axis data. |
+| `yAxisKeys` | `string[]` | **Required.** Array of field names for Y-axis data series. |
+| `height` | `number` | Chart height in pixels. Default: `300`. |
+| `colors` | `string[]` | Custom color palette for chart series. |
+| `showGrid` | `boolean` | Whether to display grid lines. Default: `true`. |
+| `showLegend` | `boolean` | Whether to display the legend. Default: `true`. |
+| `showTooltip` | `boolean` | Whether to show tooltips on hover. Default: `true`. |
+| `filters` | `array` | Optional filters to apply to the data query. |
+| `sort` | `array` | Sort criteria as `[field, direction]` pairs. |
+
+### 7.2 Chart Types
+
+**Bar Chart**: Best for comparing values across categories.
+
+**Line Chart**: Ideal for showing trends over time.
+
+**Area Chart**: Similar to line charts but with filled areas, great for cumulative data.
+
+**Pie Chart**: Best for showing proportions and distributions (limit to 5-7 categories).
+
+### 7.3 Example Chart Definitions
+
+#### Pie Chart Example
+
+```yaml
+name: projects_by_status
+label: Projects by Status
+description: Distribution of projects across different statuses
+type: pie
+object: projects
+xAxisKey: status
+yAxisKeys:
+  - count
+height: 350
+showLegend: true
+showTooltip: true
+```
+
+#### Bar Chart with Custom Colors
+
+```yaml
+name: projects_by_priority
+label: Projects by Priority
+description: Bar chart showing project distribution by priority level
+type: bar
+object: projects
+xAxisKey: priority
+yAxisKeys:
+  - count
+height: 300
+showGrid: true
+showLegend: true
+showTooltip: true
+colors:
+  - '#FF6F2C'  # High priority (Orange)
+  - '#FFC940'  # Normal priority (Yellow)
+  - '#20C933'  # Low priority (Green)
+```
+
+#### Multi-Series Area Chart
+
+```yaml
+name: tasks_completion
+label: Task Completion Trend
+description: Track task completion progress over time
+type: area
+object: tasks
+xAxisKey: due_date
+yAxisKeys:
+  - completed_count
+  - total_count
+height: 350
+showGrid: true
+showLegend: true
+showTooltip: true
+colors:
+  - '#20C933'
+  - '#2D7FF9'
+```
+
+#### Bar Chart with Sorting
+
+```yaml
+name: project_budget
+label: Project Budget Overview
+description: Visualize total budget allocated for each project
+type: bar
+object: projects
+xAxisKey: name
+yAxisKeys:
+  - budget
+height: 400
+showGrid: true
+showLegend: true
+showTooltip: true
+sort:
+  - - budget
+    - desc
+```
+
+## 8. Page Definition
+
+Page files define user interface pages or dashboards that display data and visualizations. They use the naming convention `*.page.yml` or `*.page.yaml`.
+
+Similar to Airtable's interface builder, pages allow you to compose various components (charts, tables, forms) into cohesive user experiences.
+
+### 8.1 Root Properties
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | **Required.** Unique API name of the page. |
+| `label` | `string` | Human-readable label for the page. |
+| `description` | `string` | Description of the page's purpose. |
+| `icon` | `string` | Icon identifier for the page (e.g., `dashboard`, `table`, `chart`). |
+| `layout` | `string` | Layout type: `grid`, `flex`, `stack`, or `tabs`. Default: `grid`. |
+| `components` | `array` | Array of page components to display. |
+| `settings` | `object` | Layout-specific settings (e.g., grid columns, gaps, responsive behavior). |
+
+### 8.2 Page Components
+
+Components are defined as objects with a `type` and optional `props`:
+
+```yaml
+components:
+  - type: chart
+    props:
+      chartName: projects_by_status
+  - type: table
+    props:
+      object: projects
+      fields:
+        - name
+        - status
+        - priority
+```
+
+**Common Component Types:**
+- `chart`: Display a chart visualization (requires `chartName` prop)
+- `table`: Display a data table (requires `object` prop)
+- `form`: Display a data entry form
+- `text`: Display static text or markdown content
+- `custom`: Custom component implementation
+
+### 8.3 Layout Types
+
+**Grid Layout**: Responsive grid with configurable columns
+
+**Flex Layout**: Flexible box layout for responsive designs
+
+**Stack Layout**: Vertical or horizontal stack of components
+
+**Tabs Layout**: Tabbed interface for organizing multiple views
+
+### 8.4 Example Page Definitions
+
+#### Dashboard with Charts
+
+```yaml
+name: projects_dashboard
+label: Projects Dashboard
+description: Overview of all projects with charts and task tracking
+icon: dashboard
+layout: grid
+components:
+  - type: chart
+    props:
+      chartName: projects_by_status
+  - type: chart
+    props:
+      chartName: projects_by_priority
+  - type: chart
+    props:
+      chartName: project_budget
+  - type: chart
+    props:
+      chartName: tasks_completion
+  - type: table
+    props:
+      object: projects
+      fields:
+        - name
+        - status
+        - priority
+        - start_date
+        - budget
+settings:
+  gridColumns: 2
+  gap: 20
+  responsive: true
+```
+
+#### Simple Detail Page
+
+```yaml
+name: project_detail
+label: Project Details
+description: Detailed view of a single project
+icon: file
+layout: stack
+components:
+  - type: form
+    props:
+      object: projects
+      mode: view
+  - type: table
+    props:
+      object: tasks
+      filters:
+        - - project
+          - =
+          - $current.id
+settings:
+  direction: vertical
+  gap: 16
+```
+
+#### Tabbed Interface
+
+```yaml
+name: project_tabs
+label: Project Workspace
+description: Tabbed interface for project management
+icon: layers
+layout: tabs
+components:
+  - type: tab
+    props:
+      label: Overview
+      children:
+        - type: chart
+          props:
+            chartName: projects_by_status
+  - type: tab
+    props:
+      label: Tasks
+      children:
+        - type: table
+          props:
+            object: tasks
+  - type: tab
+    props:
+      label: Budget
+      children:
+        - type: chart
+          props:
+            chartName: project_budget
+settings:
+  defaultTab: 0
+  tabPosition: top
+```
+
