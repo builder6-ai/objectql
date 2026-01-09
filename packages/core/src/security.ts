@@ -131,6 +131,26 @@ export class SecurityEngine {
     }
 
     /**
+     * Resolves variables in filters like $user.id
+     */
+    private resolveFilters(filters: any[], user: any): any[] {
+        if (!filters || !Array.isArray(filters)) return filters;
+        
+        return filters.map(item => {
+            if (Array.isArray(item)) {
+                return this.resolveFilters(item, user);
+            }
+            
+            if (typeof item === 'string' && item.startsWith('$user.')) {
+                const prop = item.substring(6); // remove '$user.'
+                return user ? user[prop] : null;
+            }
+            
+            return item;
+        });
+    }
+
+    /**
      * Checks if the operation is allowed and returns the RLS filters to apply.
      */
     check(ctx: ObjectQLContext, objectName: string, action: 'read' | 'create' | 'update' | 'delete'): { allowed: boolean, filters?: any[], fields?: string[] } {
@@ -152,10 +172,13 @@ export class SecurityEngine {
         // Construct final RLS filter
         let finalFilter = undefined;
         if (perm.filters && perm.filters.length > 0) {
-            if (perm.filters.length === 1) {
-                finalFilter = perm.filters[0];
+            // Variable Substitution
+            const resolved = this.resolveFilters(perm.filters, ctx.user);
+
+            if (resolved.length === 1) {
+                finalFilter = resolved[0];
             } else {
-                finalFilter = ['or', ...perm.filters];
+                finalFilter = ['or', ...resolved];
             }
         }
         

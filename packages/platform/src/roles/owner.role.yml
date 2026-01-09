@@ -5,6 +5,8 @@ policies: []
 permissions:
   organization: 
     actions: [read, update, delete]
+    filters:
+      - ['id', '=', '$user.spaceId']
   user:
     actions: [read]
   member:
