@@ -6,6 +6,7 @@ export const getAuth = async () => {
     if (authInstance) return authInstance;
     const { betterAuth } = await import("better-auth");
     const { organization } = await import("better-auth/plugins");
+    const { role } = await import("better-auth/plugins/access");
     
     try {
         const pool = new Pool({
@@ -26,36 +27,25 @@ export const getAuth = async () => {
                     teams: {
                         enabled: true
                     },
-                    // Define default organization roles
+                    // Define default organization roles with permissions
                     roles: {
-                        owner: {
-                            name: 'Owner',
-                            description: 'Organization owner with full access',
-                            permissions: ['*']
-                        },
-                        admin: {
-                            name: 'Admin',
-                            description: 'Administrator with management access',
-                            permissions: [
-                                'organization:read',
-                                'organization:update',
-                                'member:create',
-                                'member:read',
-                                'member:update',
-                                'member:delete',
-                                'invitation:create',
-                                'invitation:read',
-                                'invitation:delete'
-                            ]
-                        },
-                        member: {
-                            name: 'Member',
-                            description: 'Regular organization member',
-                            permissions: [
-                                'organization:read',
-                                'member:read'
-                            ]
-                        }
+                        owner: role({
+                            organization: ['create', 'read', 'update', 'delete'],
+                            member: ['create', 'read', 'update', 'delete'],
+                            invitation: ['create', 'read', 'delete'],
+                            team: ['create', 'read', 'update', 'delete']
+                        }),
+                        admin: role({
+                            organization: ['read', 'update'],
+                            member: ['create', 'read', 'update', 'delete'],
+                            invitation: ['create', 'read', 'delete'],
+                            team: ['create', 'read', 'update']
+                        }),
+                        member: role({
+                            organization: ['read'],
+                            member: ['read'],
+                            team: ['read']
+                        })
                     }
                 })
             ]

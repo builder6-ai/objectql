@@ -30,6 +30,7 @@ The organization plugin is enabled in the server's auth configuration:
 ```typescript
 import { betterAuth } from "better-auth";
 import { organization } from "better-auth/plugins";
+import { role } from "better-auth/plugins/access";
 
 const auth = betterAuth({
   database: pool,
@@ -43,28 +44,25 @@ const auth = betterAuth({
       teams: {
         enabled: true
       },
-      // Define organization roles
+      // Define organization roles with permissions
       roles: {
-        owner: {
-          name: 'Owner',
-          permissions: ['*']
-        },
-        admin: {
-          name: 'Admin',
-          permissions: [
-            'organization:read',
-            'organization:update',
-            'member:*',
-            'invitation:*'
-          ]
-        },
-        member: {
-          name: 'Member',
-          permissions: [
-            'organization:read',
-            'member:read'
-          ]
-        }
+        owner: role({
+          organization: ['create', 'read', 'update', 'delete'],
+          member: ['create', 'read', 'update', 'delete'],
+          invitation: ['create', 'read', 'delete'],
+          team: ['create', 'read', 'update', 'delete']
+        }),
+        admin: role({
+          organization: ['read', 'update'],
+          member: ['create', 'read', 'update', 'delete'],
+          invitation: ['create', 'read', 'delete'],
+          team: ['create', 'read', 'update']
+        }),
+        member: role({
+          organization: ['read'],
+          member: ['read'],
+          team: ['read']
+        })
       }
     })
   ]
@@ -117,21 +115,38 @@ When the organization plugin is enabled, Better-Auth provides the following endp
 
 ### Default Roles
 
-- **owner** - Full access to all organization features
-- **admin** - Management access for members and invitations
+The organization plugin supports custom roles with fine-grained permissions:
+
+- **owner** - Full access to all organization features (create, read, update, delete)
+- **admin** - Management access for members, invitations, and organization updates
 - **member** - Read-only access to organization and members
 
 ### Permission Format
 
-Permissions follow the pattern: `resource:action`
+Roles are defined using the `role()` function from `better-auth/plugins/access`. Each role specifies which actions are allowed on different resources:
 
-Examples:
-- `organization:read` - Read organization details
-- `organization:update` - Update organization
-- `member:create` - Add members
-- `member:delete` - Remove members
-- `invitation:create` - Create invitations
-- `*` - All permissions (owner only)
+```typescript
+import { role } from "better-auth/plugins/access";
+
+const ownerRole = role({
+  organization: ['create', 'read', 'update', 'delete'],
+  member: ['create', 'read', 'update', 'delete'],
+  invitation: ['create', 'read', 'delete'],
+  team: ['create', 'read', 'update', 'delete']
+});
+```
+
+Available resources:
+- `organization` - Organization management
+- `member` - Member management
+- `invitation` - Invitation management
+- `team` - Team management (when teams are enabled)
+
+Available actions:
+- `create` - Create new resources
+- `read` - View resources
+- `update` - Modify existing resources
+- `delete` - Remove resources
 
 ## Schema Reference
 
