@@ -176,6 +176,8 @@ export interface AppConfig {
      * Use the `isAppMenuSection()` type guard to distinguish between them at runtime.
      */
     menu?: AppMenuSection[] | AppMenuItem[];
+}
+
 export type ChartType = 'bar' | 'line' | 'pie' | 'area';
 
 export interface ChartConfig {

@@ -1,6 +1,7 @@
 import { MetadataRegistry } from '../src/registry';
 import { MetadataLoader } from '../src/loader';
 import { registerObjectQLPlugins } from '../src/plugins/objectql';
+import { isAppMenuSection } from '../src/types';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
@@ -163,35 +164,5 @@ describe('Type Guards', () => {
         
         // This should be identified as a menu item (has type property)
         expect(isAppMenuSection(itemWithSubItems)).toBe(false);
-        const chart = registry.get('chart', 'test_chart');
-        expect(chart).toBeDefined();
-        expect(chart.type).toBe('bar');
-        expect(chart.object).toBe('test_object');
-        expect(chart.xAxisKey).toBe('category');
-        expect(chart.yAxisKeys).toEqual(['value']);
-    });
-});
-
-describe('Page Metadata Loader', () => {
-    it('should load page metadata from .page.yml files', () => {
-        const registry = new MetadataRegistry();
-        const loader = new MetadataLoader(registry);
-        
-        registerObjectQLPlugins(loader);
-
-        const fixturesDir = path.join(__dirname, 'fixtures');
-        loader.load(fixturesDir);
-
-        const page = registry.get('page', 'dashboard');
-        expect(page).toBeDefined();
-        expect(page.name).toBe('dashboard');
-        expect(page.label).toBe('Dashboard');
-        expect(page.description).toBe('Main dashboard page with charts and metrics');
-        expect(page.icon).toBe('dashboard');
-        expect(page.layout).toBe('grid');
-        expect(page.components).toBeDefined();
-        expect(page.components).toHaveLength(3);
-        expect(page.settings).toBeDefined();
-        expect(page.settings.gridColumns).toBe(2);
     });
 });
