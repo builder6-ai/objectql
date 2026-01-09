@@ -39,7 +39,7 @@ features:
 
 ## Documentation Overview
 
-We have organized the documentation into two main categories:
+We have organized the documentation into multiple categories:
 
 ### [User & Developer Guide](/guide/)
 **Target Audience**: Application Developers, Customer Success, End Users.
@@ -57,3 +57,13 @@ Understand the low-level protocols:
 - Metadata File Format Specification (YAML/JSON schema)
 - Unified Query Language Protocol
 - HTTP API Reference
+
+### [Airtable Functionality Roadmap](/AIRTABLE_DOCS_INDEX) 🆕
+**Target Audience**: Project Managers, Product Managers, Development Teams.
+
+Comprehensive resources for implementing Airtable-like functionality:
+- [Comprehensive evaluation](/AIRTABLE_EVALUATION) of gaps between ObjectQL and Airtable (Chinese)
+- [Detailed implementation roadmap](/AIRTABLE_IMPLEMENTATION_ROADMAP) with 6 development phases (English)
+- [GitHub Issues templates](/GITHUB_ISSUES_TEMPLATE) for task creation
+- Resource requirements, timeline estimates, and risk assessment
+- Technical design proposals for multi-view system, collaboration, and automation
