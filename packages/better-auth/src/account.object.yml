@@ -1,5 +1,6 @@
 name: account
 description: External authentication account (OAuth etc)
+customizable: false
 fields:
   userId:
     type: string
@@ -32,6 +33,8 @@ fields:
   createdAt:
     type: datetime
     default: now()
+    customizable: false
   updatedAt:
     type: datetime
     default: now()
+    customizable: false

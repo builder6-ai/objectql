@@ -18,6 +18,13 @@ export class MetadataRegistry {
     }
 
     unregister(type: string, id: string) {
+        // Check if the metadata is customizable before allowing unregister
+        if (type === 'object') {
+            const existing = this.getEntry(type, id);
+            if (existing && existing.content.customizable === false) {
+                throw new Error(`Cannot delete system object '${id}'. This object is marked as non-customizable.`);
+            }
+        }
         this.store.get(type)?.delete(id);
     }
     
@@ -25,6 +32,10 @@ export class MetadataRegistry {
         for (const [type, map] of this.store.entries()) {
             for (const [id, meta] of map.entries()) {
                 if (meta.package === packageName) {
+                    // Check if the metadata is customizable before allowing unregister
+                    if (type === 'object' && meta.content.customizable === false) {
+                        throw new Error(`Cannot unregister package '${packageName}'. It contains non-customizable object '${id}'.`);
+                    }
                     map.delete(id);
                 }
             }
@@ -43,5 +54,47 @@ export class MetadataRegistry {
     
     getEntry(type: string, id: string): Metadata | undefined {
         return this.store.get(type)?.get(id);
+    }
+
+    /**
+     * Validates if an object can be modified based on its customizable flag.
+     * @param objectName The name of the object to check
+     * @returns true if the object can be modified, throws an error if not
+     */
+    validateObjectCustomizable(objectName: string): boolean {
+        const entry = this.getEntry('object', objectName);
+        if (!entry) {
+            return true; // Object doesn't exist yet, allow creation
+        }
+        
+        if (entry.content.customizable === false) {
+            throw new Error(`Cannot modify system object '${objectName}'. This object is marked as non-customizable.`);
+        }
+        
+        return true;
+    }
+
+    /**
+     * Validates if a field can be modified based on its customizable flag.
+     * @param objectName The name of the object containing the field
+     * @param fieldName The name of the field to check
+     * @returns true if the field can be modified, throws an error if not
+     */
+    validateFieldCustomizable(objectName: string, fieldName: string): boolean {
+        const entry = this.getEntry('object', objectName);
+        if (!entry || !entry.content.fields) {
+            return true; // Object or field doesn't exist yet, allow creation
+        }
+        
+        const field = entry.content.fields[fieldName];
+        if (!field) {
+            return true; // Field doesn't exist yet, allow creation
+        }
+        
+        if (field.customizable === false) {
+            throw new Error(`Cannot modify system field '${fieldName}' on object '${objectName}'. This field is marked as non-customizable.`);
+        }
+        
+        return true;
     }
 }

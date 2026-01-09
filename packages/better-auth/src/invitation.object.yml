@@ -1,5 +1,6 @@
 name: invitation
 description: Organization invitation
+customizable: false
 fields:
   organizationId:
     type: string
@@ -28,6 +29,8 @@ fields:
   createdAt:
     type: datetime
     default: now()
+    customizable: false
   updatedAt:
     type: datetime
     default: now()
+    customizable: false

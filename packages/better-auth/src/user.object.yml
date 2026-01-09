@@ -1,5 +1,6 @@
 name: user
 description: System user for authentication
+customizable: false
 fields:
   name:
     type: string
@@ -18,9 +19,11 @@ fields:
   createdAt:
     type: datetime
     default: now()
+    customizable: false
   updatedAt:
     type: datetime
     default: now()
+    customizable: false
   # Better Auth Specifics
   password:
     type: string

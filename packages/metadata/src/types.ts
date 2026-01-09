@@ -75,6 +75,13 @@ export interface FieldConfig {
     sortable?: boolean;
     index?: boolean;
     description?: string;
+    
+    /**
+     * Whether this field can be modified or deleted.
+     * System fields (e.g., _id, createdAt, updatedAt) should be marked as non-customizable.
+     * Defaults to true for user-defined fields.
+     */
+    customizable?: boolean;
 }
 
 export interface ActionConfig {
@@ -94,6 +101,13 @@ export interface ObjectConfig {
     listeners?: Record<string, Function>;
     actions?: Record<string, ActionConfig>;
     data?: any[];
+    
+    /**
+     * Whether this object can be modified or deleted.
+     * System objects (e.g., user, session, account) should be marked as non-customizable.
+     * Defaults to true for user-defined objects.
+     */
+    customizable?: boolean;
 }
 
 /**
