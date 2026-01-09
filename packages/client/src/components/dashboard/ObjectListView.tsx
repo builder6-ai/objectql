@@ -186,17 +186,66 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
          }
 
          return fields.map(key => {
+             const field = objectSchema?.fields?.[key];
              const type = getFieldType(key);
              
+             let cellEditor = 'agTextCellEditor';
+             let cellEditorParams = {};
+             let valueFormatter = undefined;
+
+             if (type === 'number') {
+                 cellEditor = 'agNumberCellEditor';
+             } else if (type === 'date') {
+                 cellEditor = 'agDateStringCellEditor';
+                 valueFormatter = (params: any) => {
+                     if (!params.value) return '';
+                     return new Date(params.value).toLocaleDateString();
+                 };
+             } else if (type === 'boolean') {
+                 cellEditor = 'agSelectCellEditor';
+                 cellEditorParams = {
+                     values: [true, false]
+                 };
+             } else if (type === 'badge' && field?.options) {
+                 cellEditor = 'agSelectCellEditor';
+                 cellEditorParams = {
+                     values: field.options
+                 };
+             }
+
+             // Determine if this is the primary link field (name or title)
+             const isLinkField = key === 'name' || key === 'title';
+
              return {
-                 field: key, // AgGrid uses 'field' instead of 'id'
+                 field: key,
                  headerName: getFieldLabel(key),
+                 // If it's a link field, we might want to disable inline editing to prevent conflict, 
+                 // or keep it editable but the link click takes precedence. 
+                 // Usually for primary navigation fields, inline editing is disabled or requires specific action.
+                 // Let's keep it editable but render a link. 
+                 // However, AgGrid editing is usually double-click. 
+                 // If single click navigates, double click might be hard.
+                 // Let's assume name/title navigation is primary.
                  editable: !['id', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'].includes(key),
                  sortable: true,
                  filter: true,
                  resizable: true,
+                 cellEditor,
+                 cellEditorParams,
+                 valueFormatter,
                  width: type === 'boolean' ? 100 : type === 'date' ? 180 : type === 'number' ? 120 : 200,
-                 // Optional: Custom cell renderers can be added here if needed
+                 cellRenderer: isLinkField ? (params: any) => (
+                    <span 
+                        className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
+                        onClick={(e) => {
+                            // Stop row selection when clicking the link
+                            e.stopPropagation(); 
+                            navigate(`/object/${objectName}/${params.data.id || params.data._id}`);
+                        }}
+                    >
+                        {params.value}
+                    </span>
+                 ) : undefined
              };
          });
     };
@@ -301,7 +350,8 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                         <AgGridView
                             columns={columns}
                             data={data}
-                            onRowClick={(row: any) => navigate(`/object/${objectName}/${row.id || row._id}`)}
+                            // onRowClick removed to allow cell editing/selection without navigating
+                            // Navigation is now handled by the 'name'/'title' column renderer
                             onCellEdit={handleCellEdit}
                             onDelete={handleDelete}
                             enableSorting={true}
