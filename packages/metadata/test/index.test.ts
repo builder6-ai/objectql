@@ -253,7 +253,13 @@ describe('AI Metadata', () => {
             expect(aiPromptObj.data.length).toBeGreaterThan(0);
             
             // Check for query generator prompt
-            const queryPrompt = aiPromptObj.data.find((p: any) => p.name === 'query_generator_v1');
+            interface PromptData {
+                name: string;
+                category: string;
+                model_provider: string;
+                model_name: string;
+            }
+            const queryPrompt = aiPromptObj.data.find((p: PromptData) => p.name === 'query_generator_v1');
             if (queryPrompt) {
                 expect(queryPrompt.category).toBe('query_generation');
                 expect(queryPrompt.model_provider).toBe('openai');

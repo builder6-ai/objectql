@@ -265,8 +265,8 @@ console.log('Generated Query:', query);
 
 ## Next Steps
 
-- Read the [AI Metadata Reference](./ai-metadata.md) for complete documentation
-- Explore the [AI Integration Guide](../guide/ai-integration.md) for advanced patterns
+- Read the [AI Metadata Reference](../spec/ai-metadata.md) for complete documentation
+- Explore the [AI Integration Guide](./ai-integration.md) for advanced patterns
 - Check out example fixtures in `packages/metadata/test/fixtures/ai_*.yml`
 - Review TypeScript types in `packages/metadata/src/types.ts`
 
