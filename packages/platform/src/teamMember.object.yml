@@ -1,4 +1,4 @@
-name: team_member
+name: teamMember
 description: Members of a team
 fields:
   teamId:

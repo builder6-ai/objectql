@@ -21,6 +21,12 @@ fields:
   userAgent:
     type: string
     description: User Agent of the client
+  activeOrganizationId:
+    type: string
+    description: ID of the active organization
+  activeTeamId:
+    type: string
+    description: ID of the active team
   createdAt:
     type: datetime
     default: now()
