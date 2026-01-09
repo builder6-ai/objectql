@@ -8,7 +8,8 @@
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "build:client": "npm run build --workspace=@objectql/client"
   },
   "dependencies": {
     "@example/project-management": "*",
@@ -22,7 +23,6 @@
     "@objectql/driver-knex": "*",
     "@objectql/driver-mongo": "*",
     "better-auth": "^1.4.10",
-    "liquidjs": "^10.24.0",
     "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
