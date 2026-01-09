@@ -79,7 +79,7 @@ Files should use **Snake Case** filenames (e.g., `project_tasks.object.yml`).
 | `description` | `string` | Internal description of the object. |
 | `fields` | `Map` | Dictionary of field definitions. |
 | `actions` | `Map` | Dictionary of custom action definitions. |
-| `customizable` | `boolean` | Whether this object can be modified or deleted. System objects (e.g., `user`, `session`) should be marked as `false`. Defaults to `true`. |
+| `customizable` | `boolean` | Whether this object can be modified or deleted. System objects (e.g., `user`, `session`) should be set to `false`. **Default: `true`** (if not specified, the object is customizable). |
 
 ## 4. Field Definitions
 
@@ -104,7 +104,7 @@ fields:
 | `searchable` | `boolean` | Hint to include this field in global search. |
 | `sortable` | `boolean` | Hint that this field can be used for sorting in UI. |
 | `description` | `string` | Help text or documentation for the field. |
-| `customizable` | `boolean` | Whether this field can be modified or deleted. System fields (e.g., `_id`, `createdAt`, `updatedAt`) should be marked as `false`. Defaults to `true`. |
+| `customizable` | `boolean` | Whether this field can be modified or deleted. System fields (e.g., `_id`, `createdAt`, `updatedAt`) should be set to `false`. **Default: `true`** (if not specified, the field is customizable). |
 
 ### 4.2 Supported Field Types
 
@@ -798,10 +798,45 @@ try {
 
 ### 9.6 Default Behavior
 
-If the `customizable` property is not specified:
-- **Objects**: Default to `true` (customizable)
-- **Fields**: Default to `true` (customizable)
+**When the `customizable` property is not specified, it defaults to `true` (customizable).**
 
-This ensures backward compatibility while allowing explicit protection of system metadata.
+This means:
+- **Objects without `customizable` property**: Can be modified and deleted
+- **Fields without `customizable` property**: Can be modified and deleted
+
+**Examples:**
+
+```yaml
+# Object without customizable - defaults to true (customizable)
+name: my_custom_object
+fields:
+  title:
+    type: text
+    # Field without customizable - defaults to true (customizable)
+  description:
+    type: textarea
+    # Field without customizable - defaults to true (customizable)
+```
+
+```yaml
+# Explicitly marking as non-customizable
+name: user
+customizable: false  # Must be explicitly set to false to protect
+fields:
+  email:
+    type: email
+    customizable: false  # Must be explicitly set to false to protect
+  createdAt:
+    type: datetime
+    customizable: false  # Must be explicitly set to false to protect
+  customField:
+    type: text
+    # No customizable property - defaults to true (customizable)
+```
+
+This default behavior ensures:
+1. **Backward Compatibility**: Existing objects and fields without the `customizable` property continue to work as before
+2. **Opt-in Protection**: System objects and fields must explicitly opt-in to protection by setting `customizable: false`
+3. **Safe Defaults**: User-defined metadata is customizable by default, only system metadata needs protection
 
 

@@ -8,6 +8,85 @@ describe('Metadata Customizable Protection', () => {
         registry = new MetadataRegistry();
     });
 
+    describe('Default behavior when customizable is not specified', () => {
+        it('should treat objects without customizable property as customizable (default: true)', () => {
+            const objectWithoutFlag: ObjectConfig = {
+                name: 'default_object',
+                fields: {}
+                // customizable is NOT specified - should default to true
+            };
+
+            registry.register('object', {
+                type: 'object',
+                id: 'default_object',
+                content: objectWithoutFlag
+            });
+
+            // Should allow validation (no error thrown)
+            expect(registry.validateObjectCustomizable('default_object')).toBe(true);
+
+            // Should allow unregister (no error thrown)
+            expect(() => {
+                registry.unregister('object', 'default_object');
+            }).not.toThrow();
+        });
+
+        it('should treat fields without customizable property as customizable (default: true)', () => {
+            const objectWithDefaultFields: ObjectConfig = {
+                name: 'test_object',
+                fields: {
+                    normalField: {
+                        type: 'text'
+                        // customizable is NOT specified - should default to true
+                    }
+                }
+            };
+
+            registry.register('object', {
+                type: 'object',
+                id: 'test_object',
+                content: objectWithDefaultFields
+            });
+
+            // Should allow field modification (no error thrown)
+            expect(registry.validateFieldCustomizable('test_object', 'normalField')).toBe(true);
+        });
+
+        it('should only protect when explicitly set to false', () => {
+            const mixedObject: ObjectConfig = {
+                name: 'mixed_object',
+                // customizable not specified - defaults to true
+                fields: {
+                    defaultField: {
+                        type: 'text'
+                        // not specified - defaults to true
+                    },
+                    protectedField: {
+                        type: 'text',
+                        customizable: false  // explicitly protected
+                    }
+                }
+            };
+
+            registry.register('object', {
+                type: 'object',
+                id: 'mixed_object',
+                content: mixedObject
+            });
+
+            // Object is customizable
+            expect(registry.validateObjectCustomizable('mixed_object')).toBe(true);
+            
+            // Default field is customizable
+            expect(registry.validateFieldCustomizable('mixed_object', 'defaultField')).toBe(true);
+            
+            // Protected field is not customizable
+            expect(() => {
+                registry.validateFieldCustomizable('mixed_object', 'protectedField');
+            }).toThrow(/Cannot modify system field 'protectedField'/);
+        });
+    });
+
     describe('Object-level customizable flag', () => {
         it('should allow registering and unregistering customizable objects', () => {
             const customObject: ObjectConfig = {

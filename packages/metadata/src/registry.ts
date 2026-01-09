@@ -21,7 +21,7 @@ export class MetadataRegistry {
         // Check if the metadata is customizable before allowing unregister
         if (type === 'object') {
             const existing = this.getEntry(type, id);
-            if (existing && existing.content.customizable === false) {
+            if (existing && !this.isObjectCustomizable(existing.content)) {
                 throw new Error(`Cannot delete system object '${id}'. This object is marked as non-customizable.`);
             }
         }
@@ -35,7 +35,7 @@ export class MetadataRegistry {
             for (const [id, meta] of map.entries()) {
                 if (meta.package === packageName) {
                     // Check if the metadata is customizable before allowing unregister
-                    if (type === 'object' && meta.content.customizable === false) {
+                    if (type === 'object' && !this.isObjectCustomizable(meta.content)) {
                         throw new Error(`Cannot unregister package '${packageName}'. It contains non-customizable object '${id}'.`);
                     }
                     entriesToDelete.push(id);
@@ -64,7 +64,30 @@ export class MetadataRegistry {
     }
 
     /**
+     * Helper to check if an object is customizable.
+     * If customizable property is not specified, defaults to true.
+     * @param obj The object configuration to check
+     * @returns true if object is customizable (can be modified/deleted)
+     */
+    private isObjectCustomizable(obj: any): boolean {
+        // Explicitly handle undefined: if not specified, default to true (customizable)
+        return obj.customizable !== false;
+    }
+
+    /**
+     * Helper to check if a field is customizable.
+     * If customizable property is not specified, defaults to true.
+     * @param field The field configuration to check
+     * @returns true if field is customizable (can be modified/deleted)
+     */
+    private isFieldCustomizable(field: any): boolean {
+        // Explicitly handle undefined: if not specified, default to true (customizable)
+        return field.customizable !== false;
+    }
+
+    /**
      * Validates if an object can be modified based on its customizable flag.
+     * Objects without the customizable property default to true (customizable).
      * @param objectName The name of the object to check
      * @returns true if the object can be modified, throws an error if not
      */
@@ -74,7 +97,7 @@ export class MetadataRegistry {
             return true; // Object doesn't exist yet, allow creation
         }
         
-        if (entry.content.customizable === false) {
+        if (!this.isObjectCustomizable(entry.content)) {
             throw new Error(`Cannot modify system object '${objectName}'. This object is marked as non-customizable.`);
         }
         
@@ -83,6 +106,7 @@ export class MetadataRegistry {
 
     /**
      * Validates if a field can be modified based on its customizable flag.
+     * Fields without the customizable property default to true (customizable).
      * @param objectName The name of the object containing the field
      * @param fieldName The name of the field to check
      * @returns true if the field can be modified, throws an error if not
@@ -98,7 +122,7 @@ export class MetadataRegistry {
             return true; // Field doesn't exist yet, allow creation
         }
         
-        if (field.customizable === false) {
+        if (!this.isFieldCustomizable(field)) {
             throw new Error(`Cannot modify system field '${fieldName}' on object '${objectName}'. This field is marked as non-customizable.`);
         }
         
