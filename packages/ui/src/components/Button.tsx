@@ -4,6 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../lib/utils"
 
+/**
+ * Button variants following Apple's design language:
+ * - default: Filled blue button (primary actions)
+ * - tinted: Apple-style tinted button with subtle background
+ * - destructive: Red button for delete/destructive actions
+ * - outline: Secondary button with border
+ * - secondary: Subtle gray background
+ * - ghost: Minimal button with hover effect
+ * - link: Text-only link style
+ */
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-apple focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-40 active:scale-[0.98]",
   {
