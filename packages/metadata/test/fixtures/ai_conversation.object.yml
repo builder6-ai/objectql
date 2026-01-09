@@ -33,6 +33,7 @@ fields:
       - anthropic
       - azure-openai
       - google
+      - cohere
       - ollama
       - custom
     defaultValue: openai

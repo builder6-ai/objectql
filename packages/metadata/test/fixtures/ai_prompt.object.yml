@@ -68,6 +68,7 @@ fields:
       - anthropic
       - azure-openai
       - google
+      - cohere
       - ollama
       - custom
     description: Preferred AI model provider
