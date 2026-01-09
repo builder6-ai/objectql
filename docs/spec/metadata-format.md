@@ -340,7 +340,7 @@ menu:
         url: https://docs.example.com
 ```
 
-## 7. Complete Object Example
+## 7. Complete Example
 
 ```yaml
 name: project
