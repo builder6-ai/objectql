@@ -12,11 +12,14 @@ import {
   SidebarRail,
   SidebarFooter,
 } from "@objectql/ui"
-import { Database, Settings, FileText } from "lucide-react"
+import { Database, FileText } from "lucide-react"
 import { useRouter } from "../hooks/useRouter"
+import { NavUser } from "./nav-user"
+import { useAuth } from "../context/AuthContext"
 
 export function AppSidebar({ objects, ...props }: React.ComponentProps<typeof Sidebar> & { objects: Record<string, any> }) {
   const { path, navigate } = useRouter()
+  const { user } = useAuth()
   
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -56,17 +59,11 @@ export function AppSidebar({ objects, ...props }: React.ComponentProps<typeof Si
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-         <SidebarMenu>
-            <SidebarMenuItem>
-                <SidebarMenuButton 
-                  isActive={path === '/settings'}
-                  onClick={() => navigate('/settings')}
-                >
-                    <Settings />
-                    <span>Settings</span>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-         </SidebarMenu>
+         <NavUser user={{
+             name: user?.name || 'User',
+             email: user?.email || '',
+             avatar: user?.image
+         }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

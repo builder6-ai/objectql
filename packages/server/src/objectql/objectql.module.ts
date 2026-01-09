@@ -1,5 +1,4 @@
 import { Module, MiddlewareConsumer, RequestMethod, OnModuleInit } from '@nestjs/common';
-import { createObjectQLRouter } from '@objectql/api';
 import { objectql } from './objectql.instance';
 
 @Module({
@@ -12,32 +11,5 @@ export class ObjectQLModule implements OnModuleInit {
     }
 
     configure(consumer: MiddlewareConsumer) {
-        const router = createObjectQLRouter({
-            objectql,
-            swagger: {
-                enabled: true,
-                path: '/docs'
-            },
-            getContext: (req) => {
-                // simple auth simulation
-                const userId = req.headers['x-user-id'] as string;
-                if (userId === 'admin') {
-                     return objectql.createContext({ isSystem: true });
-                }
-                return objectql.createContext({
-                    userId: userId
-                });
-            }
-        });
-
-        consumer
-            .apply((req: any, res: any, next: any) => {
-                // Rewrite URL for objectql router
-                if (req.url.startsWith('/api/object')) {
-                    req.url = req.url.replace(/^\/api\/object/, '') || '/';
-                }
-                router(req, res, next);
-            })
-            .forRoutes('api/object');
     }
 }

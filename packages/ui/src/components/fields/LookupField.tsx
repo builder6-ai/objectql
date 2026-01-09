@@ -68,7 +68,7 @@ export function LookupField({
           if (typeof value !== 'string') return;
 
           // Fetch single record to get label
-          fetch(`/api/object/${referenceTo}/${value}`)
+          fetch(`/api/v6/data/${referenceTo}/${value}`)
             .then(res => res.json())
             .then(data => {
                 if (data) {
@@ -96,7 +96,7 @@ export function LookupField({
     // Always limit results
     params.append('top', '20');
 
-    fetch(`/api/object/${referenceTo}?${params.toString()}`)
+    fetch(`/api/v6/data/${referenceTo}?${params.toString()}`)
         .then(res => res.json())
         .then(data => {
             const list = Array.isArray(data) ? data : (data.list || []);

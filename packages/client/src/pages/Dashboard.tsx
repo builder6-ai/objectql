@@ -37,11 +37,19 @@ export default function Dashboard() {
     useEffect(() => {
         if (user) {
             // Fetch objects
-            fetch('/api/object/_schema/object', { headers: getHeaders() })
+            fetch('/api/v6/metadata/object', { headers: getHeaders() })
                 .then(res => res.json())
                 .then(result => {
-                    const objNames = Object.keys(result);
-                    setObjects(result);
+                    // Convert array to map
+                    const objectsMap: Record<string, any> = {};
+                    if (Array.isArray(result)) {
+                        result.forEach((obj: any) => {
+                            objectsMap[obj.name] = obj;
+                        });
+                    }
+                    
+                    const objNames = Object.keys(objectsMap);
+                    setObjects(objectsMap);
                     
                     const currentPath = window.location.pathname;
                     if ((currentPath === '/' || currentPath === '/object') && objNames.length > 0) {
