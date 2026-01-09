@@ -237,7 +237,9 @@ export const test_conversation = async (ctx: ObjectQLContext, params: { test_mes
         chatbot_name: chatbot.name,
         test_count: test_messages.length,
         results,
-        average_response_time: results.reduce((sum, r) => sum + r.response_time_ms, 0) / results.length,
+        average_response_time: results.length > 0 
+            ? results.reduce((sum, r) => sum + r.response_time_ms, 0) / results.length 
+            : 0,
         timestamp: new Date().toISOString()
     };
 };
