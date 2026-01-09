@@ -358,20 +358,19 @@ colors:
 #### Bar Chart with Sorting
 
 ```yaml
-name: project_timeline
-label: Project Timeline
-description: Visualize project start and end dates
+name: project_budget
+label: Project Budget Overview
+description: Visualize total budget allocated for each project
 type: bar
 object: projects
 xAxisKey: name
 yAxisKeys:
-  - start_date
-  - end_date
+  - budget
 height: 400
 showGrid: true
 showLegend: true
 showTooltip: true
 sort:
-  - - start_date
-    - asc
+  - - budget
+    - desc
 ```
