@@ -1,7 +1,28 @@
 import { useState, useEffect } from 'react';
-import { Button, Badge, Modal, Spinner, AgGridView, Input } from '@objectql/ui';
+import { 
+    Button, 
+    Badge, 
+    Dialog, 
+    DialogContent, 
+    DialogHeader, 
+    DialogTitle,
+    Spinner, 
+    Input,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuItem,
+    DropdownMenuSeparator
+} from '@objectql/ui';
 import { ObjectForm } from './ObjectForm';
-import { cn } from '../../lib/utils';
+import { Plus, RefreshCw, Grid, List as ListIcon, Filter, MoreHorizontal, FileText, Trash, Pencil } from 'lucide-react';
 // import { useRouter } from ... passed as prop
 
 interface ObjectListViewProps {
@@ -41,17 +62,6 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
         return field ? (field.label || field.title || key) : key;
     };
 
-    const getFieldType = (key: string) => {
-        if (!objectSchema || !objectSchema.fields) return 'text';
-        const field = objectSchema.fields[key];
-        if (!field) return 'text';
-        
-        if (field.type === 'boolean') return 'boolean';
-        if (field.type === 'date' || field.type === 'datetime') return 'date';
-        if (field.type === 'number' || field.type === 'integer' || field.type === 'float') return 'number';
-        if (field.type === 'select' && field.options) return 'badge';
-        return 'text';
-    };
 
     const getHeaders = () => {
         const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -137,26 +147,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
         .catch(err => alert(err.message));
     }
 
-    const handleCellEdit = (rowIndex: number, columnId: string, value: any) => {
-        const row = data[rowIndex];
-        const id = row.id || row._id;
-        
-        fetch(`/api/object/${objectName}/${id}`, {
-            method: 'PUT',
-            headers: getHeaders(),
-            body: JSON.stringify({ ...row, [columnId]: value })
-        })
-        .then(async res => {
-            if (!res.ok) throw new Error(await res.text());
-            return res.json();
-        })
-        .then(() => {
-            const newData = [...data];
-            newData[rowIndex] = { ...newData[rowIndex], [columnId]: value };
-            setData(newData);
-        })
-        .catch(err => alert(err.message));
-    };
+
 
     const handleDelete = (row: any) => {
         if (!confirm('Are you sure you want to delete this record?')) return;
@@ -173,9 +164,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
         .catch(err => alert(err.message));
     }
 
-    const getAgGridColumns = () => {
-         // AgGrid Column Definitions
-         // Prefer schema for columns, fallback to data inspection
+    const getColumns = () => {
          let fields: string[] = [];
          if (objectSchema && objectSchema.fields) {
              fields = Object.keys(objectSchema.fields);
@@ -184,83 +173,20 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
          } else if (data && data.length > 0) {
              fields = Object.keys(data[0]).filter(key => !['_id', '__v'].includes(key));
          }
-
-         return fields.map(key => {
-             const field = objectSchema?.fields?.[key];
-             const type = getFieldType(key);
-             
-             let cellEditor = 'agTextCellEditor';
-             let cellEditorParams = {};
-             let valueFormatter = undefined;
-
-             if (type === 'number') {
-                 cellEditor = 'agNumberCellEditor';
-             } else if (type === 'date') {
-                 cellEditor = 'agDateStringCellEditor';
-                 valueFormatter = (params: any) => {
-                     if (!params.value) return '';
-                     return new Date(params.value).toLocaleDateString();
-                 };
-             } else if (type === 'boolean') {
-                 cellEditor = 'agSelectCellEditor';
-                 cellEditorParams = {
-                     values: [true, false]
-                 };
-             } else if (type === 'badge' && field?.options) {
-                 cellEditor = 'agSelectCellEditor';
-                 cellEditorParams = {
-                     values: field.options
-                 };
-             }
-
-             // Determine if this is the primary link field (name or title)
-             const isLinkField = key === 'name' || key === 'title';
-
-             return {
-                 field: key,
-                 headerName: getFieldLabel(key),
-                 // If it's a link field, we might want to disable inline editing to prevent conflict, 
-                 // or keep it editable but the link click takes precedence. 
-                 // Usually for primary navigation fields, inline editing is disabled or requires specific action.
-                 // Let's keep it editable but render a link. 
-                 // However, AgGrid editing is usually double-click. 
-                 // If single click navigates, double click might be hard.
-                 // Let's assume name/title navigation is primary.
-                 editable: !['id', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'].includes(key),
-                 sortable: true,
-                 filter: true,
-                 resizable: true,
-                 cellEditor,
-                 cellEditorParams,
-                 valueFormatter,
-                 width: type === 'boolean' ? 100 : type === 'date' ? 180 : type === 'number' ? 120 : 200,
-                 cellRenderer: isLinkField ? (params: any) => (
-                    <span 
-                        className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
-                        onClick={(e) => {
-                            // Stop row selection when clicking the link
-                            e.stopPropagation(); 
-                            navigate(`/object/${objectName}/${params.data.id || params.data._id}`);
-                        }}
-                    >
-                        {params.value}
-                    </span>
-                 ) : undefined
-             };
-         });
+         return fields;
     };
 
-    const columns = getAgGridColumns();
+    const columns = getColumns();
 
     return (
-        <div className="flex flex-col h-full bg-stone-50">
-             <div className="bg-white border-b border-stone-200">
+        <div className="flex flex-col h-full bg-background">
+             <div className="border-b bg-background">
                  <div className="px-6 py-4 flex justify-between items-center">
                      <div>
-                         <h3 className="font-bold text-stone-900 text-lg flex items-center gap-2">
-                            <i className={`ri-${objectSchema?.icon || 'file-list-2-line'} text-xl text-stone-400`} />
+                         <h3 className="font-bold text-foreground text-lg flex items-center gap-2">
+                             <FileText className="w-5 h-5 text-muted-foreground"/>
                             {label}
-                            <Badge className="ml-2">{data.length} records</Badge>
+                            <Badge variant="secondary" className="ml-2">{data.length} records</Badge>
                          </h3>
                      </div>
                      <div className="flex items-center gap-2">
@@ -275,49 +201,40 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                                  />
                              </div>
                          )}
-                         <div className="inline-flex rounded-lg border border-stone-200 bg-stone-50 p-1">
-                             <button
+                         <div className="flex items-center border rounded-md shadow-sm">
+                             <Button
+                                 variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                                 size="icon"
+                                 className="h-8 w-8 rounded-none rounded-l-md"
                                  onClick={() => setViewMode('table')}
-                                 className={cn(
-                                     "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-                                     viewMode === 'table'
-                                         ? 'bg-white text-stone-900 shadow-sm'
-                                         : 'text-stone-600 hover:text-stone-900'
-                                 )}
                              >
-                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                 </svg>
-                             </button>
-                             <button
+                                 <ListIcon className="h-4 w-4" />
+                             </Button>
+                             <Button
+                                 variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                                 size="icon"
+                                 className="h-8 w-8 rounded-none rounded-r-md"
                                  onClick={() => setViewMode('grid')}
-                                 className={cn(
-                                     "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-                                     viewMode === 'grid'
-                                         ? 'bg-white text-stone-900 shadow-sm'
-                                         : 'text-stone-600 hover:text-stone-900'
-                                 )}
                              >
-                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                                 </svg>
-                             </button>
+                                 <Grid className="h-4 w-4" />
+                             </Button>
                          </div>
                          
-                         <Button onClick={fetchData} variant="secondary" className="h-9 text-sm px-3">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                         <Button onClick={fetchData} variant="outline" size="sm" className="h-9">
+                            <RefreshCw className="w-4 h-4 mr-2" />
                             Refresh
                          </Button>
                          <Button 
-                            variant={showFilter ? 'default' : 'secondary'} 
-                            className="h-9 text-sm px-3"
+                            variant={showFilter ? 'default' : 'outline'} 
+                            size="sm"
+                            className="h-9"
                             onClick={() => setShowFilter(!showFilter)}
                          >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                            <Filter className="w-4 h-4 mr-2" />
                             Filter
                          </Button>
-                         <Button onClick={() => navigate(`/object/${objectName}/new`)} className="h-9 text-sm px-3">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                         <Button onClick={() => navigate(`/object/${objectName}/new`)} size="sm" className="h-9">
+                            <Plus className="w-4 h-4 mr-2" />
                             New Record
                          </Button>
                      </div>
@@ -326,54 +243,107 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
             
             <div className="flex-1 overflow-auto p-6 relative">
                 {error && (
-                    <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-lg border border-red-200">
+                    <div className="mb-4 p-4 text-destructive bg-destructive/10 rounded-lg border border-destructive/20">
                         {error}
                     </div>
                 )}
 
                 {loading && (
-                    <div className="absolute inset-0 z-50 bg-white/50 flex items-center justify-center pointer-events-none">
-                        <Spinner size="lg" />
+                    <div className="absolute inset-0 z-50 bg-background/50 flex items-center justify-center pointer-events-none">
+                        <Spinner className="w-8 h-8" />
                     </div>
                 )}
 
                 {data.length === 0 && !loading ? (
-                    <div className="flex flex-col items-center justify-center h-full text-stone-400 p-8 bg-white rounded-xl border border-stone-200">
-                        <i className={`ri-${objectSchema?.icon || 'database-2-line'} text-6xl mb-4 opacity-50`} />
+                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8 rounded-xl border border-dashed">
+                        <FileText className="w-16 h-16 mb-4 opacity-20" />
                         <p className="text-sm font-medium">No records found for {label}</p>
                         <Button onClick={() => navigate(`/object/${objectName}/new`)} variant="secondary" className="mt-4">
                             Create First Record
                         </Button>
                     </div>
                 ) : (
-                    <div className="h-full w-full">
-                        <AgGridView
-                            columns={columns}
-                            data={data}
-                            // onRowClick removed to allow cell editing/selection without navigating
-                            // Navigation is now handled by the 'name'/'title' column renderer
-                            onCellEdit={handleCellEdit}
-                            onDelete={handleDelete}
-                            enableSorting={true}
-                            className="h-full w-full"
-                        />
-                    </div>
+                   viewMode === 'table' ? (
+                       <div className="rounded-md border bg-card">
+                           <Table>
+                               <TableHeader>
+                                   <TableRow>
+                                       {columns.map(col => (
+                                           <TableHead key={col}>{getFieldLabel(col)}</TableHead>
+                                       ))}
+                                       <TableHead className="w-[50px]"></TableHead>
+                                   </TableRow>
+                               </TableHeader>
+                               <TableBody>
+                                   {data.map((row, i) => (
+                                       <TableRow key={i} className="group">
+                                           {columns.map(col => (
+                                               <TableCell key={col}>
+                                                   {typeof row[col] === 'object' ? JSON.stringify(row[col]) : String(row[col])}
+                                               </TableCell>
+                                           ))}
+                                           <TableCell>
+                                               <DropdownMenu>
+                                                   <DropdownMenuTrigger asChild>
+                                                       <Button variant="ghost" className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100">
+                                                           <span className="sr-only">Open menu</span>
+                                                           <MoreHorizontal className="h-4 w-4" />
+                                                       </Button>
+                                                   </DropdownMenuTrigger>
+                                                   <DropdownMenuContent align="end">
+                                                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                       <DropdownMenuItem onClick={() => navigate(`/object/${objectName}/${row.id || row._id}`)}>
+                                                           <Pencil className="mr-2 h-4 w-4" /> Edit
+                                                       </DropdownMenuItem>
+                                                       <DropdownMenuSeparator />
+                                                       <DropdownMenuItem 
+                                                           className="text-destructive focus:text-destructive"
+                                                           onClick={() => handleDelete(row.id || row._id)}
+                                                        >
+                                                           <Trash className="mr-2 h-4 w-4" /> Delete
+                                                       </DropdownMenuItem>
+                                                   </DropdownMenuContent>
+                                               </DropdownMenu>
+                                           </TableCell>
+                                       </TableRow>
+                                   ))}
+                               </TableBody>
+                           </Table>
+                       </div>
+                   ) : (
+                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                           {data.map((row, i) => (
+                               <div key={i} className="p-4 border rounded-lg bg-card shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/object/${objectName}/${row.id || row._id}`)}>
+                                   <div className="font-semibold mb-2">{row.name || row.title || `Item ${i}`}</div>
+                                   <div className="text-sm text-muted-foreground truncate">
+                                       {Object.entries(row).slice(0, 3).map(([k, v]) => (
+                                           <div key={k}>{k}: {String(v)}</div>
+                                       ))}
+                                   </div>
+                               </div>
+                           ))}
+                       </div>
+                   )
                 )}
             </div>
 
-            <Modal 
-                isOpen={isCreating} 
-                onClose={() => navigate(`/object/${objectName}`)} 
-                title={`New ${label}`}
+            <Dialog 
+                open={isCreating} 
+                onOpenChange={(open) => !open && navigate(`/object/${objectName}`)}
             >
-                <ObjectForm 
-                    objectName={objectName} 
-                    initialValues={ {} }
-                    headers={getHeaders()}
-                    onSubmit={handleCreate} 
-                    onCancel={() => navigate(`/object/${objectName}`)} 
-                />
-            </Modal>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>New {label}</DialogTitle>
+                    </DialogHeader>
+                    <ObjectForm 
+                        objectName={objectName} 
+                        initialValues={ {} }
+                        headers={getHeaders()}
+                        onSubmit={handleCreate} 
+                        onCancel={() => navigate(`/object/${objectName}`)} 
+                    />
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

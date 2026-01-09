@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from "class-variance-authority"
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Loader2 } from "lucide-react"
+import { Loader2, LucideProps } from "lucide-react"
 
 const spinnerVariants = cva("text-muted-foreground animate-spin", {
   variants: {
@@ -18,7 +18,7 @@ const spinnerVariants = cva("text-muted-foreground animate-spin", {
 })
 
 export interface SpinnerProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends Omit<LucideProps, "size">,
     VariantProps<typeof spinnerVariants> {}
 
 const Spinner = ({ className, size, ...props }: SpinnerProps) => {

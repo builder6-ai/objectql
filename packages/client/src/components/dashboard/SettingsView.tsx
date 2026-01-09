@@ -1,29 +1,45 @@
-import { Card, Badge } from '@objectql/ui';
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardHeader, 
+    CardTitle,
+    Badge 
+} from '@objectql/ui';
 
 interface SettingsViewProps {
-    objectCount: number;
+    objectCount?: number;
 }
 
-export function SettingsView({ objectCount }: SettingsViewProps) {
+export function SettingsView({ objectCount = 0 }: SettingsViewProps) {
     return (
-        <div className="overflow-auto">
-            <div className="p-8 max-w-4xl mx-auto animate-[fadeIn_0.3s_ease-out]">
-                <h2 className="text-2xl font-bold text-stone-900 mb-6">Server Settings</h2>
-                <Card title="About ObjectQL" description="System information and status.">
-                    <div className="space-y-4">
-                        <div className="flex justify-between py-2 border-b border-stone-100">
-                            <span className="text-stone-600">Version</span>
-                            <span className="font-medium text-stone-900">v0.2.0</span>
+        <div className="overflow-auto w-full">
+            <div className="max-w-4xl mx-auto space-y-6">
+                 <div>
+                    <h3 className="text-lg font-medium">Settings</h3>
+                    <p className="text-sm text-muted-foreground">
+                        Manage your server configuration and view system status.
+                    </p>
+                </div>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>About ObjectQL</CardTitle>
+                        <CardDescription>System information and status.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex justify-between py-2 border-b">
+                            <span className="text-muted-foreground">Version</span>
+                            <span className="font-medium">v0.2.0</span>
                         </div>
-                        <div className="flex justify-between py-2 border-b border-stone-100">
-                            <span className="text-stone-600">Environment</span>
-                            <span className="font-medium text-stone-900">Development</span>
+                        <div className="flex justify-between py-2 border-b">
+                            <span className="text-muted-foreground">Environment</span>
+                            <span className="font-medium">Development</span>
                         </div>
                         <div className="flex justify-between py-2">
-                            <span className="text-stone-600">Collections</span>
-                            <Badge variant="default">{objectCount}</Badge>
+                            <span className="text-muted-foreground">Collections</span>
+                            <Badge variant="secondary">{objectCount}</Badge>
                         </div>
-                    </div>
+                    </CardContent>
                 </Card>
             </div>
         </div>

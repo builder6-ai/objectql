@@ -47,5 +47,5 @@ export * from './components/ui/sonner';
 export * from './components/ui/toggle';
 export * from './components/ui/toggle-group';
 export * from './components/ui/spinner';
-export { useMobile } from './hooks/use-mobile';
+export { useIsMobile } from './hooks/use-mobile';
 // Export shadcn components as they are added
