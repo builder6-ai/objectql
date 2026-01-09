@@ -130,6 +130,41 @@ graph TD
 
 ```
 
+## 📊 Visual Reporting
+
+ObjectQL includes a comprehensive **visual reporting system** similar to Salesforce Reports:
+
+* **Multi-Table Joins**: Create reports spanning multiple related objects using dot notation (`project.owner.name`)
+* **Three Report Types**: Tabular (lists), Summary (grouped), and Matrix (pivot tables)
+* **Visual Builder**: React components for building reports without code
+* **Grouping & Aggregations**: Count, sum, average, min, max across grouped data
+* **Chart Integration**: Built-in visualization support
+
+**Example Report Definition:**
+```yaml
+name: tasks_by_project
+label: Tasks by Project and Priority
+type: summary
+object: tasks
+
+columns:
+  - field: project.name
+    label: Project
+  - field: priority
+    label: Priority
+
+groupings:
+  - field: project.name
+  - field: priority
+
+aggregations:
+  - field: id
+    function: count
+    label: Task Count
+```
+
+See [Visual Reporting Guide](./docs/guide/visual-reporting.md) for complete documentation.
+
 ## 🛣 Roadmap
 
 * [ ] **Phase 1: Core Protocol:** Define stable `UnifiedQuery` types and AST parser.
