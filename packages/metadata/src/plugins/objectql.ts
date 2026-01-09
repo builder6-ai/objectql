@@ -206,7 +206,7 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
                     registerPage(ctx.registry, doc, ctx.file, ctx.packageName);
                 } else {
                     for (const [key, value] of Object.entries(doc)) {
-                        if (typeof value === 'object') {
+                        if (value && !Array.isArray(value) && typeof value === 'object') {
                             const page = value as any;
                             if (!page.name) page.name = key;
                             registerPage(ctx.registry, page, ctx.file, ctx.packageName);
