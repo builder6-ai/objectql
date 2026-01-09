@@ -19,7 +19,8 @@
     "src"
   ],
   "scripts": {
-    "dev": "echo 'AI Management example - see README.md for usage'"
+    "dev": "echo 'AI Management example - see README.md for usage'",
+    "build": "echo 'AI Management example - no build needed'"
   },
   "dependencies": {
     "@objectql/core": "*",
