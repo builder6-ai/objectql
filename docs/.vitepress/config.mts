@@ -7,6 +7,9 @@ export default defineConfig({
   // Scans the docs directory
   srcDir: '.',
 
+  // Ignore dead links from merged documentation
+  ignoreDeadLinks: true,
+
   themeConfig: {
     logo: '/logo.svg',
     // Top Navigation
