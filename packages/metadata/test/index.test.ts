@@ -1,7 +1,6 @@
 import { MetadataRegistry } from '../src/registry';
 import { MetadataLoader } from '../src/loader';
 import { registerObjectQLPlugins } from '../src/plugins/objectql';
-import { isAppMenuSection } from '../src/types';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
 
