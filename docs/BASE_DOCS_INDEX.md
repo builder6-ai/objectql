@@ -4,6 +4,14 @@
 
 ## 📚 文档导航
 
+### 决策者必读（10分钟）
+👉 **[BASE_DECISION_PROPOSAL.md](./BASE_DECISION_PROPOSAL.md)**
+- **决策文档** - 包含决策所需的所有关键信息
+- 问题陈述、用户场景、技术方案
+- 成本收益分析、风险评估
+- 竞品对比、决策建议
+- 包含决策签字页
+
 ### 快速开始（5分钟）
 👉 **[BASE_LAYER_SUMMARY.md](./BASE_LAYER_SUMMARY.md)**
 - 核心结论和建议
@@ -48,6 +56,7 @@
 - [x] 编写评估文档
 - [x] 编写实施指南
 - [x] 编写快速参考文档
+- [x] 编写决策提案文档
 
 ### 待完成（如果批准实施）
 - [ ] 团队评审和决策
@@ -62,10 +71,11 @@
 ## 🗂 文件清单
 
 ### 文档文件
-1. **BASE_LAYER_SUMMARY.md** - 快速参考摘要
-2. **BASE_LAYER_EVALUATION.md** - 完整评估报告
-3. **BASE_IMPLEMENTATION_GUIDE.md** - 技术实施指南
-4. **BASE_DOCS_INDEX.md** (本文件) - 文档索引
+1. **BASE_DECISION_PROPOSAL.md** - 决策提案文档（决策者必读）⭐
+2. **BASE_LAYER_SUMMARY.md** - 快速参考摘要
+3. **BASE_LAYER_EVALUATION.md** - 完整评估报告
+4. **BASE_IMPLEMENTATION_GUIDE.md** - 技术实施指南
+5. **BASE_DOCS_INDEX.md** (本文件) - 文档索引
 
 ### 代码文件
 1. **packages/better-auth/src/base.object.yml** - Base 对象定义
