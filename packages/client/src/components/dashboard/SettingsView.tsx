@@ -21,7 +21,7 @@ export function SettingsView({ objectCount }: SettingsViewProps) {
                         </div>
                         <div className="flex justify-between py-2">
                             <span className="text-stone-600">Collections</span>
-                            <Badge variant="secondary">{objectCount}</Badge>
+                            <Badge variant="default">{objectCount}</Badge>
                         </div>
                     </div>
                 </Card>

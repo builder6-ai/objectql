@@ -24,7 +24,7 @@ export type AggregationFunction =
 /**
  * Chart types for report visualization
  */
-export type ChartType = 
+export type ReportChartType = 
   | 'bar' 
   | 'line' 
   | 'pie' 
@@ -146,11 +146,11 @@ export interface SortConfig {
 /**
  * Chart configuration for report visualization
  */
-export interface ChartConfig {
+export interface ReportChartConfig {
   /** 
    * Type of chart to display
    */
-  type: ChartType;
+  type: ReportChartType;
   
   /** 
    * Field to group data by (X-axis for bar/line charts)
@@ -312,7 +312,7 @@ export interface ReportDefinition {
   /** 
    * Chart configuration
    */
-  chart?: ChartConfig;
+  chart?: ReportChartConfig;
   
   /** 
    * Maximum number of rows to return

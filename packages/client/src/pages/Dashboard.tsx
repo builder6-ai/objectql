@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Spinner, Badge, Card } from '@objectql/ui';
+import { Spinner } from '@objectql/ui';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from '../hooks/useRouter';
 import { SidebarItem } from '../components/dashboard/SidebarItem';

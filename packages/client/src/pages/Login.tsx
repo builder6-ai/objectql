@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Input, Button, Spinner } from '@objectql/ui';
+import { Card, Input, Button, Spinner, Label } from '@objectql/ui';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -52,30 +52,36 @@ export default function Login() {
                 <Card className="backdrop-blur-xl bg-white/70 shadow-2xl border-white/50 ring-1 ring-black/5 p-6">
                     <form onSubmit={handleSubmit} className="space-y-5">
                         {!isSignIn && (
-                            <Input 
-                                label="Full Name" 
-                                value={name} 
-                                onChange={(e) => setName(e.target.value)} 
-                                placeholder="Jane Doe"
-                                required
-                            />
+                            <div className="space-y-2">
+                                <Label>Full Name</Label>
+                                <Input 
+                                    value={name} 
+                                    onChange={(e) => setName(e.target.value)} 
+                                    placeholder="Jane Doe"
+                                    required
+                                />
+                            </div>
                         )}
-                        <Input 
-                            label="Email address" 
-                            type="email"
-                            value={email} 
-                            onChange={(e) => setEmail(e.target.value)} 
-                            placeholder="name@example.com"
-                            required 
-                        />
-                        <Input 
-                            label="Password" 
-                            type="password" 
-                            value={password} 
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
-                            placeholder="••••••••"
-                            required 
-                        />
+                        <div className="space-y-2">
+                            <Label>Email address</Label>
+                            <Input 
+                                type="email"
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
+                                placeholder="name@example.com"
+                                required 
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Password</Label>
+                            <Input 
+                                type="password" 
+                                value={password} 
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
+                                placeholder="••••••••"
+                                required 
+                            />
+                        </div>
 
                         {error && (
                             <div className="p-3 text-[13px] text-red-600 bg-red-50/50 border border-red-100 rounded-lg flex items-start gap-2">
