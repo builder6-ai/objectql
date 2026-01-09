@@ -352,26 +352,29 @@ function calculateAggregation(
   });
 
   let result: number;
-  
-  switch (func) {
-    case 'count':
-      result = values.length;
-      break;
-    case 'sum':
-      result = values.reduce((a, b) => a + b, 0);
-      break;
-    case 'avg':
-      result = values.reduce((a, b) => a + b, 0) / values.length;
-      break;
-    case 'min':
-      result = Math.min(...values);
-      break;
-    case 'max':
-      result = Math.max(...values);
-      break;
-    default:
-      result = 0;
+
+  if (values.length === 0) {
+    result = 0;
+  } else {
+    switch (func) {
+      case 'count':
+        result = values.length;
+        break;
+      case 'sum':
+        result = values.reduce((a, b) => a + b, 0);
+        break;
+      case 'avg':
+        result = values.reduce((a, b) => a + b, 0) / values.length;
+        break;
+      case 'min':
+        result = Math.min(...values);
+        break;
+      case 'max':
+        result = Math.max(...values);
+        break;
+      default:
+        result = 0;
+    }
   }
-  
   return result.toFixed(2);
 }
