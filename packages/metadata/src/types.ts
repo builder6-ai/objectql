@@ -95,3 +95,22 @@ export interface ObjectConfig {
     actions?: Record<string, ActionConfig>;
     data?: any[];
 }
+
+export type ChartType = 'bar' | 'line' | 'pie' | 'area';
+
+export interface ChartConfig {
+    name: string;
+    label?: string;
+    description?: string;
+    type: ChartType;
+    object: string;
+    xAxisKey: string;
+    yAxisKeys: string[];
+    height?: number;
+    colors?: string[];
+    showGrid?: boolean;
+    showLegend?: boolean;
+    showTooltip?: boolean;
+    filters?: any[];
+    sort?: [string, 'asc' | 'desc'][];
+}
