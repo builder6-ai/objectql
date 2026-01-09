@@ -7,10 +7,10 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\" --kill-others --names \"SERVER,CLIENT\" -c \"magenta,blue\"",
-    "server": "npm run dev --workspace=@objectql/server",
+    "server": "npm run dev --workspace=@objectql/api",
     "client": "npm run dev --workspace=@objectql/client",
     "build": "tsc -b && npm run build --workspaces",
-    "start": "npm run start --workspace=@objectql/server",
+    "start": "npm run start --workspace=@objectql/api",
     "test": "npm run test --workspaces",
     "changeset": "changeset",
     "version": "changeset version",

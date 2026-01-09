@@ -1,6 +1,6 @@
-# @objectql/api
+# @example/nestjs
 
-## 1.1.0
+## 0.2.0
 
 ### Minor Changes
 
@@ -9,15 +9,7 @@
 ### Patch Changes
 
 - Updated dependencies
+  - @example/project-management@2.0.0
+  - @objectql/api@1.1.0
   - @objectql/core@1.1.0
-
-## 1.0.0
-
-### Major Changes
-
-- first release
-
-### Patch Changes
-
-- Updated dependencies
-  - @objectql/core@1.0.0
+  - @objectql/driver-mongo@1.1.0

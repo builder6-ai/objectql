@@ -14,7 +14,7 @@ This is a TypeScript-based monorepo for ObjectQL, a universal data query engine 
 - **Build all packages**: `npm run build` (runs TypeScript compiler with project references)
 - **Test all packages**: `npm run test` (runs Jest tests across workspaces)
 - **Test specific package**: `npm run test --workspace=@objectql/core`
-- **Dev server**: `npm run dev` (starts @objectql/server in development mode)
+- **Dev server**: `npm run dev` (starts @objectql/api in development mode)
 
 ## Repository Structure
 
@@ -24,8 +24,7 @@ This is a monorepo managed by npm workspaces:
 - `packages/metadata`: Metadata type definitions and validation
 - `packages/driver-mongo`: MongoDB driver implementation
 - `packages/driver-knex`: SQL driver (PostgreSQL, MySQL, SQLite) using Knex with JSONB strategy
-- `packages/api`: API layer and query handling
-- `packages/server`: Server implementation
+- `packages/api`: Server API implementation (NestJS)
 - `packages/ui`: UI components
 - `packages/better-auth`: Authentication utilities
 - `examples/`: Usage examples and demonstrations
