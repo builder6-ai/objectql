@@ -5,3 +5,6 @@ dist
 
 .env
 .env.local
+
+# VitePress cache
+docs/.vitepress/cache
