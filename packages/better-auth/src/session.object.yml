@@ -1,5 +1,6 @@
 name: session
 description: User authentication session
+customizable: false
 fields:
   userId:
     type: string
@@ -23,6 +24,8 @@ fields:
   createdAt:
     type: datetime
     default: now()
+    customizable: false
   updatedAt:
     type: datetime
     default: now()
+    customizable: false
