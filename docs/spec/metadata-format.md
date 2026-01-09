@@ -211,7 +211,7 @@ App files define application interfaces with custom navigation menus, similar to
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `name` | `string` | **Required.** Display name of the app. |
-| `id` | `string` | Unique identifier for the app. If not provided, uses `name`. |
+| `id` | `string` | Unique identifier for the app. Defaults to `name` if not provided. |
 | `code` | `string` | URL-friendly code/slug for the app. |
 | `description` | `string` | Description of the app's purpose. |
 | `icon` | `string` | Icon identifier (e.g., `ri-dashboard-line`). |
