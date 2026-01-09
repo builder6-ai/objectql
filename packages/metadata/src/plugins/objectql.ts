@@ -1,7 +1,7 @@
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { MetadataLoader } from '../loader';
-import { ObjectConfig } from '../types';
+import { ObjectConfig, ChartConfig } from '../types';
 
 export function registerObjectQLPlugins(loader: MetadataLoader) {
     // Objects
@@ -166,6 +166,32 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
             }
         }
     });
+
+    // Charts
+    loader.use({
+        name: 'chart',
+        glob: ['**/*.chart.yml', '**/*.chart.yaml'],
+        handler: (ctx) => {
+            try {
+                const doc = yaml.load(ctx.content) as any;
+                if (!doc) return;
+
+                if (doc.name && doc.type && doc.object) {
+                    registerChart(ctx.registry, doc, ctx.file, ctx.packageName);
+                } else {
+                    for (const [key, value] of Object.entries(doc)) {
+                        if (typeof value === 'object' && (value as any).type && (value as any).object) {
+                            const chart = value as any;
+                            if (!chart.name) chart.name = key;
+                            registerChart(ctx.registry, chart, ctx.file, ctx.packageName);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error(`Error loading chart from ${ctx.file}:`, e);
+            }
+        }
+    });
 }
 
 function registerObject(registry: any, obj: any, file: string, packageName?: string) {
@@ -185,6 +211,16 @@ function registerObject(registry: any, obj: any, file: string, packageName?: str
         path: file,
         package: packageName,
         content: obj
+    });
+}
+
+function registerChart(registry: any, chart: any, file: string, packageName?: string) {
+    registry.register('chart', {
+        type: 'chart',
+        id: chart.name,
+        path: file,
+        package: packageName,
+        content: chart
     });
 }
 

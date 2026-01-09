@@ -1,0 +1,16 @@
+name: project_timeline
+label: Project Timeline
+description: Visualize project start and end dates
+type: bar
+object: projects
+xAxisKey: name
+yAxisKeys:
+  - start_date
+  - end_date
+height: 400
+showGrid: true
+showLegend: true
+showTooltip: true
+sort:
+  - - start_date
+    - asc
