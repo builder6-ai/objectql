@@ -70,7 +70,6 @@ export default function Dashboard() {
                         });
                     }
                     
-                    const objNames = Object.keys(objectsMap);
                     setObjects(objectsMap);
                     // Auto-redirect removed to show App List
                     setLoading(false);

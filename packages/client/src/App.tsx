@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AppList from './pages/AppList';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -26,7 +26,7 @@ function AppContent() {
       if (parts[1] === 'app' && parts[2]) {
           const appName = parts[2];
           // Simple cache check/avoid refetch if same app
-          if (currentAppMetadata && (currentAppMetadata.id === appName || currentAppMetadata.content?.code === appName)) {
+          if (currentAppMetadata && (currentAppMetadata.name === appName || currentAppMetadata.id === appName)) {
               return;
           }
           

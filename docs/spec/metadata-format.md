@@ -212,8 +212,8 @@ App files define application interfaces with custom navigation menus, similar to
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `code` | `string` | Unique identifier for the app, default to id if not specified. |
-| `name` | `string` | **Required.** Display name of the app. |
+| `name` | `string` | Unique identifier for the app, default to id if not specified. |
+| `label` | `string` | **Required.** Display name of the app. |
 | `description` | `string` | Description of the app's purpose. |
 | `icon` | `string` | Icon identifier (e.g., `ri-dashboard-line`). |
 | `color` | `string` | Color theme for the app (e.g., `blue`, `gray`). |
@@ -283,8 +283,8 @@ The `menu` property defines the left-side navigation structure. It can be either
 ### 6.4 Complete App Example
 
 ```yaml
-code: projects
-name: Project Management
+name: projects
+label: Project Management
 description: Manage and track your projects efficiently.
 icon: ri-dashboard-line
 color: blue

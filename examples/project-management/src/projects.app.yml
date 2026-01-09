@@ -1,8 +1,9 @@
 # ==========================================
 # 1. 应用基础信息 (App Identity)
 # ==========================================
-code: projects
-name: Projects Management
+
+name: projects
+label: Projects Management
 description: Manage and track your projects efficiently.
 dark: true
 color: gray

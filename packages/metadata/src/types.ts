@@ -119,11 +119,11 @@ export interface ObjectConfig {
 export interface AppMenuItem {
     /** Unique identifier for the menu item */
     id?: string;
-    /** Display label for the menu item */
-    label?: string;
+    /** **Required.** Display label for the menu item */
+    label: string;
     /** Icon identifier (e.g., remixicon class name like 'ri-home-line') */
     icon?: string;
-    /** Type of menu item */
+    /** Type of menu item. Default: 'page' */
     type?: 'object' | 'page' | 'url' | 'divider';
     /** Reference to an object name (for type: 'object') */
     object?: string;
@@ -131,7 +131,7 @@ export interface AppMenuItem {
     url?: string;
     /** Badge text or count to display */
     badge?: string | number;
-    /** Whether this item is visible */
+    /** Whether this item is visible. Default: true */
     visible?: boolean;
     /** Nested sub-menu items */
     items?: AppMenuItem[];
@@ -145,9 +145,9 @@ export interface AppMenuSection {
     label?: string;
     /** **Required.** Menu items in this section. */
     items: AppMenuItem[];
-    /** Whether this section is collapsible */
+    /** Whether this section is collapsible. Default: false */
     collapsible?: boolean;
-    /** Whether this section is collapsed by default */
+    /** Whether this section is collapsed by default. Default: false */
     collapsed?: boolean;
 }
 
@@ -171,22 +171,24 @@ export function isAppMenuSection(entry: AppMenuSection | AppMenuItem): entry is 
 export interface AppConfig {
     /** Unique identifier or code for the app */
     id?: string;
-    /** App name */
+    /** App name. Unique identifier for the app, default to id if not specified. */
     name: string;
-    /** App code/slug */
+    /** App code/slug (Legacy, use name or id) */
     code?: string;
-    /** Description of the app */
+    /** **Required.** Display name of the app. */
+    label: string;
+    /** Description of the app's purpose. */
     description?: string;
-    /** App icon identifier */
+    /** Icon identifier (e.g., `ri-dashboard-line`). */
     icon?: string;
-    /** Color theme for the app */
+    /** Color theme for the app (e.g., `blue`, `gray`). */
     color?: string;
-    /** Dark mode preference */
+    /** Whether to use dark mode by default. */
     dark?: boolean;
     /** Base ID this app belongs to (optional, for Base layer support) */
     baseId?: string;
     /** 
-     * Left-side menu configuration.
+     * Left-side navigation menu configuration.
      * Can be either:
      * - An array of menu sections (recommended for organized menus with groups)
      * - An array of menu items (for simple flat menus)

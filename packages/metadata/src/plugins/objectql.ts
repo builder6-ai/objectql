@@ -37,7 +37,7 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
         handler: (ctx) => {
             try {
                 const doc = yaml.load(ctx.content) as any;
-                const id = doc.id || doc.name;
+                const id = doc.code || doc.id || doc.name;
                 if (id) {
                     ctx.registry.register('app', {
                         type: 'app',

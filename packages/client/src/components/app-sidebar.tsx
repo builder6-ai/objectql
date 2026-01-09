@@ -34,12 +34,13 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
   const currentApp = parts[1] === 'app' ? parts[2] : null;
   const getObjectPath = (name: string) => currentApp ? `/app/${currentApp}/object/${name}` : `/object/${name}`;
   
-  const rawMenu = appMetadata?.content?.menu;
+  const rawMenu = appMetadata?.menu;
   
-  // Normalize menu structure to always be a list of sections (groups)
-  // If the first item has a 'type' or doesn't look like a section container, wrap it in a default section.
-  const isGrouped = Array.isArray(rawMenu) && rawMenu.length > 0 && 
-                    (rawMenu[0].items && !rawMenu[0].type); 
+  // Robust check for grouped vs flat menu structure
+  // A section has 'items' but NO 'type', 'object', or 'url'
+  const isSection = (item: any) => item && item.items && Array.isArray(item.items) && !item.type && !item.object && !item.url;
+
+  const isGrouped = Array.isArray(rawMenu) && rawMenu.length > 0 && isSection(rawMenu[0]);
   
   const menuSections = rawMenu ? (isGrouped ? rawMenu : [{ label: 'Menu', items: rawMenu }]) : [];
 
@@ -51,20 +52,24 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
         return <div key={idx} className="my-2 h-px bg-border" />;
     }
 
+    // Default label if missing (e.g. for dividers context or malformed data)
+    const label = item.label || '';
+    const itemType = item.type || 'page';
+
     // Determine active state
     let isActive = false;
-    if (item.type === 'object') {
+    if (itemType === 'object') {
         isActive = path.includes(`/object/${item.object}`);
-    } else if (item.type === 'page' || item.type === 'url') {
+    } else if (itemType === 'page' || itemType === 'url') {
         isActive = item.url ? path.endsWith(item.url) : false;
     }
 
     const handleClick = () => {
-        if (item.type === 'object' && item.object) {
+        if (itemType === 'object' && item.object) {
             navigate(getObjectPath(item.object));
-        } else if (item.type === 'page' && item.url) {
+        } else if (itemType === 'page' && item.url) {
             navigate(item.url);
-        } else if (item.type === 'url' && item.url) {
+        } else if (itemType === 'url' && item.url) {
            window.open(item.url, '_blank');
         }
     };
@@ -72,12 +77,12 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
     // Handle Nested Items (Submenus)
     if (item.items && item.items.length > 0) {
         return (
-            <Collapsible key={idx} asChild defaultOpen={item.collapsed === false} className="group/collapsible">
+            <Collapsible key={idx} asChild defaultOpen={false} className="group/collapsible">
                 <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.label}>
-                             <DynamicIcon name={item.icon} fallback={item.type === 'object' ? LucideIcons.FileText : LucideIcons.Layout} />
-                             <span>{item.label}</span>
+                        <SidebarMenuButton tooltip={label}>
+                             <DynamicIcon name={item.icon} fallback={itemType === 'object' ? LucideIcons.FileText : LucideIcons.Layout} />
+                             <span>{label}</span>
                              <LucideIcons.ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                         </SidebarMenuButton>
                     </CollapsibleTrigger>
@@ -85,14 +90,15 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
                         <SidebarMenuSub>
                             {item.items.map((subItem: any, subIdx: number) => {
                                 if (subItem.visible === false) return null;
+                                const subItemType = subItem.type || 'page';
                                 return (
                                 <SidebarMenuSubItem key={subIdx}>
                                     <SidebarMenuSubButton 
-                                        isActive={subItem.type === 'object' ? path.includes(`/object/${subItem.object}`) : path.endsWith(subItem.url)}
+                                        isActive={subItemType === 'object' ? path.includes(`/object/${subItem.object}`) : path.endsWith(subItem.url)}
                                         onClick={() => {
-                                            if (subItem.type === 'object') navigate(getObjectPath(subItem.object));
-                                            else if (subItem.type === 'page') navigate(subItem.url);
-                                            else if (subItem.type === 'url') window.open(subItem.url, '_blank');
+                                            if (subItemType === 'object') navigate(getObjectPath(subItem.object));
+                                            else if (subItemType === 'page') navigate(subItem.url);
+                                            else if (subItemType === 'url') window.open(subItem.url, '_blank');
                                         }}
                                     >
                                         <span>{subItem.label}</span>
@@ -114,8 +120,8 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
                 isActive={isActive}
                 onClick={handleClick}
             >
-                <DynamicIcon name={item.icon} fallback={item.type === 'object' ? LucideIcons.FileText : LucideIcons.Layout} />
-                <span>{item.label}</span>
+                <DynamicIcon name={item.icon} fallback={itemType === 'object' ? LucideIcons.FileText : LucideIcons.Layout} />
+                <span>{label}</span>
                 {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
             </SidebarMenuButton>
         </SidebarMenuItem>
@@ -132,7 +138,7 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
                 <LucideIcons.Database className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{appMetadata?.content?.name || 'ObjectQL'}</span>
+                <span className="truncate font-semibold">{appMetadata?.name || 'ObjectQL'}</span>
                 <span className="truncate text-xs">Data Browser</span>
               </div>
             </SidebarMenuButton>
@@ -140,8 +146,7 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {menuSections.length > 0 ? (
-            menuSections.map((section: any, idx: number) => {
+        {menuSections.map((section: any, idx: number) => {
                 const isCollapsible = section.collapsible === true;
                 const isCollapsed = section.collapsed === true;
                 
@@ -184,28 +189,7 @@ export function AppSidebar({ objects, appMetadata, ...props }: React.ComponentPr
                         </SidebarGroupContent>
                     </SidebarGroup>
                 );
-            })
-        ) : (
-            // Render Default Object List
-            <SidebarGroup>
-            <SidebarGroupLabel>Collections</SidebarGroupLabel>
-            <SidebarGroupContent>
-                <SidebarMenu>
-                {Object.entries(objects).map(([name, schema]) => (
-                    <SidebarMenuItem key={name}>
-                    <SidebarMenuButton 
-                        isActive={path.includes(`/object/${name}`)}
-                        onClick={() => navigate(getObjectPath(name))}
-                        >
-                        <LucideIcons.FileText />
-                        <span>{schema.label || schema.title || name}</span>
-                    </SidebarMenuButton>
-                    </SidebarMenuItem>
-                ))}
-                </SidebarMenu>
-            </SidebarGroupContent>
-            </SidebarGroup>
-        )}
+            })}
       </SidebarContent>
       <SidebarFooter>
          <NavUser user={{
