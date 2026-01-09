@@ -6,9 +6,8 @@
  */
 
 import * as React from 'react'
-import { DataTable, DataTableFilter, DataTableFiltersToolbar } from '@objectql/ui'
-import { ColumnDef, useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from '@tanstack/react-table'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@objectql/ui'
+import { DataTable } from '@objectql/ui'
+import { ColumnDef } from '@tanstack/react-table'
 
 // Example data type
 type User = {
