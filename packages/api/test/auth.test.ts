@@ -82,4 +82,83 @@ describe('AuthController (e2e)', () => {
       expect(response.body).toHaveProperty('id');
       expect(response.body.name).toBe('Dev Team');
   });
+
+  it('should get current session', async () => {
+      const response = await agent
+        .get('/api/v6/auth/get-session')
+        .expect(200);
+
+      expect(response.body).toHaveProperty('session');
+      expect(response.body).toHaveProperty('user');
+      expect(response.body.user.email).toBe(email);
+  });
+
+  it('should list organizations', async () => {
+      const response = await agent
+        .get('/api/v6/auth/organization/list')
+        .expect(200);
+      
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBeGreaterThan(0);
+      const org = response.body.find((o: any) => o.id === organizationId);
+      expect(org).toBeDefined();
+      expect(org.name).toBe(orgName);
+  });
+
+  it('should set active organization', async () => {
+      const response = await agent
+        .post('/api/v6/auth/organization/set-active')
+        .send({
+            organizationId
+        })
+        .expect(200);
+      
+      // Verify session has active org
+      const sessionResponse = await agent.get('/api/v6/auth/get-session');
+      expect(sessionResponse.body.session.activeOrganizationId).toBe(organizationId);
+  });
+
+  it('should update organization', async () => {
+      const newName = `${orgName} Updated`;
+      const response = await agent
+        .post('/api/v6/auth/organization/update')
+        .send({
+            organizationId,
+            data: {
+                name: newName
+            }
+        })
+        .expect(200);
+      
+      expect(response.body.name).toBe(newName);
+  });
+
+  it('should create invitation', async () => {
+      const inviteEmail = `invitee.${uniqueId}@example.com`;
+      const response = await agent
+        .post('/api/v6/auth/organization/invite-member')
+        .send({
+            organizationId,
+            email: inviteEmail,
+            role: 'member'
+        })
+        .expect(200);
+        
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.email).toBe(inviteEmail);
+      expect(response.body.status).toBe('pending');
+  });
+
+  it('should sign out', async () => {
+      await agent
+        .post('/api/v6/auth/sign-out')
+        .send({}) // Must send empty body to set Content-Type: application/json
+        .expect(200);
+      
+      const response = await agent
+        .get('/api/v6/auth/get-session')
+        .expect(200);
+      
+      expect(response.body).toBe(null);
+  });
 });
