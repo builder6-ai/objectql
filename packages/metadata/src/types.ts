@@ -127,7 +127,7 @@ export interface AppMenuItem {
 export interface AppMenuSection {
     /** Section title/label */
     label?: string;
-    /** Menu items in this section (required for sections) */
+    /** **Required.** Menu items in this section. */
     items: AppMenuItem[];
     /** Whether this section is collapsible */
     collapsible?: boolean;
