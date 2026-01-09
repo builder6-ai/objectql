@@ -33,10 +33,11 @@ export class KnexDriver implements Driver {
 
              if (Array.isArray(item)) {
                  // Heuristic to detect if it is a criterion [field, op, value] or a nested group
-                 const [field, op, value] = item;
-                 const isCriterion = typeof field === 'string' && typeof op === 'string';
+                 const [fieldRaw, op, value] = item;
+                 const isCriterion = typeof fieldRaw === 'string' && typeof op === 'string';
 
                  if (isCriterion) {
+                     const field = this.mapSortField(fieldRaw);
                      // Handle specific operators that map to different knex methods
                      const apply = (b: any) => {
                          let method = nextJoin === 'or' ? 'orWhere' : 'where';
@@ -71,11 +72,17 @@ export class KnexDriver implements Driver {
         }
     }
 
+    private mapSortField(field: string): string {
+        if (field === 'createdAt') return 'created_at';
+        if (field === 'updatedAt') return 'updated_at';
+        return field;
+    }
+
     async find(objectName: string, query: any, options?: any): Promise<any[]> {
         const builder = this.getBuilder(objectName, options);
         
         if (query.fields) {
-            builder.select(query.fields);
+            builder.select(query.fields.map((f: string) => this.mapSortField(f)));
         } else {
             builder.select('*');
         }
@@ -86,7 +93,7 @@ export class KnexDriver implements Driver {
 
         if (query.sort) {
             for (const [field, dir] of query.sort) {
-                builder.orderBy(field, dir);
+                builder.orderBy(this.mapSortField(field), dir);
             }
         }
 

@@ -24,6 +24,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
     const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
     const [sortConfig, setSortConfig] = useState<SortConfig[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showFilter, setShowFilter] = useState(false); // New state for filter visibility
     
     const label = objectSchema?.label || objectSchema?.title || objectName;
 
@@ -116,7 +117,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
     };
 
     useEffect(() => {
-        if (user && objectName) fetchData();
+        if (objectName) fetchData();
     }, [objectName, user, sortConfig, debouncedSearch]);
 
     const handleCreate = (formData: any) => {
@@ -220,14 +221,17 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                          </h3>
                      </div>
                      <div className="flex items-center gap-2">
-                         <div className="w-64">
-                             <Input 
-                                 placeholder="Search..." 
-                                 value={searchTerm}
-                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                 className="h-9"
-                             />
-                         </div>
+                         {showFilter && (
+                             <div className="w-64 animate-in slide-in-from-right-2 fade-in duration-200">
+                                 <Input 
+                                     placeholder="Search..." 
+                                     value={searchTerm}
+                                     autoFocus
+                                     onChange={(e) => setSearchTerm(e.target.value)}
+                                     className="h-9"
+                                 />
+                             </div>
+                         )}
                          <div className="inline-flex rounded-lg border border-stone-200 bg-stone-50 p-1">
                              <button
                                  onClick={() => setViewMode('table')}
@@ -261,7 +265,11 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                             Refresh
                          </Button>
-                         <Button variant="secondary" className="h-9 text-sm px-3">
+                         <Button 
+                            variant={showFilter ? 'default' : 'secondary'} 
+                            className="h-9 text-sm px-3"
+                            onClick={() => setShowFilter(!showFilter)}
+                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
                             Filter
                          </Button>
