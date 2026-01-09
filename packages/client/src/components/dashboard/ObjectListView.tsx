@@ -173,30 +173,37 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
     }
 
     const generateColumns = () => {
-        if (!data || data.length === 0) return [];
+        // Prefer schema for columns, fallback to data inspection
+        let fields: string[] = [];
         
-        const sampleRow = data[0];
-        return Object.keys(sampleRow)
-            .filter(key => !['_id', '__v', 'createdAt', 'updatedAt'].includes(key))
-            .map(key => {
-                const field = objectSchema?.fields?.[key];
-                const type = getFieldType(key) as 'text' | 'number' | 'boolean' | 'date' | 'select' | 'badge';
-                
-                return {
-                    id: key,
-                    label: getFieldLabel(key),
-                    type: type,
-                    width: type === 'boolean' ? 80 : type === 'date' ? 150 : type === 'number' ? 120 : 200,
-                    editable: !['id', 'createdBy', 'updatedBy'].includes(key),
-                    ...(type === 'badge' && field?.options ? {
-                        options: field.options.map((opt: string) => ({
-                            value: opt,
-                            label: opt,
-                            variant: 'default'
-                        }))
-                    } : {})
-                };
-            });
+        if (objectSchema && objectSchema.fields) {
+            fields = Object.keys(objectSchema.fields);
+            if (!fields.includes('createdAt')) fields.push('createdAt');
+            if (!fields.includes('updatedAt')) fields.push('updatedAt');
+        } else if (data && data.length > 0) {
+            fields = Object.keys(data[0]).filter(key => !['_id', '__v'].includes(key));
+        }
+
+        return fields.map(key => {
+            const field = objectSchema?.fields?.[key];
+            const type = getFieldType(key) as 'text' | 'number' | 'boolean' | 'date' | 'select' | 'badge';
+            
+            return {
+                id: key,
+                label: getFieldLabel(key),
+                type: type,
+                width: type === 'boolean' ? 80 : type === 'date' ? 150 : type === 'number' ? 120 : 200,
+                editable: !['id', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt'].includes(key),
+                sortable: true,
+                ...(type === 'badge' && field?.options ? {
+                    options: field.options.map((opt: string) => ({
+                        value: opt,
+                        label: opt,
+                        variant: 'default'
+                    }))
+                } : {})
+            };
+        });
     };
 
     const columns = generateColumns();
@@ -267,20 +274,19 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
              </div>
             
             <div className="flex-1 overflow-auto p-6 relative">
-                {loading && (
-                    <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-                        <Spinner className="w-6 h-6 text-blue-500" />
+                {error && (
+                    <div className="mb-4 p-4 text-red-700 bg-red-100 rounded-lg border border-red-200">
+                        {error}
                     </div>
                 )}
-                
-                {error ? (
-                     <div className="flex flex-col items-center justify-center h-full text-red-500 p-8 text-center bg-white rounded-xl border border-stone-200">
-                        <i className="ri-alert-line text-4xl mb-4 opacity-50 block" />
-                        <p className="font-medium">Error loading data</p>
-                        <p className="text-sm opacity-75 max-w-md break-words">{error}</p>
-                        <Button onClick={fetchData} variant="secondary" className="mt-4">Try Again</Button>
+
+                {loading && (
+                    <div className="absolute inset-0 z-50 bg-white/50 flex items-center justify-center pointer-events-none">
+                        <Spinner size="lg" />
                     </div>
-                ) : data.length === 0 ? (
+                )}
+
+                {data.length === 0 && !loading ? (
                     <div className="flex flex-col items-center justify-center h-full text-stone-400 p-8 bg-white rounded-xl border border-stone-200">
                         <i className={`ri-${objectSchema?.icon || 'database-2-line'} text-6xl mb-4 opacity-50`} />
                         <p className="text-sm font-medium">No records found for {label}</p>
@@ -288,7 +294,7 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                             Create First Record
                         </Button>
                     </div>
-                ) : viewMode === 'grid' && columns.length > 0 ? (
+                ) : (
                     <GridView
                         columns={columns}
                         data={data}
@@ -299,51 +305,6 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                         enableSorting={true}
                         onSortChange={setSortConfig}
                     />
-                ) : (
-                    <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
-                        <table className="w-full text-left border-collapse text-sm">
-                            <thead className="bg-stone-50 sticky top-0 z-10">
-                                <tr>
-                                    {Object.keys(data[0] || {}).map(key => (
-                                        <th key={key} className="px-6 py-3 font-semibold text-stone-600 border-b border-stone-200 whitespace-nowrap text-xs uppercase tracking-wider">
-                                            {getFieldLabel(key)}
-                                        </th>
-                                    ))}
-                                    <th className="px-6 py-3 font-semibold text-stone-600 border-b border-stone-200 whitespace-nowrap text-xs uppercase tracking-wider text-right">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-stone-100">
-                                {data.map((row, idx) => (
-                                    <tr 
-                                        key={idx} 
-                                        onClick={() => navigate(`/object/${objectName}/${row.id || row._id}`)}
-                                        className="hover:bg-stone-50 transition-colors group cursor-pointer"
-                                    >
-                                        {Object.keys(data[0] || {}).map(key => (
-                                            <td key={key} className="px-6 py-3.5 text-stone-700 whitespace-nowrap max-w-xs overflow-hidden text-ellipsis font-normal">
-                                                {typeof row[key] === 'object' ? 
-                                                    <span className="font-mono text-xs text-stone-400">{JSON.stringify(row[key])}</span> : 
-                                                    String(row[key])
-                                                }
-                                            </td>
-                                        ))}
-                                        <td className="px-6 py-3.5 text-right whitespace-nowrap">
-                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button onClick={(e) => { e.stopPropagation(); navigate(`/object/${objectName}/${row.id || row._id}`); }} className="p-1 text-stone-400 hover:text-blue-600 transition-colors" title="View/Edit">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                                </button>
-                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(row); }} className="p-1 text-stone-400 hover:text-red-600 transition-colors" title="Delete">
-                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
                 )}
             </div>
 
