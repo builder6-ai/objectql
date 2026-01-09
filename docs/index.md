@@ -28,7 +28,7 @@ features:
     details: Written in 100% TypeScript with zero heavy legacy dependencies. Promise-based asynchronous API with no runtime requirements beyond Node.js.
   - icon: 🔌
     title: Pluggable Architecture
-    details: Core logic completely decoupled from storage drivers. Easily extensible to support other data sources like REST APIs, GraphQL, or SQLite.
+    details: Core logic completely decoupled from storage drivers. Easily extensible to support other data sources like REST APIs, GraphQL, or additional SQL/NoSQL databases.
   - icon: 📖
     title: Comprehensive Documentation
     details: Detailed guides for developers and comprehensive protocol specifications for system integrators and driver contributors.
