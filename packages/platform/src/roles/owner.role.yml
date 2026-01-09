@@ -12,10 +12,6 @@ permissions:
   member:
     actions: [create, read, update, delete]
   invitation:
-    actions: [create, read, delete]
-  base:
-    actions: [create, read, update, delete]
-  base_member:
-    actions: [create, read, update, delete]
+    actions: [read, create, delete]
   team:
     actions: [create, read, update, delete]

@@ -5,7 +5,6 @@ Metadata package for ObjectQL providing platform-level object definitions.
 Includes integration for:
 - Better-Auth (User, Session, Account, Organization, etc.)
 - Platform Roles (Super Admin, Admin, User)
-- Base/Workspace management
 
 ## Objects
 
@@ -16,8 +15,8 @@ Includes integration for:
 - `organization`
 - `member`
 - `invitation`
-- `base`
-- `base_member`
+- `team`
+- `teamMember`
 
 ## Roles
 

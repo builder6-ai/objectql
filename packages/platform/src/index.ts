@@ -13,8 +13,6 @@ import * as path from 'path';
  * - organization: Organizations for multi-tenant apps
  * - member: Organization membership
  * - invitation: Organization invitations
- * - base: Airtable-like Base (data workspace container)
- * - base_member: Base-level membership and permissions
  * 
  * Also includes standard Platform Roles:
  * - super_admin: System Administrator
@@ -43,12 +41,8 @@ export const objectDefinitions = [
     'member.object.yml',
     'invitation.object.yml',
     'team.object.yml',
-    'team_member.object.yml',
-    'base.object.yml',
-    'base_member.object.yml'
-];
-
-/**
+    'teamMember.object.yml'
+];*
  * Get the full path to an object definition file
  * @param filename The object definition filename
  * @returns Full path to the file
