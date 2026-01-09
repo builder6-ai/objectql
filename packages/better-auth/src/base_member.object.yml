@@ -53,8 +53,7 @@ fields:
   joinedAt:
     type: datetime
     label: Joined At
-    default: now()
-    help_text: When the user joined this base
+    help_text: When the user joined this base (set programmatically)
   
   lastAccessedAt:
     type: datetime

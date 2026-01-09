@@ -218,10 +218,17 @@ export class ObjectRepository {
    * 1. Context has a baseId
    * 2. Object has baseId field
    * 3. Not in system mode (isSystem = true)
+   * 4. Not a Base-related object (to avoid recursion)
    */
   private injectBaseFilter(query: Partial<UnifiedQuery>): UnifiedQuery {
     // Skip if system mode or no baseId in context
     if (this.ctx.isSystem || !this.ctx.baseId) {
+      return query as UnifiedQuery;
+    }
+
+    // Skip Base-related objects to avoid recursion
+    const baseRelatedObjects = ['base', 'base_member'];
+    if (baseRelatedObjects.includes(this.entityName)) {
       return query as UnifiedQuery;
     }
 

@@ -16,8 +16,8 @@ fields:
     label: URL Slug
     unique: true
     required: true
-    regex: ^[a-z0-9-]+$
-    help_text: URL-friendly identifier (e.g., 'product-roadmap')
+    regex: ^[a-z0-9][a-z0-9_-]*[a-z0-9]$
+    help_text: URL-friendly identifier (e.g., 'product-roadmap', 'client_project_2024')
   
   description:
     type: textarea
