@@ -39,7 +39,7 @@ features:
 
 ## Documentation Overview
 
-We have organized the documentation into multiple categories:
+We have organized the documentation into three main categories:
 
 ### [User & Developer Guide](/guide/)
 **Target Audience**: Application Developers, Customer Success, End Users.
