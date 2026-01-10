@@ -71,7 +71,9 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
                 if (objectName) {
                     const entry = ctx.registry.getEntry('object', objectName);
                     if (entry) {
-                         const config = entry.content as ObjectConfig;
+                         // Cast to any because ObjectConfig from types might not have all runtime properties populated yet
+                         // or we are extending it dynamically.
+                         const config = entry.content as any; 
                          if (!config.listeners) config.listeners = {};
                          
                          const hookNames = [
@@ -83,7 +85,7 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
 
                          for (const name of hookNames) {
                              if (typeof hookModule[name] === 'function') {
-                                 config.listeners[name as keyof typeof config.listeners] = hookModule[name];
+                                 config.listeners[name] = hookModule[name];
                              }
                          }
                          if (hookModule.default && typeof hookModule.default === 'object') {
@@ -94,7 +96,7 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
                              if (!config.actions) config.actions = {};
                              for (const [actionName, handler] of Object.entries(hookModule.actions)) {
                                  if (!config.actions[actionName]) config.actions[actionName] = {};
-                                 config.actions[actionName].handler = handler as any;
+                                 config.actions[actionName].handler = handler;
                              }
                          }
                     }
@@ -123,14 +125,15 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
                 if (objectName) {
                     const entry = ctx.registry.getEntry('object', objectName);
                     if (entry) {
-                         const config = entry.content as ObjectConfig;
+                         // Cast to any for dynamic extension
+                         const config = entry.content as any;
                          if (!config.actions) config.actions = {};
                          
                          for (const [key, value] of Object.entries(actionModule)) {
                              if (key === 'listenTo') continue;
                              if (typeof value === 'function') {
                                  if (!config.actions[key]) config.actions[key] = {};
-                                 config.actions[key].handler = value as any;
+                                 config.actions[key].handler = value; // any cast handled by config being any
                              }
                          }
                     }
@@ -156,7 +159,7 @@ export function registerObjectQLPlugins(loader: MetadataLoader) {
                 
                 const entry = ctx.registry.getEntry('object', objectName);
                 if (entry) {
-                    const config = entry.content as ObjectConfig;
+                    const config = entry.content as any;
                     config.data = data; 
                 } else {
                     console.warn(`Found data for unknown object '${objectName}' in ${ctx.file}`);
