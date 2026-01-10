@@ -4,8 +4,11 @@ import { KnexDriver } from '@objectql/driver-knex';
 export const objectql = new ObjectQL({
   datasources: {
       default: new KnexDriver({ 
-          client: 'pg',
-          connection: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/objectql'
+          client: 'sqlite3',
+          connection: {
+              filename: ':memory:'
+          },
+          useNullAsDefault: true
       })
   },
   packages: [

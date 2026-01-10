@@ -49,10 +49,13 @@ export const objectQLProvider: Provider = {
 
         // Default if no datasource configured
         if (Object.keys(datasources).length === 0) {
-            console.warn('No datasource found in config, using default Postgres connection.');
+            console.warn('No datasource found in config, using default SQLite connection.');
             datasources.default = new KnexDriver({ 
-                client: 'pg',
-                connection: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/objectql'
+                client: 'sqlite3',
+                connection: {
+                    filename: ':memory:'
+                },
+                useNullAsDefault: true
             });
         }
 
