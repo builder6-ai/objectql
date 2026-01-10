@@ -1,0 +1,17 @@
+{
+  "name": "@objectos/preset-documents",
+  "version": "0.1.0",
+  "description": "Document library preset for ObjectOS",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc && cp src/*.yml dist/",
+    "test": "jest --passWithNoTests"
+  },
+  "dependencies": {
+    "@objectql/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

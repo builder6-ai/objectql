@@ -1,0 +1,44 @@
+name: folder
+label: Folder
+description: Folder for organizing documents
+icon: folder-line
+fields:
+  name:
+    type: text
+    required: true
+    label: Folder Name
+    description: Name of the folder
+  description:
+    type: textarea
+    label: Description
+    description: Folder description
+  parent_folder:
+    type: lookup
+    reference_to: folder
+    label: Parent Folder
+    description: Parent folder for hierarchical organization
+  is_public:
+    type: boolean
+    label: Public Folder
+    description: Whether this folder is publicly accessible
+    defaultValue: false
+  created_by:
+    type: lookup
+    reference_to: user
+    label: Created By
+    description: User who created this folder
+  created_at:
+    type: datetime
+    label: Created At
+    default: now()
+    customizable: false
+  updated_at:
+    type: datetime
+    label: Updated At
+    default: now()
+    customizable: false
+  path:
+    type: text
+    label: Folder Path
+    description: Full path of the folder in the hierarchy
+    readonly: true

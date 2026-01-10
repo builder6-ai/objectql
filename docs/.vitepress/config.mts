@@ -39,6 +39,12 @@ export default defineConfig({
             { text: 'Hooks Examples', link: '/guide/logic-hooks-examples' },
             { text: 'Custom Actions', link: '/guide/logic-actions' }
           ]
+        },
+        {
+          text: 'Document Library',
+          items: [
+            { text: 'Setup Wizard', link: '/guide/document-library-wizard' }
+          ]
         }
       ],
 
@@ -51,6 +57,12 @@ export default defineConfig({
             { text: 'Metadata Format', link: '/spec/metadata-format' },
             { text: 'Query Language', link: '/spec/query-language' },
             { text: 'HTTP Protocol', link: '/spec/http-protocol' }
+          ]
+        },
+        {
+          text: 'Document Library',
+          items: [
+            { text: 'Document Protocol', link: '/spec/document-protocol' }
           ]
         }
       ]
