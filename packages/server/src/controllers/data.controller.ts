@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, HttpException, HttpStatus, Req } from '@nestjs/common';
-import { objectql } from '../objectql/objectql.instance';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, HttpException, HttpStatus, Req, Inject } from '@nestjs/common';
+import { ObjectQL } from '@objectql/core';
 
 @Controller('api/v6/data/:objectName')
 export class DataController {
     
+    constructor(@Inject(ObjectQL) private objectql: ObjectQL) {}
+
     private getContext(req: any) {
         const user = req.user || {};
-        return objectql.createContext({
+        return this.objectql.createContext({
             userId: user.userId || user.id || user.sub,
             spaceId: user.spaceId,
             roles: user.roles,

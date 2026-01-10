@@ -1,15 +1,10 @@
-import { Module, MiddlewareConsumer, RequestMethod, OnModuleInit } from '@nestjs/common';
-import { objectql } from './objectql.instance';
+import { Module, Global } from '@nestjs/common';
+import { objectQLProvider } from './objectql.provider';
 
+@Global()
 @Module({
-    exports: []
+    providers: [objectQLProvider],
+    exports: [objectQLProvider]
 })
-export class ObjectQLModule implements OnModuleInit {
-    async onModuleInit() {
-        await objectql.init();
-        console.log('ObjectQL Initialized');
-    }
+export class ObjectQLModule {}
 
-    configure(consumer: MiddlewareConsumer) {
-    }
-}

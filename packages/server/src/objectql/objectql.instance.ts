@@ -9,7 +9,6 @@ export const objectql = new ObjectQL({
       })
   },
   packages: [
-      '@example/project-management',
-      '@objectql/platform'
+      '@objectos/preset-base'
   ]
 });

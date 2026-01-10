@@ -11,5 +11,5 @@
 - Updated dependencies
   - @example/project-management@2.0.0
   - @objectql/api@1.1.0
-  - @objectql/core@1.1.0
+  - @objectos/core@1.1.0
   - @objectql/driver-mongo@1.1.0
