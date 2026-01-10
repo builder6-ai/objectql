@@ -1,0 +1,51 @@
+name: documentVersion
+label: Document Version
+description: Version history of documents
+icon: history-line
+fields:
+  document:
+    type: lookup
+    reference_to: document
+    required: true
+    label: Document
+    description: Reference to the main document
+  version_number:
+    type: number
+    required: true
+    label: Version Number
+    description: Version number
+  title:
+    type: text
+    required: true
+    label: Title
+    description: Document title at this version
+  content:
+    type: textarea
+    label: Content
+    description: Document content at this version
+  file_url:
+    type: url
+    label: File URL
+    description: URL to the file at this version
+  file_name:
+    type: text
+    label: File Name
+    description: File name at this version
+  file_size:
+    type: number
+    label: File Size
+    description: File size in bytes
+  change_summary:
+    type: textarea
+    label: Change Summary
+    description: Summary of changes in this version
+  created_by:
+    type: lookup
+    reference_to: user
+    label: Created By
+    description: User who created this version
+  created_at:
+    type: datetime
+    label: Created At
+    default: now()
+    customizable: false

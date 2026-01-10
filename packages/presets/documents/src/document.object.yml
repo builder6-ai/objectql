@@ -1,0 +1,87 @@
+name: document
+label: Document
+description: Document in the library
+icon: file-text-line
+fields:
+  title:
+    type: text
+    required: true
+    label: Document Title
+    description: Title of the document
+  description:
+    type: textarea
+    label: Description
+    description: Document description or summary
+  folder:
+    type: lookup
+    reference_to: folder
+    label: Folder
+    description: Folder containing this document
+  content:
+    type: textarea
+    label: Content
+    description: Document content (for text documents)
+  file_url:
+    type: url
+    label: File URL
+    description: URL to the uploaded file
+  file_name:
+    type: text
+    label: File Name
+    description: Original file name
+  file_size:
+    type: number
+    label: File Size
+    description: File size in bytes
+  file_type:
+    type: text
+    label: File Type
+    description: MIME type of the file
+  status:
+    type: select
+    label: Status
+    description: Document status
+    options:
+      - draft
+      - review
+      - published
+      - archived
+    defaultValue: draft
+  tags:
+    type: text
+    label: Tags
+    description: Comma-separated tags for categorization
+  is_public:
+    type: boolean
+    label: Public Document
+    description: Whether this document is publicly accessible
+    defaultValue: false
+  version:
+    type: number
+    label: Version
+    description: Current version number
+    defaultValue: 1
+  author:
+    type: lookup
+    reference_to: user
+    label: Author
+    description: Document author
+  created_by:
+    type: lookup
+    reference_to: user
+    label: Created By
+    description: User who created this document
+  created_at:
+    type: datetime
+    label: Created At
+    default: now()
+    customizable: false
+  updated_at:
+    type: datetime
+    label: Updated At
+    default: now()
+    customizable: false
+  published_at:
+    type: datetime
+    label: Published At
+    description: When the document was published
