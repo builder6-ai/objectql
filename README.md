@@ -1,11 +1,11 @@
-# ObjectOS (The Runtime Platform)
+# ObjectOS
 
 <div align="center">
 
-**The Metadata-Driven Low-Code Engine.**
-*Build Salesforce-class Enterprise Applications in minutes, not months.*
+**Open-source alternative to Salesforce & Airtable.**
+*A full-stack low-code platform with metadata-driven backend and auto-generated React UI.*
 
-[Documentation](https://www.google.com/search?q=https://objectos.org) · [ObjectQL Protocol](https://www.google.com/search?q=https://github.com/objectql/objectql) · [Discussions](https://www.google.com/search?q=https://github.com/objectql/objectos/discussions)
+[Documentation](https://objectos.org) · [Protocol Specs](https://github.com/objectql/objectql) · [Live Demo](https://demo.objectos.org)
 
 </div>
 
@@ -13,168 +13,134 @@
 
 ## 📖 Introduction
 
-**ObjectOS** is the high-performance application runtime built on top of the [ObjectQL Protocol](https://www.google.com/search?q=https://github.com/objectql/objectql).
+**ObjectOS** is the unified low-code platform for the AI era.
 
-While ObjectQL defines *how to describe data* (the Protocol & Drivers), **ObjectOS** defines *how to run the business* (the Platform). It provides a modular **Kernel**, a production-ready **HTTP Server**, and a rich ecosystem of **Plugins** to handle Authentication, Workflows, and Permissions.
+Most platforms force you to choose: flexibility (like **Airtable**) or structure (like **Salesforce**). ObjectOS gives you both in a single, open-source package.
 
-**Think of it as:**
+By defining your business logic in standard `*.object.yml` files (powered by [ObjectQL](https://github.com/objectql/objectql)), ObjectOS instantly generates:
 
-* **ObjectQL** is HTML (Standard).
-* **ObjectOS** is Chrome (Engine).
+1. **A Powerful Backend:** Node.js kernel with built-in Auth, Permissions (RBAC/RLS), and Workflow.
+2. **A Unified Frontend:** A React application that combines high-performance Data Grids with enterprise-grade Detail Forms.
 
 ## ✨ Key Features
 
-* **🧠 Modular Micro-Kernel:** A pure logic engine that handles metadata loading, lifecycle hooks, and dependency injection. Framework agnostic.
-* **🔌 Protocol Driven:** Natively understands `*.object.yml` files. Zero boilerplate for CRUD.
-* **🛡️ Enterprise Security:** Built-in Row-Level Security (RLS) and Field-Level Security (FLS) powered by RBAC.
-* **🧩 Preset System:** Instantly transform the engine into a CRM, ERP, or PM tool using pre-packaged metadata bundles (Presets).
-* **⚡ High Performance:** Optimized for Node.js, supporting massive concurrency and serverless deployment.
+### 🖥️ The Unified UI (Hybrid Experience)
+
+Stop building separate "Admin Panels" and "Dashboards".
+
+* **Grid View (Airtable-like):** Powered by **TanStack Table**. Supports resizing, sorting, and inline editing for mass data entry.
+* **Detail Drawer (Salesforce-like):** Click any row to slide out a structured form with related lists and activity feeds.
+* **Auto-Generated:** Zero frontend code required. Rendered dynamically from metadata.
+
+### ⚙️ The Metadata Engine
+
+* **Protocol Driven:** Describes data, validation, and layout in pure YAML.
+* **Database Agnostic:** Runs on PostgreSQL, MongoDB, or SQLite.
+* **Enterprise Security:** Field-level security and record-level sharing rules out of the box.
+
+### 🤖 AI-First Architecture
+
+ObjectOS is designed to be the "Execution Layer" for AI.
+
+* Don't write boilerplate. Let AI generate your `object.yml` and complex formulas.
+* The runtime handles the heavy lifting (CRUD, Validation, State Management).
 
 ---
 
 ## 🏗 Architecture
 
-ObjectOS follows a strict **Onion Architecture**. The Kernel is the core, surrounded by Interface adapters (Server) and Infrastructure (Drivers/Plugins).
+ObjectOS is a Monorepo that bridges the gap between Protocol and User Experience.
 
 ```mermaid
 graph TD
-    User((Client)) -->|REST / GraphQL| Server[@objectos/server]
-    
-    subgraph "ObjectOS Runtime"
-        Server -->|Context| Kernel[@objectos/kernel]
-        
-        Kernel -->|Auth Logic| PluginAuth[@objectos/plugin-auth]
-        Kernel -->|Workflow| PluginFlow[@objectos/plugin-workflow]
-        
-        Kernel -->|Load Metadata| Preset[@objectos/preset-steedos]
+    subgraph "The Definition (ObjectQL)"
+        YAML[contact.object.yml] -->|Parses| Metadata
     end
     
-    subgraph "ObjectQL Data Layer (External Repo)"
-        Kernel -->|Dispatch Query| DriverPG[@objectql/driver-pg]
-        Kernel -->|Dispatch Query| DriverMongo[@objectql/driver-mongo]
+    subgraph "The Engine (@objectos/kernel)"
+        Metadata --> Kernel
+        Kernel -->|Auth & Logic| Plugins
+        Kernel -->|SQL/NoSQL| DB[(Database)]
     end
     
-    DriverPG --> DB[(PostgreSQL)]
+    subgraph "The Interface (apps/platform)"
+        Kernel <-->|API| SDK[@objectos/sdk]
+        SDK --> Renderer[@objectos/renderer]
+        Renderer --> UI[Unified React UI]
+    end
+    
+    style UI fill:#f9f,stroke:#333,stroke-width:2px
 
 ```
-
----
-
-## 📦 Packages Overview
-
-This repository is a **Monorepo** managed by Turborepo.
-
-### 1. The Core 
-
-| Package | Description |
-| --- | --- |
-| **`@objectos/kernel`** | The brain. Manages object registry, triggers, and query dispatching. |
-| **`@objectos/server`** | The gateway. A NestJS-based HTTP server exposing standard API endpoints. |
-
-### 2. The Plugins
-
-| Package | Description |
-| --- | --- |
-| **`@objectos/plugin-auth`** | Integration with **Better-Auth**. Handles Session, SSO, and 2FA. |
-| **`@objectos/plugin-workflow`** | A BPMN-compatible workflow engine for approval processes. |
-| **`@objectos/plugin-storage`** | File upload adapters for S3, OSS, and MinIO. |
-| **`@objectos/plugin-script`** | Sandbox for running custom server-side scripts safely. |
-
-### 3. The Presets 
-
-| Package | Description |
-| --- | --- |
-| **`@objectos/preset-base`** | Minimal system objects (Users, Roles, Permissions). |
-| **`@objectos/preset-steedos`** | **Steedos Compatible.** Full CRM metadata (Spaces, Orgs, Accounts). |
-| **`@objectos/preset-iot`** | IoT specific objects (Devices, Telemetry, Alerts). |
 
 ---
 
 ## 🚀 Quick Start
 
-Build a CRM in 30 seconds.
+Build a CRM in less than a minute.
 
-### 1. Install Dependencies
-
-Note: We install the **Runtime** from here, and the **Driver** from the ObjectQL repo.
+### 1. Create a Project
 
 ```bash
-npm install @objectos/kernel @objectos/server @objectql/driver-pg
+npx create-objectos-app my-company
+cd my-company
+npm install
 
 ```
 
-### 2. Create the Application (`main.ts`)
+### 2. Define an Object
 
-```typescript
-import { ObjectOS } from '@objectos/kernel';
-import { ObjectServer } from '@objectos/server';
-// The Driver comes from the Protocol layer
-import { PostgresDriver } from '@objectql/driver-pg'; 
+Create `objects/deal.object.yml`:
 
-async function bootstrap() {
-  // 1. Initialize the Kernel
-  const kernel = new ObjectOS();
-
-  // 2. Mount the Driver (Kernel is database agnostic)
-  const driver = new PostgresDriver({
-    connection: process.env.DATABASE_URL
-  });
-  await driver.connect();
-  kernel.useDriver(driver);
-
-  // 3. Load Business Logic (Presets & Local Files)
-  // This loads standard CRM objects like 'accounts', 'contacts'
-  await kernel.loadPreset('@objectos/preset-steedos'); 
-  
-  // Load your custom objects
-  await kernel.loadFromDirectory('./my-objects');
-
-  // 4. Start the HTTP Server
-  const server = new ObjectServer(kernel);
-  await server.listen(3000);
-  
-  console.log('🚀 ObjectOS is running on http://localhost:3000');
-}
-
-bootstrap();
+```yaml
+name: deals
+label: Sales Deal
+icon: dollar-sign
+fields:
+  title:
+    type: text
+    required: true
+  amount:
+    type: currency
+    scale: 2
+  stage:
+    type: select
+    options: ["New", "Negotiation", "Won", "Lost"]
+  close_date:
+    type: date
 
 ```
 
-### 3. Consume the API
-
-You now have a full CRUD API with filtering, sorting, and permissions.
+### 3. Run the Platform
 
 ```bash
-curl -X POST http://localhost:3000/api/v4/accounts/query \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filters": [["annual_revenue", ">", 1000000]],
-    "fields": ["name", "owner.name", "created_at"]
-  }'
+npm run dev
 
 ```
+
+Visit `http://localhost:3000`.
+You will see a **Data Grid** for Deals. Click "New" to see the **Form**. All CRUD operations work instantly.
 
 ---
 
-## 🤖 AI Strategy
+## 📦 Ecosystem
 
-ObjectOS is designed to be the **Execution Target** for AI.
-
-Do not write boilerplate code. Use our **AI Context** (in `objectql` repo) to instruct LLMs (Cursor, Copilot) to:
-
-1. Generate `*.object.yml` files from business requirements.
-2. Write complex Formulas and Automation Rules.
-3. Generate frontend code that consumes ObjectOS APIs.
+| Package | Description |
+| --- | --- |
+| **`apps/platform`** | The unified frontend application (React + Shadcn UI). |
+| **`@objectos/kernel`** | The backend logic engine. |
+| **`@objectos/server`** | The NestJS API gateway. |
+| **`@objectos/plugin-auth`** | Authentication via Better-Auth. |
 
 ---
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](https://www.google.com/search?q=CONTRIBUTING.md).
+We are building the future of open-source business software.
 
-* **Bug Reports:** Open an issue here.
-* **Protocol Changes:** Please go to [objectql/objectql](https://www.google.com/search?q=https://github.com/objectql/objectql).
+* **Core Protocol:** Contribute to [objectql/objectql](https://github.com/objectql/objectql).
+* **Runtime & UI:** Submit PRs to this repository.
 
 ## 📄 License
 
-MIT © [ObjectOS Team](https://www.google.com/search?q=https://objectos.org)
+MIT © [ObjectOS Team](https://objectos.org)
