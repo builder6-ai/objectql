@@ -16,7 +16,6 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/' },
       { text: 'Specifications', link: '/spec/' },
-      { text: 'AI Context', link: '/AI_CONTEXT' }
     ],
 
     // Sidebar Configuration
@@ -36,7 +35,6 @@ export default defineConfig({
           items: [
             { text: 'SDK Reference', link: '/guide/sdk-reference' },
             { text: 'Writing Hooks', link: '/guide/logic-hooks' },
-            { text: 'Hooks Examples', link: '/guide/logic-hooks-examples' },
             { text: 'Custom Actions', link: '/guide/logic-actions' }
           ]
         }

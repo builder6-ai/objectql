@@ -1,4 +1,4 @@
-import { ObjectQLContext } from '@objectql/core';
+import { ObjectQLContext } from '@objectql/types';
 
 export const listenTo = 'projects';
 

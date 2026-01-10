@@ -11,11 +11,11 @@
     "build": "tsc && cp src/*.yml dist/",
     "test": "echo \"No tests specified\" && exit 0"
   },
-  "peerDependencies": {
-    "@objectql/core": "^1.1.0"
+  "dependencies": {
+    "@objectql/core": "^1.2.0"
   },
   "devDependencies": {
-    "@objectql/core": "^1.1.0",
+    "@objectql/types": "^1.2.0",
     "typescript": "^5.3.0"
   }
 }
