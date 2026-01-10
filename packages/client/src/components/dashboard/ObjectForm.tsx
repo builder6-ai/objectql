@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Button, Spinner, Field } from '@objectql/ui';
+import { Button, Spinner, Field } from '@objectos/ui';
 
 interface ObjectFormProps {
     objectName: string;

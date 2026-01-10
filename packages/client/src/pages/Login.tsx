@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Input, Button, Label, Spinner } from '@objectql/ui';
+import { Card, Input, Button, Label, Spinner } from '@objectos/ui';
 import { useAuth } from '../context/AuthContext';
 import { Database } from 'lucide-react';
 

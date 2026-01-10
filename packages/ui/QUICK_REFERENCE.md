@@ -23,7 +23,7 @@
 ### 1. Enable All Features (GridView)
 
 ```tsx
-import { GridView } from '@objectql/ui'
+import { GridView } from '@objectos/ui'
 
 <GridView
   columns={columns}
@@ -43,7 +43,7 @@ import { GridView } from '@objectql/ui'
 ### 2. Enable All Features (DataTable)
 
 ```tsx
-import { DataTable } from '@objectql/ui'
+import { DataTable } from '@objectos/ui'
 
 <DataTable
   columns={columns}

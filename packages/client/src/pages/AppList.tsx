@@ -7,7 +7,7 @@ import {
     CardContent,
     Button,
     Spinner
-} from '@objectql/ui';
+} from '@objectos/ui';
 import { useRouter } from '../hooks/useRouter';
 import { getHeaders } from '../lib/api';
 import { AppWindow, Settings, ChevronRight } from 'lucide-react';

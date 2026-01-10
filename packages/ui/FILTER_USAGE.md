@@ -16,7 +16,7 @@ The ObjectQL DataTable component now includes enhanced filter functionality that
 ### 1. Basic Single Column Filter (Legacy)
 
 ```tsx
-import { DataTable } from '@objectql/ui'
+import { DataTable } from '@objectos/ui'
 
 <DataTable
   columns={columns}
@@ -29,7 +29,7 @@ import { DataTable } from '@objectql/ui'
 ### 2. Multiple Column Filters
 
 ```tsx
-import { DataTable } from '@objectql/ui'
+import { DataTable } from '@objectos/ui'
 
 <DataTable
   columns={columns}
@@ -47,7 +47,7 @@ import { DataTable } from '@objectql/ui'
 ### 3. Custom Filter UI with Standalone Components
 
 ```tsx
-import { DataTable, DataTableFilter, DataTableFiltersToolbar } from '@objectql/ui'
+import { DataTable, DataTableFilter, DataTableFiltersToolbar } from '@objectos/ui'
 import { useReactTable, getCoreRowModel, getFilteredRowModel } from '@tanstack/react-table'
 
 function MyCustomTable() {

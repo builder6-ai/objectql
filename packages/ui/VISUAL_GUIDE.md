@@ -262,7 +262,7 @@ import {
   Badge,
   Select,
   Popover
-} from '@objectql/ui'
+} from '@objectos/ui'
 ```
 
 2. **Define columns:**

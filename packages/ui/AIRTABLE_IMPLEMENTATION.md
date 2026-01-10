@@ -143,7 +143,7 @@ Updated to use a consistent **stone** color palette:
 ## Usage Example
 
 ```tsx
-import { GridView, Toolbar, ViewSwitcher, Badge } from '@objectql/ui'
+import { GridView, Toolbar, ViewSwitcher, Badge } from '@objectos/ui'
 
 function MyDataView() {
   const columns = [
@@ -189,7 +189,7 @@ The new components are fully backward compatible. To use the new GridView:
 
 1. Import the new components:
 ```tsx
-import { GridView, Badge } from '@objectql/ui'
+import { GridView, Badge } from '@objectos/ui'
 ```
 
 2. Replace your table component with GridView:

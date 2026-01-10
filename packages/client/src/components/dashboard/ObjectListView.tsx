@@ -20,7 +20,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuItem,
     DropdownMenuSeparator
-} from '@objectql/ui';
+} from '@objectos/ui';
 import { ObjectForm } from './ObjectForm';
 import { Plus, RefreshCw, Grid, List as ListIcon, Filter, MoreHorizontal, FileText, Trash, Pencil } from 'lucide-react';
 // import { useRouter } from ... passed as prop

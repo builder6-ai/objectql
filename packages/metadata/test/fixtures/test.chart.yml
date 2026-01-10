@@ -1,8 +1,0 @@
-name: test_chart
-label: Test Chart
-type: bar
-object: test_object
-xAxisKey: category
-yAxisKeys:
-  - value
-height: 300

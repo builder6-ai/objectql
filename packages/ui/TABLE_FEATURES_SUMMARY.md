@@ -256,7 +256,7 @@ Clipboard API includes fallback for older browsers.
 ## Example Usage (All Features Combined)
 
 ```tsx
-import { GridView } from '@objectql/ui'
+import { GridView } from '@objectos/ui'
 
 function MyTable() {
   const [columns, setColumns] = useState(initialColumns)

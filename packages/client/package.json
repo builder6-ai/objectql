@@ -1,5 +1,5 @@
 {
-  "name": "@objectql/client",
+  "name": "@objectos/client",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@objectql/ui": "*",
+    "@objectos/ui": "*",
     "better-auth": "^1.4.10",
     "clsx": "^2.1.0",
     "lucide-react": "^0.344.0",

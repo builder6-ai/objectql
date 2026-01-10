@@ -14,16 +14,16 @@ A versatile chart component for data visualization, inspired by Airtable's chart
 
 ## Installation
 
-The Chart component is included in the `@objectql/ui` package:
+The Chart component is included in the `@objectos/ui` package:
 
 ```bash
-npm install @objectql/ui
+npm install @objectos/ui
 ```
 
 ## Basic Usage
 
 ```tsx
-import { Chart } from '@objectql/ui';
+import { Chart } from '@objectos/ui';
 
 const data = [
   { month: 'Jan', sales: 4000 },
@@ -200,7 +200,7 @@ const data = [
 The component is fully typed. You can import the types:
 
 ```typescript
-import { Chart, ChartProps, ChartType, ChartDataPoint } from '@objectql/ui';
+import { Chart, ChartProps, ChartType, ChartDataPoint } from '@objectos/ui';
 
 const myData: ChartDataPoint[] = [
   { name: 'A', value: 100 },

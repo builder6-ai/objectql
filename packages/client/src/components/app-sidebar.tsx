@@ -18,7 +18,7 @@ import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
-} from "@objectql/ui"
+} from "@objectos/ui"
 import * as LucideIcons from "lucide-react"
 import { useRouter } from "../hooks/useRouter"
 import { NavUser } from "./nav-user"

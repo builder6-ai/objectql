@@ -7,7 +7,7 @@ export default {
       "./index.html",
       "./src/**/*.{js,ts,jsx,tsx}",
       "../ui/src/**/*.{js,ts,jsx,tsx}",
-      "../../node_modules/@objectql/ui/dist/**/*.{js,mjs}"
+      "../../node_modules/@objectos/ui/dist/**/*.{js,mjs}"
     ],
     theme: {
     	container: {

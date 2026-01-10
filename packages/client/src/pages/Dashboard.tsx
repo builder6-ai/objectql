@@ -5,7 +5,7 @@ import {
     CardHeader,
     CardTitle,
     CardDescription
-} from '@objectql/ui';
+} from '@objectos/ui';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from '../hooks/useRouter';
 import { ObjectListView } from '../components/dashboard/ObjectListView';

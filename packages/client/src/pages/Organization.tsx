@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Card, Input, Label, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@objectql/ui';
+import { Card, Input, Label, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@objectos/ui';
 import { useAuth } from '../context/AuthContext';
 import { authClient } from '../lib/auth';
 

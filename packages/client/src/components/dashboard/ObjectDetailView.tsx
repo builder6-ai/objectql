@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Spinner } from '@objectql/ui';
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Spinner } from '@objectos/ui';
 import { getHeaders } from '../../lib/api';
 import { ChevronLeft, Pencil, Trash } from 'lucide-react';
 import { ObjectForm } from './ObjectForm';

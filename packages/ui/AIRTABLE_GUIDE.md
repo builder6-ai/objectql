@@ -27,7 +27,7 @@ ObjectQL UI provides a comprehensive set of components to build data-centric app
 The GridView component provides an Airtable-like grid interface with support for multiple column types and inline editing.
 
 ```tsx
-import { GridView } from '@objectql/ui'
+import { GridView } from '@objectos/ui'
 
 const columns = [
   { id: 'name', label: 'Name', type: 'text', width: 200, editable: true },
@@ -106,7 +106,7 @@ GridView supports single and multi-column sorting similar to Airtable:
 **Example:**
 
 ```tsx
-import { GridView, SortConfig } from '@objectql/ui'
+import { GridView, SortConfig } from '@objectos/ui'
 
 function MyComponent() {
   const [sorts, setSorts] = useState<SortConfig[]>([])
@@ -152,7 +152,7 @@ const columns = [
 Toolbar provides a consistent header for your views with title, actions, and view switching.
 
 ```tsx
-import { Toolbar, ViewSwitcher, ToolbarIcons } from '@objectql/ui'
+import { Toolbar, ViewSwitcher, ToolbarIcons } from '@objectos/ui'
 
 <Toolbar
   title="Projects Database"
@@ -190,7 +190,7 @@ import { Toolbar, ViewSwitcher, ToolbarIcons } from '@objectql/ui'
 Badges are used to display status, categories, or any labeled information with color coding.
 
 ```tsx
-import { Badge } from '@objectql/ui'
+import { Badge } from '@objectos/ui'
 
 <Badge variant="success">Active</Badge>
 <Badge variant="warning">Pending</Badge>
@@ -211,7 +211,7 @@ import { Badge } from '@objectql/ui'
 A styled dropdown select component.
 
 ```tsx
-import { Select } from '@objectql/ui'
+import { Select } from '@objectos/ui'
 
 <Select
   options={[
@@ -228,7 +228,7 @@ import { Select } from '@objectql/ui'
 A simple popover for dropdown menus and contextual actions.
 
 ```tsx
-import { Popover } from '@objectql/ui'
+import { Popover } from '@objectos/ui'
 
 <Popover
   trigger={<Button>Actions</Button>}
@@ -247,7 +247,7 @@ ObjectQL provides specialized field components for forms:
 ### SelectField
 
 ```tsx
-import { SelectField } from '@objectql/ui'
+import { SelectField } from '@objectos/ui'
 
 <SelectField
   name="status"
@@ -265,7 +265,7 @@ import { SelectField } from '@objectql/ui'
 ### DateField
 
 ```tsx
-import { DateField } from '@objectql/ui'
+import { DateField } from '@objectos/ui'
 
 <DateField
   name="startDate"
@@ -280,7 +280,7 @@ import { DateField } from '@objectql/ui'
 For selecting status/category values displayed as badges:
 
 ```tsx
-import { BadgeField } from '@objectql/ui'
+import { BadgeField } from '@objectos/ui'
 
 <BadgeField
   name="priority"
@@ -309,7 +309,7 @@ import {
   Button,
   Modal,
   AutoForm,
-} from '@objectql/ui'
+} from '@objectos/ui'
 
 function MyDataView() {
   const [data, setData] = useState([/* your data */])

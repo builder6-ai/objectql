@@ -23,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@objectql/ui"
+} from "@objectos/ui"
 import { useAuth } from "../context/AuthContext"
 
 export function NavUser({

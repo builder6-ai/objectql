@@ -1,11 +1,7 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/metadata" },
-    { "path": "./packages/core" },
     { "path": "./packages/api" },
-    { "path": "./packages/driver-mongo" },
-    { "path": "./packages/driver-knex" },
     { "path": "./packages/ui" },
     { "path": "./examples/project-management" }
   ]

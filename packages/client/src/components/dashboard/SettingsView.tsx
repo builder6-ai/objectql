@@ -5,7 +5,7 @@ import {
     CardHeader, 
     CardTitle,
     Badge 
-} from '@objectql/ui';
+} from '@objectos/ui';
 
 interface SettingsViewProps {
     objectCount?: number;

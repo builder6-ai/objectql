@@ -1,4 +1,4 @@
-import { Card, Input, Label, Button } from '@objectql/ui';
+import { Card, Input, Label, Button } from '@objectos/ui';
 import { useAuth } from '../context/AuthContext';
 
 export default function Settings() {

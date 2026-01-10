@@ -30,7 +30,7 @@ The row sorting feature allows users to sort table data by one or multiple colum
 #### GridView 组件
 
 ```tsx
-import { GridView, SortConfig } from '@objectql/ui'
+import { GridView, SortConfig } from '@objectos/ui'
 
 function MyComponent() {
   const [sorts, setSorts] = useState<SortConfig[]>([])
@@ -111,7 +111,7 @@ The grouping feature allows users to group table data by a specified column, wit
 #### GridView 组件
 
 ```tsx
-import { GridView } from '@objectql/ui'
+import { GridView } from '@objectos/ui'
 
 <GridView
   columns={columns}
@@ -124,7 +124,7 @@ import { GridView } from '@objectql/ui'
 #### DataTable 组件
 
 ```tsx
-import { DataTable } from '@objectql/ui'
+import { DataTable } from '@objectos/ui'
 
 <DataTable
   columns={columns}

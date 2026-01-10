@@ -21,9 +21,5 @@
   },
   "exclude": ["node_modules", "test", "dist", "**/*.spec.ts", "**/*.test.ts"],
   "references": [
-    { "path": "../core" },
-    { "path": "../driver-mongo" },
-    { "path": "../driver-knex" },
-    { "path": "../../examples/project-management" }
   ]
 }

@@ -1,4 +1,4 @@
-import { cn } from "@objectql/ui";
+import { cn } from "@objectos/ui";
 
 export function Spinner({ className }: { className?: string }) {
     return (

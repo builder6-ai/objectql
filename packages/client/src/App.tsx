@@ -6,7 +6,7 @@ import Settings from './pages/Settings';
 import Organization from './pages/Organization';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { AppSidebar } from './components/app-sidebar';
-import { SidebarProvider, SidebarInset, SidebarTrigger, Separator, Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, Avatar, AvatarFallback, AvatarImage, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from '@objectql/ui';
+import { SidebarProvider, SidebarInset, SidebarTrigger, Separator, Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, Avatar, AvatarFallback, AvatarImage, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuGroup, DropdownMenuItem } from '@objectos/ui';
 import { LogOut, Settings as SettingsIcon, Building, Bell } from 'lucide-react';
 
 function AppContent() {

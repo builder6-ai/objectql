@@ -1,5 +1,5 @@
 {
-  "name": "@objectql/api",
+  "name": "@objectos/api",
   "version": "0.2.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,7 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.2",
-    "@objectql/platform": "*",
+    "@objectos/platform": "*",
     "@objectql/core": "*",
     "@objectql/driver-knex": "*",
     "@objectql/driver-mongo": "*",
