@@ -33,21 +33,23 @@ export class AppModule implements NestModule {
     const studioHandler = createStudioHandler();
 
     consumer
-      .apply(restHandler)
-      .forRoutes({ path: 'api/data', method: RequestMethod.ALL });
-
-    consumer
-        .apply(metadataHandler)
-        .forRoutes({ path: 'api/metadata', method: RequestMethod.ALL });
-
-    consumer
-        .apply(objectQLHandler)
-        .forRoutes({ path: 'api/objectql', method: RequestMethod.ALL });
- 
-        
-    consumer
       .apply(AuthMiddleware)
       .forRoutes({ path: 'api/*', method: RequestMethod.ALL });
 
+    consumer
+      .apply(restHandler)
+      .forRoutes({ path: 'api/data*', method: RequestMethod.ALL });
+
+    consumer
+        .apply(metadataHandler)
+        .forRoutes({ path: 'api/metadata*', method: RequestMethod.ALL });
+
+    consumer
+        .apply(objectQLHandler)
+        .forRoutes({ path: 'api/objectql*', method: RequestMethod.ALL });
+        
+    consumer
+        .apply(studioHandler)
+        .forRoutes({ path: 'studio*', method: RequestMethod.ALL });
   }
 }
