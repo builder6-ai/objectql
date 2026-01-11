@@ -5,7 +5,7 @@
 **Salesforce 和 Airtable 的开源替代方案**  
 *元数据驱动的全栈低代码平台，自动生成后端 API 和 React 前端界面*
 
-[英文文档](../README.md) · [中文文档](./zh/) · [协议规范](https://github.com/objectql/objectql) · [AI Builder](https://www.builder6.ai)
+[英文文档](./README.md) · [中文文档](./docs/zh/) · [协议规范](https://github.com/objectql/objectql) · [AI Builder](https://www.builder6.ai)
 
 </div>
 
@@ -123,7 +123,7 @@ npm run dev
 
 我们提供了全面的中文文档，包括：
 
-### 📖 [项目简介](./zh/项目简介.md)
+### 📖 [项目简介](./docs/zh/项目简介.md)
 - 项目定位与核心理念
 - ObjectQL 与 ObjectOS 的关系  
 - 详细的技术架构
@@ -132,7 +132,7 @@ npm run dev
 - 适用场景分析
 - 快速开始指南
 
-### 💼 [商业战略](./zh/商业战略.md)
+### 💼 [商业战略](./docs/zh/商业战略.md)
 - 战略定位与三大战略支柱
 - 目标市场分析（规模 $270 亿 → $1,870 亿）
 - 竞争格局与差异化优势
@@ -142,7 +142,7 @@ npm run dev
 - 风险管理与应对措施
 - 战略合作规划
 
-### 🛠 [开发计划](./zh/开发计划.md)
+### 🛠 [开发计划](./docs/zh/开发计划.md)
 - 开发原则与技术栈
 - 架构演进路线（单体 → 微服务 → 边缘计算）
 - 详细功能开发路线图（2026-2027）
@@ -152,7 +152,7 @@ npm run dev
 - 版本发布计划
 - 成功指标（KPI）
 
-[查看完整中文文档目录 →](./zh/)
+[查看完整中文文档目录 →](./docs/zh/)
 
 ---
 
