@@ -92,3 +92,5 @@ export const getAuth = async () => {
     }
 };
 
+export default { getAuth };
+

@@ -1,5 +1,5 @@
 import { Controller, All, Req, Res } from '@nestjs/common';
-import { getAuth } from './auth.client';
+import { getAuth } from './auth.client.js';
 
 @Controller('api/v6/auth')
 export class AuthController {

@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
-  testMatch: ['**/test/**/*.test.ts'],
+  testMatch: ['**/test/**/*.test.ts', '!**/test/**/*.e2e.test.ts'],
   transform: {
     '^.+\\.(t|j|m)s$': ['ts-jest', {
       useESM: true,

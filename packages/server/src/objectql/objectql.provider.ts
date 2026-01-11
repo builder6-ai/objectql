@@ -76,3 +76,5 @@ export const objectQLProvider: Provider = {
         return objectos;
     }
 };
+
+export default objectQLProvider;
