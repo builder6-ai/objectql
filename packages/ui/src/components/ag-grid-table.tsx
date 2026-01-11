@@ -97,6 +97,8 @@ const HeaderCheckboxRenderer = (props: any) => {
 
   React.useEffect(() => {
     const api = apiRef.current
+    if (!api) return
+    
     const updateCheckboxState = () => {
       const selectedCount = api.getSelectedNodes().length
       const totalCount = api.getDisplayedRowCount()
@@ -106,6 +108,7 @@ const HeaderCheckboxRenderer = (props: any) => {
 
     api.addEventListener('selectionChanged', updateCheckboxState)
     return () => {
+      // Clean up using the stored API reference to prevent memory leaks
       api.removeEventListener('selectionChanged', updateCheckboxState)
     }
   }, [])
@@ -399,7 +402,7 @@ export function AgGridTable({
   const handlePageSizeChange = (value: string) => {
     const newPageSize = Number(value)
     setPageSize(newPageSize)
-    // Update pagination via gridOptions instead
+    // AG Grid v35 uses updateGridOptions instead of the deprecated paginationSetPageSize
     if (gridRef.current?.api) {
       gridRef.current.api.updateGridOptions({ paginationPageSize: newPageSize })
     }
