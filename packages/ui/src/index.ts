@@ -50,4 +50,5 @@ export * from './components/ui/toggle-group';
 export * from './components/ui/spinner';
 export { useIsMobile } from './hooks/use-mobile';
 export { AgGridTable } from './components/ag-grid-table';
+export { DataTable, schema } from './components/data-table';
 // Export shadcn components as they are added
