@@ -93,26 +93,28 @@ const CheckboxRenderer = (props: any) => {
 const HeaderCheckboxRenderer = (props: any) => {
   const [checked, setChecked] = React.useState(false)
   const [indeterminate, setIndeterminate] = React.useState(false)
+  const apiRef = React.useRef(props.api)
 
   React.useEffect(() => {
+    const api = apiRef.current
     const updateCheckboxState = () => {
-      const selectedCount = props.api.getSelectedNodes().length
-      const totalCount = props.api.getDisplayedRowCount()
+      const selectedCount = api.getSelectedNodes().length
+      const totalCount = api.getDisplayedRowCount()
       setChecked(selectedCount === totalCount && totalCount > 0)
       setIndeterminate(selectedCount > 0 && selectedCount < totalCount)
     }
 
-    props.api.addEventListener('selectionChanged', updateCheckboxState)
+    api.addEventListener('selectionChanged', updateCheckboxState)
     return () => {
-      props.api.removeEventListener('selectionChanged', updateCheckboxState)
+      api.removeEventListener('selectionChanged', updateCheckboxState)
     }
-  }, [props.api])
+  }, [])
 
   const onChange = (value: boolean) => {
     if (value) {
-      props.api.selectAll()
+      apiRef.current.selectAll()
     } else {
-      props.api.deselectAll()
+      apiRef.current.deselectAll()
     }
   }
 
@@ -517,7 +519,7 @@ export function DataTable({
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <div className="overflow-hidden rounded-lg border ag-theme-alpine-dark">
+        <div className="overflow-hidden rounded-lg border ag-theme-alpine dark:ag-theme-alpine-dark">
           <div style={{ height: '600px', width: '100%' }}>
             <AgGridReact
               ref={gridRef}
