@@ -17,7 +17,7 @@ const clientDistPath = resolve(process.cwd(), process.cwd().endsWith('api') ? '.
     AuthModule,
     ServeStaticModule.forRoot({
       rootPath: clientDistPath,
-      exclude: ['/api/(.*)', '/docs/(.*)', '/studio/(.*)'],
+      exclude: ['/api/(.*)'],
     }),
   ],
   controllers: [AppController],
