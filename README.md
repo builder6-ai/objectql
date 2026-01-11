@@ -5,7 +5,9 @@
 **Open-source alternative to Salesforce & Airtable.**
 *A full-stack low-code platform with metadata-driven backend and auto-generated React UI.*
 
-[Documentation](https://objectos.org) · [Protocol Specs](https://github.com/objectql/objectql) · [AI Builder](https://www.builder6.ai)
+[Documentation](https://objectos.org) · [中文文档](docs/zh/) · [Protocol Specs](https://github.com/objectql/objectql) · [AI Builder](https://www.builder6.ai)
+
+**[English](README.md) | [简体中文](README.zh-CN.md)**
 
 </div>
 
@@ -139,6 +141,16 @@ We are building the future of open-source business software.
 
 * **Core Protocol:** Contribute to [objectql/objectql](https://github.com/objectql/objectql).
 * **Runtime & UI:** Submit PRs to this repository.
+
+## 📚 中文文档 (Chinese Documentation)
+
+完整的中文文档已提供，包括：
+
+* **[项目简介](docs/zh/项目简介.md)** - 了解 ObjectOS 的核心价值、技术架构和应用场景
+* **[商业战略](docs/zh/商业战略.md)** - 市场定位、商业模式和发展战略
+* **[开发计划](docs/zh/开发计划.md)** - 技术路线图、功能规划和团队建设
+
+[查看所有中文文档 →](docs/zh/)
 
 ## 📄 License
 
