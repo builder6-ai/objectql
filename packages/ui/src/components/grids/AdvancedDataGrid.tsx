@@ -218,7 +218,13 @@ const LookupCellRenderer = (props: ICellRendererParams) => {
  */
 const sanitizeEmail = (email: string): string => {
   const sanitized = String(email).trim();
-  if (!sanitized.includes('@') || sanitized.toLowerCase().startsWith('javascript:')) {
+  // Basic validation - must contain @ and not start with dangerous protocols
+  const lowerEmail = sanitized.toLowerCase();
+  if (!sanitized.includes('@') || 
+      lowerEmail.startsWith('javascript:') ||
+      lowerEmail.startsWith('data:') ||
+      lowerEmail.startsWith('vbscript:') ||
+      lowerEmail.startsWith('file:')) {
     return '';
   }
   return sanitized;
@@ -229,10 +235,13 @@ const sanitizeEmail = (email: string): string => {
  */
 const sanitizeUrl = (url: string): string => {
   const sanitized = String(url).trim();
+  // Only allow http and https protocols
   if (!sanitized.match(/^https?:\/\//i)) {
     return '';
   }
-  if (sanitized.toLowerCase().match(/^(javascript|data|vbscript):/)) {
+  // Prevent javascript:, data:, vbscript:, and other dangerous protocols
+  const lowerUrl = sanitized.toLowerCase();
+  if (lowerUrl.match(/^(javascript|data|vbscript|file|about):/)) {
     return '';
   }
   return sanitized;
