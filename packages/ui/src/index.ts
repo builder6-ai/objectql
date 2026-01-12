@@ -84,6 +84,9 @@ export * from './components/visualizations/ChartAreaInteractive';
 export * from './components/visualizations/ChartBarInteractive';
 export * from './components/visualizations/ChartDonut';
 
+// Grid Components
+export * from './components/grids';
+
 // Legacy exports (keeping for backward compatibility or refactoring)
 export { DataTable, schema } from './components/data-table';
 export { ObjectForm, useObjectForm } from './components/object-form';
