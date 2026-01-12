@@ -4,9 +4,12 @@ import * as fs from 'fs';
 import glob from 'fast-glob';
 import { ObjectQLPlugin, IObjectQL } from '@objectql/types';
 
-async function loadFiles(app: IObjectQL, patterns: string[], handler: (ctx: any) => void) {
+async function loadFiles(app: IObjectQL, patterns: string[], handler: (ctx: any) => void, extraRoots: string[] = []) {
     const config = (app as any).config || {};
-    const sources: string[] = config.source ? (Array.isArray(config.source) ? config.source : [config.source]) : ['.'];
+    const configSources: string[] = config.source ? (Array.isArray(config.source) ? config.source : [config.source]) : ['.'];
+    // Merge config sources with extra roots (presets)
+    // Note: path.resolve handles absolute paths (extraRoots) correctly by ignoring cwd
+    const sources = [...configSources, ...extraRoots];
     
     for (const source of sources) {
         const cwd = path.resolve(process.cwd(), source);
@@ -21,6 +24,8 @@ async function loadFiles(app: IObjectQL, patterns: string[], handler: (ctx: any)
                     file,
                     content,
                     registry: app.metadata,
+                    // Try to infer package name from path if it's inside node_modules
+                    packageName: source.includes('node_modules') ? path.basename(source) : undefined
                 });
             } catch (err) {
                 console.error(`Error loading file ${file}`, err);
@@ -32,12 +37,48 @@ async function loadFiles(app: IObjectQL, patterns: string[], handler: (ctx: any)
 export const ObjectOSPlugin: ObjectQLPlugin = {
     name: 'objectos-core',
     async setup(app: IObjectQL) {
+        
+        // Resolve Presets to get their paths
+        const config = (app as any).config || {};
+        const presets = config.presets || config.packages || [];
+        const presetRoots: string[] = [];
+        
+        for (const preset of presets) {
+            try {
+                // Try to resolve package.json to get root, or entry point and get dirname
+                let entryPath;
+                try {
+                    // Try standard resolution
+                    entryPath = require.resolve(`${preset}/package.json`);
+                    presetRoots.push(path.dirname(entryPath));
+                    console.log(`[ObjectOS] Resolved preset '${preset}' at ${path.dirname(entryPath)}`);
+                } catch {
+                     try {
+                        entryPath = require.resolve(preset);
+                        presetRoots.push(path.dirname(entryPath));
+                        console.log(`[ObjectOS] Resolved preset '${preset}' entry at ${path.dirname(entryPath)}`);
+                     } catch {
+                        // Try resolving from process.cwd() (Project Root/Server Root)
+                        entryPath = require.resolve(preset, { paths: [process.cwd()] });
+                        // If it points to index.js, use dirname
+                        presetRoots.push(path.dirname(entryPath));
+                        console.log(`[ObjectOS] Resolved preset '${preset}' from cwd at ${path.dirname(entryPath)}`);
+                     }
+                }
+            } catch (e) {
+                console.warn(`[ObjectOS] Could not resolve preset '${preset}'. Make sure it is installed.`);
+            }
+        }
+
         // Objects
         await loadFiles(app, ['**/*.object.yml', '**/*.object.yaml'], (ctx) => {
              try {
                 const doc = yaml.load(ctx.content) as any;
                 const name = doc.name;
                 if (name) {
+                    // Check if object already exists?
+                    // Presets are loaded after? Or concurrent?
+                    // We register blindly, last one wins (or registry throws if strict)
                     ctx.registry.register('object', {
                         type: 'object',
                         id: name,
@@ -49,7 +90,7 @@ export const ObjectOSPlugin: ObjectQLPlugin = {
             } catch (e) {
                     console.error(`Error loading object from ${ctx.file}: ${e instanceof Error ? e.message : String(e)}`);
             }
-        });
+        }, presetRoots);
 
         // Apps
         await loadFiles(app, ['**/*.app.yml', '**/*.app.yaml'], (ctx) => {
@@ -69,7 +110,7 @@ export const ObjectOSPlugin: ObjectQLPlugin = {
                     console.error(`Error loading app from ${ctx.file}: ${e instanceof Error ? e.message : String(e)}`);
                     console.error('Expected YAML structure: { name: string, label: string, menu?: [...] }');
             }
-        });
+        }, presetRoots);
 
         // Data
         await loadFiles(app, ['**/*.data.yml', '**/*.data.yaml'], (ctx) => {

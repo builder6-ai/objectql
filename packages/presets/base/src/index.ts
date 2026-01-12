@@ -46,6 +46,13 @@ export const objectDefinitions = [
 ];
 
 /**
+ * List of app definition files provided by this package
+ */
+export const appDefinitions = [
+    'admin.app.yml'
+];
+
+/**
  * Get the full path to an object definition file
  * @param filename The object definition filename
  * @returns Full path to the file
