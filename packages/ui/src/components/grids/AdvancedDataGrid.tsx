@@ -157,7 +157,9 @@ const NumberCellRenderer = (props: ICellRendererParams & { fieldType?: FieldType
   let formatted = num.toLocaleString()
   
   if (fieldType === 'currency') {
-    formatted = new Intl.NumberFormat('en-US', {
+    // TODO: Make locale and currency configurable via field config
+    // For now, use browser's default locale with USD
+    formatted = new Intl.NumberFormat(undefined, {
       style: 'currency',
       currency: 'USD',
     }).format(num)
@@ -494,7 +496,6 @@ export function AdvancedDataGrid({
       style={{ height: typeof height === 'number' ? `${height}px` : height, width: '100%' }}
     >
       <AgGridReact
-        theme="legacy"
         ref={gridRef}
         rowData={data}
         columnDefs={columnDefs}

@@ -147,6 +147,7 @@ export function GridPagination({
             className="h-8 w-16"
             placeholder={(currentPage + 1).toString()}
             disabled={disabled || totalPages === 0}
+            aria-label="Jump to page number"
           />
         </form>
 
