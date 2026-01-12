@@ -122,7 +122,8 @@ function getValidationRules(fieldConfig: FieldConfig) {
   // URL validation
   if (fieldConfig.type === 'url') {
     rules.pattern = {
-      value: /^https?:\/\/.+/i,
+      // Require http(s) scheme and a plausible hostname, with optional port and path
+      value: /^(https?:\/\/)([\w-]+(\.[\w-]+)+)(:\d+)?(\/[^\s]*)?$/i,
       message: 'Invalid URL (must start with http:// or https://)'
     }
   }
