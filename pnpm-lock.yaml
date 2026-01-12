@@ -17,6 +17,12 @@ importers:
       '@objectql/driver-mongo':
         specifier: ^1.6.1
         version: 1.6.1
+      '@objectql/starter-basic':
+        specifier: ^1.6.1
+        version: 1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)
+      '@objectql/starter-enterprise':
+        specifier: ^1.6.1
+        version: 1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)
       build:
         specifier: ^0.1.4
         version: 0.1.4
@@ -133,19 +139,6 @@ importers:
       vite:
         specifier: ^6.0.5
         version: 6.4.1(@types/node@20.19.28)(jiti@1.21.7)(terser@5.44.1)
-
-  examples/project-management:
-    dependencies:
-      '@objectql/core':
-        specifier: ^1.6.1
-        version: 1.6.1
-    devDependencies:
-      '@objectql/types':
-        specifier: ^1.6.1
-        version: 1.6.1
-      typescript:
-        specifier: ^5.3.0
-        version: 5.6.3
 
   packages/kernel:
     dependencies:
@@ -1718,8 +1711,32 @@ packages:
   '@objectql/driver-mongo@1.6.1':
     resolution: {integrity: sha512-CB3/Y3D1IS7ZQOPTeq/wHYJLA7DS8wYkFMkOWJYmgiWO1Xj01BGhu7Zlg3SmlBL8TJ0HURDn5damt6xklJaDzA==}
 
+  '@objectql/driver-sql@1.6.1':
+    resolution: {integrity: sha512-Yi8GYEkFVkBX5NHPB/wZWTnT+0m1APmBUJ2JbW6rNC3CT39ykGsfE+0M7kyonAQAwKnenpFeus2g9dhurS33hg==}
+
+  '@objectql/platform-node@1.6.1':
+    resolution: {integrity: sha512-SmL7Srq/o9L3N9pHQwhvh/9pZhLjxXatAMSFnekSV1KL7sHkn6XcXLrmTDkFmoXRQlTYOqs0yATJghCmQysj/A==}
+
   '@objectql/server@1.6.1':
     resolution: {integrity: sha512-fKn6ET88QYndoWrCx8Kz/3B0CbCOk6dq5YBTNw+0Iu6mwcljBYfSXxnUAA6x5iZdCvFuw6XzTp4WBUQitKUBrQ==}
+
+  '@objectql/starter-basic@1.6.1':
+    resolution: {integrity: sha512-NYA4Km6zHoVkJG1T3/4fTkatcBXY4i6LMx1ui9oQQFzGYHz3aE6gfPTh8ZeBnqD0JxJ0pNF1EipX3oWGcEjg7g==}
+    peerDependencies:
+      '@objectql/core': 1.6.1
+      '@objectql/driver-sql': 1.6.1
+      '@objectql/platform-node': 1.6.1
+      '@objectql/types': 1.6.1
+      sqlite3: ^5.1.7
+
+  '@objectql/starter-enterprise@1.6.1':
+    resolution: {integrity: sha512-TJ1fXVvLHK3ueTuIIV3HYocEFfjsk56Wo182sh4s34Xevg/92OJyqztPTmTVeZQH5PcKMDcmuh283HW12Rf+7w==}
+    peerDependencies:
+      '@objectql/core': 1.6.1
+      '@objectql/driver-sql': 1.6.1
+      '@objectql/platform-node': 1.6.1
+      '@objectql/types': 1.6.1
+      sqlite3: ^5.1.7
 
   '@objectql/types@1.5.0':
     resolution: {integrity: sha512-Z8OgQ30vnr5QLRkZuPJSy736us2JQpUWNerpxgeMfL0FlKuI33HEXt1yuR8GLha/wMp/OfYdpNlSXG0B+rw/Iw==}
@@ -8054,11 +8071,48 @@ snapshots:
       - mongodb-client-encryption
       - snappy
 
+  '@objectql/driver-sql@1.6.1(sqlite3@5.1.7)':
+    dependencies:
+      '@objectql/types': 1.6.1
+      knex: 3.1.0(better-sqlite3@12.6.0)(pg@8.16.3)(sqlite3@5.1.7)
+    transitivePeerDependencies:
+      - better-sqlite3
+      - mysql
+      - mysql2
+      - pg
+      - pg-native
+      - sqlite3
+      - supports-color
+      - tedious
+
+  '@objectql/platform-node@1.6.1':
+    dependencies:
+      '@objectql/core': 1.6.1
+      '@objectql/types': 1.6.1
+      fast-glob: 3.3.3
+      js-yaml: 4.1.1
+
   '@objectql/server@1.6.1':
     dependencies:
       '@objectql/core': 1.6.1
       '@objectql/types': 1.6.1
       js-yaml: 4.1.1
+
+  '@objectql/starter-basic@1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)':
+    dependencies:
+      '@objectql/core': 1.6.1
+      '@objectql/driver-sql': 1.6.1(sqlite3@5.1.7)
+      '@objectql/platform-node': 1.6.1
+      '@objectql/types': 1.6.1
+      sqlite3: 5.1.7
+
+  '@objectql/starter-enterprise@1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)':
+    dependencies:
+      '@objectql/core': 1.6.1
+      '@objectql/driver-sql': 1.6.1(sqlite3@5.1.7)
+      '@objectql/platform-node': 1.6.1
+      '@objectql/types': 1.6.1
+      sqlite3: 5.1.7
 
   '@objectql/types@1.5.0': {}
 
