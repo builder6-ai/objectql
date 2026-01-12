@@ -17,7 +17,6 @@ import {
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 
 // Import types from @objectql/types
 import type { ObjectConfig, FieldConfig, FieldType } from '@objectql/types'
