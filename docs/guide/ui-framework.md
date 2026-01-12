@@ -1,10 +1,74 @@
 # Standard UI Components Reference
 
-This document defines the standard component library for `@objectos/ui`. These components are the reference implementations for the **View & Layout Specification**.
+This document defines the standard component library for `@objectos/ui`. These components are the reference implementations for the **View & Layout Specifications**.
 
-## 1. View Controller
+---
 
-The entry point for rendering any object view.
+## 1. Page Architecture
+
+The top-level system for composing screens from Widgets and Layouts. Driven by `*.page.yml`.
+
+### `ObjectPage`
+The master controller for any URL-addressable page in the application.
+
+- **Props**:
+  - `pageId`: string (e.g., "dashboard-sales") - *The ID of the page definition to load.*
+  - `context`: Record<string, any> - *Optional global variable to pass to widgets (e.g., `{ recordId: "123" }`)*.
+- **Behavior**:
+  1.  Loads `*.page.yml` from the Metadata Kernel.
+  2.  Resolves permissions (can the user see this page?).
+  3.  Injects the `PageContext` provider.
+  4.  Renders the appropriate **Layout** renderer.
+
+### `DashboardLayout`
+**Implements:** `layout: dashboard` / `layout: grid`
+
+A Responsive Grid Layout Engine (based on `react-grid-layout` or CSS Grid).
+
+- **Features**:
+  - **Grid System**: 12-column grid.
+  - **Responsive**: Stacks widgets on mobile, respects `(x, y, w, h)` on desktop.
+  - **Editable**: (Future) Allows dragging widgets to rearrange if user has "Customize Page" permission.
+
+### `SingleColumnLayout`
+**Implements:** `layout: single_column` / `layout: list`
+
+A simple stack layout, mostly used for Wiki-style pages or Mobile app views.
+
+---
+
+## 2. Page Components (Widgets)
+
+These are the "Blocks" that live inside a Layout. In `*.page.yml`, these are the items in the `components` array.
+
+### `WidgetMetric`
+**Type:** `metric`
+Displays a single KPI with trend indicator.
+- **Props**: `label`, `value` (expression or query), `trend`, `format`.
+- **UI**: A compact card (`Card`, `CardHeader`, `CardContent`).
+
+### `WidgetChart`
+**Type:** `chart`
+Renders a visualization.
+- **Props**: `chart_id`.
+- **Behavior**: Use the `chart_id` to fetch the Chart definition (`*.chart.yml`), then renders the appropriate **Visualization Primitive** (see Section 7).
+
+### `WidgetView`
+**Type:** `view`
+ Embeds a full `ObjectView` inside a dashboard tile.
+- **Props**: `view_id` OR (`object`, `view`).
+- **Behavior**: Renders the `<ObjectView />` component (see Section 3) within a constrained container. Key difference: The toolbar might be simplified (e.g., no global search) to fit into a widget.
+
+### `WidgetHtml`
+**Type:** `html` / `markdown`
+Renders static or dynamic content.
+- **Props**: `content` (HTML/Markdown string).
+
+---
+
+## 3. View Architecture
+
+The system for rendering Object Data Collections. Can appear standalone (as a full page) or inside a Widget.
 
 ### `ObjectView`
 The "Switchboard" component. It connects to the Metadata Registry, fetches the requested view definition (YAML), and renders the appropriate concrete View Component.
@@ -20,9 +84,9 @@ The "Switchboard" component. It connects to the Metadata Registry, fetches the r
 
 ---
 
-## 2. Standard View Components
+## 4. View Component Library
 
-These "Smart Components" implement the specific logic for each View Type defined in the spec.
+These "Smart Components" implement the specific logic for each View Type defined in `*.view.yml`.
 
 ### `ObjectGridView`
 **Implements:** `type: list`, `type: grid`
@@ -103,9 +167,9 @@ A full-featured editor for creating or updating records.
 
 ---
 
-## 3. Structural Components
+## 5. Layout & Shell
 
-Building blocks for the View layouts.
+Building blocks for the outer application shell and view wrappers.
 
 ### `ViewToolbar`
 The header bar rendered above any view.
@@ -124,7 +188,7 @@ A complex filter construction UI.
 
 ---
 
-## 📝 4. Field Components
+## 6. Field System
 
 The `Field` component is the factory that decides which specific widget to render inside Forms, Cells, and Cards.
 
@@ -146,9 +210,9 @@ The `Field` component is the factory that decides which specific widget to rende
 
 ---
 
-## 📊 5. Visualization Components
+## 7. Visualization Primitives
 
-Standard charting for Dashboards (`*.page.yml`).
+Low-level charting components used by `WidgetChart`.
 
 ### `ChartAreaInteractive`
 Interactive area chart for trends.
@@ -161,7 +225,7 @@ Donut/Pie chart for part-to-whole analysis.
 
 ---
 
-## 🎨 6. Design System Primitives
+## 8. UI Atoms
 
 We strictly use **Tailwind CSS** and **Radix UI** (shadcn/ui) primitives.
 
