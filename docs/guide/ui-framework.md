@@ -53,14 +53,21 @@ The `Field` component is the factory that decides which specific widget to rende
 
 | ObjectQL Type | UI Component | Features |
 | :--- | :--- | :--- |
-| `text` | `TextField` | Simple input. |
-| `textarea` | `TextAreaField` | Multi-line, auto-growing text area. |
-| `number` | `NumberField` | Numeric input with step and validation. |
+| `text`, `string` | `TextField` | Single-line text input. |
+| `textarea`, `longtext` | `TextAreaField` | Multi-line, auto-growing text area. |
+| `email` | `TextField` | Input with email validation type. Renders as `mailto:` link in read mode. |
+| `url` | `TextField` | Input with URL validation type. Renders as clickable link in read mode. |
+| `password` | `TextField` | Masked input (`type="password"`). Value is never shown in read mode. |
+| `tel`, `phone` | `TextField` | Telephone number input (`type="tel"`). |
+| `number`, `integer`, `float` | `NumberField` | Numeric input with step validation. |
 | `currency` | `NumberField` | Formats display with currency symbol (e.g., "$1,000.00"). |
-| `boolean` | `BooleanField` | Checkbox or Switch toggle. |
-| `date` / `datetime` | `DateField` | Popover calendar picker. |
+| `percent` | `NumberField` | Formats display as percentage (e.g., "50%"). |
+| `boolean` | `BooleanField` | Checkbox for lists, Switch toggle for forms. |
+| `date` | `DateField` | Popover calendar picker. |
+| `datetime` | `DateField` | Date picker with time selection. |
 | `select` | `SelectField` | Native accessible dropdown or Command palette. |
-| `lookup` / `master_detail` | `LookupField` | Async search for related records. (e.g., "Select Account"). |
+| `lookup` | `LookupField` | Async search for related records. (e.g., "Select Account"). |
+| `master_detail` | `LookupField` | Same as lookup, but implies cascade delete and tighter coupling. |
 
 ---
 
