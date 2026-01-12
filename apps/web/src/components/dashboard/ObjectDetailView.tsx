@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Spinner } from '@objectos/ui';
+import { Button, Dialog, DialogContent, DialogHeader, DialogTitle, Spinner, ObjectForm } from '@objectos/ui';
 import { getHeaders } from '../../lib/api';
 import { ChevronLeft, Pencil, Trash } from 'lucide-react';
-import { ObjectForm } from './ObjectForm';
 
 interface ObjectDetailViewProps {
     objectName: string;
@@ -122,13 +121,14 @@ export function ObjectDetailView({ objectName, recordId, navigate, objectSchema 
                         <DialogHeader>
                             <DialogTitle>Edit {label}</DialogTitle>
                         </DialogHeader>
-                         <ObjectForm 
-                            objectName={objectName} 
-                            initialValues={data}
-                            headers={getHeaders()}
-                            onSubmit={handleUpdate} 
-                            onCancel={() => setIsEditing(false)} 
-                        />
+                         {schema && (
+                             <ObjectForm 
+                                objectConfig={schema}
+                                initialValues={data}
+                                onSubmit={handleUpdate} 
+                                onCancel={() => setIsEditing(false)} 
+                            />
+                         )}
                     </DialogContent>
                 </Dialog>
         </div>

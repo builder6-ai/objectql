@@ -6,9 +6,9 @@ import {
     DialogHeader, 
     DialogTitle,
     ObjectGridTable,
-    Input
+    Input,
+    ObjectForm
 } from '@objectos/ui';
-import { ObjectForm } from './ObjectForm';
 import { Plus, RefreshCw, Search } from 'lucide-react';
 
 interface ObjectListViewProps {
@@ -167,13 +167,14 @@ export function ObjectListView({ objectName, user, isCreating, navigate, objectS
                     <DialogHeader>
                         <DialogTitle>New {label}</DialogTitle>
                     </DialogHeader>
-                    <ObjectForm 
-                        objectName={objectName} 
-                        initialValues={{}}
-                        headers={getHeaders()}
-                        onSubmit={handleCreate} 
-                        onCancel={() => navigate('..')} 
-                    />
+                    {objectSchema && (
+                        <ObjectForm 
+                            objectConfig={objectSchema}
+                            initialValues={{}}
+                            onSubmit={handleCreate} 
+                            onCancel={() => navigate('..')} 
+                        />
+                    )}
                 </DialogContent>
             </Dialog>
         </div>

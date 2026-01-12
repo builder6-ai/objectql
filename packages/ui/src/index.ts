@@ -73,7 +73,6 @@ export * from './components/views/ObjectCalendarView';
 export * from './components/views/ObjectTimelineView';
 export * from './components/views/ObjectGalleryView';
 export * from './components/views/ObjectDetailView';
-export * from './components/views/ObjectFormView';
 
 // Layout & Shell
 export * from './components/shell/ViewToolbar';
@@ -83,9 +82,6 @@ export * from './components/shell/FilterBuilder';
 export * from './components/visualizations/ChartAreaInteractive';
 export * from './components/visualizations/ChartBarInteractive';
 export * from './components/visualizations/ChartDonut';
-
-// Enhanced Form Components
-export * from './components/forms';
 
 // Legacy exports (keeping for backward compatibility or refactoring)
 export { DataTable, schema } from './components/data-table';
