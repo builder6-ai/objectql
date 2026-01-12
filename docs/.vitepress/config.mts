@@ -23,10 +23,16 @@ export default defineConfig({
       // Sidebar for Guide section
       '/guide/': [
         {
+          text: 'Architecture Overview',
+          items: [
+            { text: 'Architecture Diagram', link: '/guide/architecture' },
+            { text: 'Platform Components', link: '/guide/platform-components' }
+          ]
+        },
+        {
           text: 'Getting Started',
           items: [
             { text: 'Introduction', link: '/guide/' },
-            { text: 'Architecture Overview', link: '/guide/architecture' },
             { text: 'Data Modeling', link: '/guide/data-modeling' },
             { text: 'Security Guide', link: '/guide/security-guide' }
           ]
@@ -37,6 +43,12 @@ export default defineConfig({
             { text: 'SDK Reference', link: '/guide/sdk-reference' },
             { text: 'Writing Hooks', link: '/guide/logic-hooks' },
             { text: 'Custom Actions', link: '/guide/logic-actions' }
+          ]
+        },
+        {
+          text: 'User Interface',
+          items: [
+            { text: 'UI Framework Overview', link: '/guide/ui-framework' }
           ]
         }
       ],
