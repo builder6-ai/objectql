@@ -1,58 +1,112 @@
 // Utility to convert ObjectQL field types to AMIS form field types
+// Maps official ObjectQL spec types: https://github.com/objectql/objectql/blob/main/docs/spec/object.md
 export function objectqlTypeToAmisFormType(fieldType: string): string {
   const typeMap: Record<string, string> = {
+    // Basic Types (ObjectQL Spec)
     text: 'input-text',
     textarea: 'textarea',
-    email: 'input-email',
-    url: 'input-url',
+    markdown: 'textarea',  // TODO: Use markdown editor
+    html: 'rich-text',
     number: 'input-number',
     currency: 'input-number',
     percent: 'input-number',
-    checkbox: 'checkbox',
-    select: 'select',
-    picklist: 'select',
-    multiselect: 'multi-select',
+    boolean: 'checkbox',  // ObjectQL standard
+    
+    // System/Format Types (ObjectQL Spec)
+    email: 'input-email',
+    phone: 'input-text',
+    url: 'input-url',
+    password: 'input-password',
+    
+    // Date & Time (ObjectQL Spec)
     date: 'input-date',
     datetime: 'input-datetime',
     time: 'input-time',
+    
+    // Complex/Media (ObjectQL Spec)
+    file: 'input-file',
+    image: 'input-image',
+    avatar: 'input-image',
+    location: 'input-text',  // TODO: Use location picker
+    
+    // Relationships (ObjectQL Spec)
+    select: 'select',
     lookup: 'select',
     master_detail: 'select',
-    password: 'input-password',
-    phone: 'input-text',
-    html: 'rich-text',
-    switch: 'switch',
-    slider: 'input-range',
-    color: 'input-color',
-    rating: 'input-rating',
+    
+    // Advanced (ObjectQL Spec)
+    formula: 'static',  // Read-only
+    summary: 'static',  // Read-only
+    auto_number: 'static',  // Read-only
+    object: 'input-kv',  // JSON key-value editor
+    grid: 'input-table',  // Nested table
+    
+    // Legacy/Non-Standard Types (for backward compatibility)
+    // These map to ObjectQL standard types
+    checkbox: 'checkbox',  // → boolean
+    switch: 'switch',      // → boolean with UI hint
+    picklist: 'select',    // → select
+    multiselect: 'multi-select',  // → select with multiple: true
+    slider: 'input-range',  // → number with UI hint
+    color: 'input-color',   // → text with color picker
+    rating: 'input-rating', // → number with rating display
   };
   
   return typeMap[fieldType] || 'input-text';
 }
 
 // Utility to convert ObjectQL field types to AMIS table column types
+// Maps official ObjectQL spec types: https://github.com/objectql/objectql/blob/main/docs/spec/object.md
 export function objectqlTypeToAmisColumnType(fieldType: string): string {
   const typeMap: Record<string, string> = {
+    // Basic Types (ObjectQL Spec)
     text: 'text',
     textarea: 'text',
-    email: 'text',
-    url: 'link',
+    markdown: 'text',
+    html: 'text',
     number: 'number',
     currency: 'number',
     percent: 'number',
-    checkbox: 'status',
-    select: 'text',
-    picklist: 'text',
-    multiselect: 'text',
+    boolean: 'status',
+    
+    // System/Format Types (ObjectQL Spec)
+    email: 'text',
+    phone: 'text',
+    url: 'link',
+    password: 'text',  // Won't display actual value
+    
+    // Date & Time (ObjectQL Spec)
     date: 'date',
     datetime: 'datetime',
     time: 'time',
-    lookup: 'text',
-    master_detail: 'text',
-    image: 'image',
+    
+    // Complex/Media (ObjectQL Spec)
     file: 'link',
-    switch: 'switch',
-    rating: 'mapping',
-    color: 'color',
+    image: 'image',
+    avatar: 'image',
+    location: 'text',  // TODO: Display as map link
+    
+    // Relationships (ObjectQL Spec)
+    select: 'text',
+    lookup: 'text',  // Resolved to label
+    master_detail: 'text',  // Resolved to label
+    
+    // Advanced (ObjectQL Spec)
+    formula: 'text',  // Display calculated result
+    summary: 'number',  // Display summary result
+    auto_number: 'text',  // Display auto number
+    object: 'json',  // Display JSON
+    grid: 'text',  // Display count or summary
+    vector: 'text',  // Not displayed
+    
+    // Legacy/Non-Standard Types (for backward compatibility)
+    checkbox: 'status',  // → boolean
+    switch: 'switch',    // → boolean
+    picklist: 'text',    // → select
+    multiselect: 'text', // → select
+    slider: 'number',    // → number
+    rating: 'mapping',   // → number
+    color: 'color',      // → text
   };
   
   return typeMap[fieldType] || 'text';

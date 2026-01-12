@@ -7,7 +7,8 @@ import {
 
 /**
  * Comprehensive field type validation tests
- * Tests all supported ObjectQL field types and their mappings to AMIS components
+ * Tests all supported ObjectQL field types (https://github.com/objectql/objectql)
+ * and their mappings to AMIS components
  */
 describe('Field Type Validation - Complete Coverage', () => {
   
