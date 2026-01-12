@@ -1,14 +1,8 @@
-import React from "react"
+import * as React from "react"
+import { cn } from "@/lib/utils"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn } from "@/lib/utils"
 import { FieldProps } from "./types"
-
-export interface NumberFieldProps extends FieldProps<number> {
-  min?: number
-  max?: number
-  step?: number
-}
 
 export function NumberField({
   value,
@@ -22,10 +16,7 @@ export function NumberField({
   required,
   description,
   name,
-  min,
-  max,
-  step
-}: NumberFieldProps) {
+}: FieldProps<number>) {
   return (
     <div className={cn("grid gap-2", className)}>
       {label && (
@@ -39,17 +30,15 @@ export function NumberField({
         type="number"
         value={value ?? ""}
         onChange={(e) => {
-          const val = e.target.value === "" ? undefined : Number(e.target.value)
-          // Handle NaN if necessary, but type="number" blocks most non-numbers
-          onChange?.(val as number)
+          const val = e.target.value;
+          onChange?.(val === "" ? undefined : Number(val));
         }}
         disabled={disabled}
         readOnly={readOnly}
         placeholder={placeholder}
-        min={min}
-        max={max}
-        step={step}
-        className={cn(error && "border-destructive focus-visible:ring-destructive")}
+        className={cn(
+          error && "border-destructive focus-visible:ring-destructive"
+        )}
       />
       {description && !error && (
         <p className="text-sm text-muted-foreground">{description}</p>

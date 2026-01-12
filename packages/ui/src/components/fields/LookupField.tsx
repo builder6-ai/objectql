@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import * as React from "react"
 import { Check, ChevronsUpDown, Loader2, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -9,6 +9,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "../ui/command"
 import {
   Popover,
@@ -17,22 +18,7 @@ import {
 } from "../ui/popover"
 import { Label } from "../ui/label"
 import { LookupFieldProps } from "./types"
-
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value)
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
-
-    return () => {
-      clearTimeout(handler)
-    }
-  }, [value, delay])
-
-  return debouncedValue
-}
+import { useDebounce } from "../../hooks/use-debounce"
 
 export function LookupField({
   value,
@@ -46,54 +32,50 @@ export function LookupField({
   required,
   description,
   name,
-  referenceTo, // The object name we are looking up
+  referenceTo,
 }: LookupFieldProps) {
-  const [open, setOpen] = useState(false)
-  const [items, setItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [contentLabel, setContentLabel] = useState<string>("")
-  const [search, setSearch] = useState("")
+  const [open, setOpen] = React.useState(false)
+  const [items, setItems] = React.useState<any[]>([])
+  const [loading, setLoading] = React.useState(false)
+  const [contentLabel, setContentLabel] = React.useState<string>("")
+  const [search, setSearch] = React.useState("")
   
   const debouncedSearch = useDebounce(search, 300)
 
-  // Fetch initial label if value exists but we don't have the label
-  useEffect(() => {
-      if (value && !contentLabel) {
-          // If value is an object (expanded), use it
-          if (typeof value === 'object' && (value as any).name) {
-              setContentLabel((value as any).name || (value as any).title || (value as any)._id);
-              return;
-          }
-          
-          if (typeof value !== 'string') return;
-
-          // Fetch single record to get label
-          fetch(`/api/data/${referenceTo}/${value}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data) {
-                    setContentLabel(data.name || data.title || data.email || data._id || value);
-                }
-            })
-            .catch(() => setContentLabel(value)); // Fallback to ID
+  // Fetch initial label
+  React.useEffect(() => {
+    if (value && !contentLabel) {
+      if (typeof value === 'object' && (value as any).name) {
+          setContentLabel((value as any).name || (value as any).title || (value as any)._id);
+          return;
       }
-  }, [value, referenceTo]);
+      
+      if (typeof value !== 'string') return;
+
+      // TODO: Use a proper data fetching client
+      fetch(`/api/data/${referenceTo}/${value}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data) {
+                setContentLabel(data.name || data.title || data.email || data._id || value);
+            }
+        })
+        .catch(() => setContentLabel(value));
+    }
+  }, [value, referenceTo, contentLabel]);
 
   // Search items
-  useEffect(() => {
+  React.useEffect(() => {
     if (!open) return;
 
     setLoading(true);
     const params = new URLSearchParams();
     
     if (debouncedSearch) {
-        // Try simple search first
-        // In a real ObjectQL implementation this should use filters
         const filter = JSON.stringify([['name', 'contains', debouncedSearch], 'or', ['title', 'contains', debouncedSearch]]);
         params.append('filters', filter);
     }
     
-    // Always limit results
     params.append('top', '20');
 
     fetch(`/api/data/${referenceTo}?${params.toString()}`)
@@ -107,8 +89,8 @@ export function LookupField({
 
   }, [open, debouncedSearch, referenceTo]);
 
-  const handleSelect = (currentValue: string, item: any) => {
-    onChange?.(currentValue === value ? undefined : currentValue)
+  const handleSelect = (itemId: string, item: any) => {
+    onChange?.(itemId === value ? undefined : itemId)
     setContentLabel(item.name || item.title || item.email || item._id);
     setOpen(false)
   }
@@ -135,35 +117,39 @@ export function LookupField({
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "w-full justify-between",
+              "w-full justify-between font-normal",
               !value && "text-muted-foreground",
               error && "border-destructive focus-visible:ring-destructive"
             )}
             disabled={disabled || readOnly}
           >
-            {value ? contentLabel || value : (placeholder || "Select record...")}
+            <span className="truncate">
+                {value ? contentLabel || value : (placeholder || "Select record...")}
+            </span>
             {value && !disabled && !readOnly ? (
-                <X className="ml-2 h-4 w-4 opacity-50 hover:opacity-100" onClick={handleClear} />
+                <X className="ml-2 h-4 w-4 opacity-50 hover:opacity-100 flex-shrink-0" onClick={handleClear} />
             ) : (
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
           <Command shouldFilter={false}>
             <CommandInput 
                 placeholder={`Search ${referenceTo}...`} 
                 value={search}
                 onValueChange={setSearch} 
             />
-            {loading && <div className="py-6 text-center text-sm text-muted-foreground flex justify-center"><Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading...</div>}
-            
-            {!loading && (
-                <CommandGroup className="max-h-[200px] overflow-auto">
-                    {items.length === 0 ? (
-                        <CommandEmpty>No results found.</CommandEmpty>
-                    ) : (
-                        items.map((item) => {
+            <CommandList>
+                {loading && <div className="py-6 text-center text-sm text-muted-foreground flex justify-center"><Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading...</div>}
+                
+                {!loading && items.length === 0 && (
+                    <CommandEmpty>No results found.</CommandEmpty>
+                )}
+
+                {!loading && items.length > 0 && (
+                    <CommandGroup>
+                        {items.map((item) => {
                             const itemId = item._id || item.id;
                             const itemLabel = item.name || item.title || item.email || itemId;
                             return (
@@ -181,10 +167,10 @@ export function LookupField({
                                     {itemLabel}
                                 </CommandItem>
                             )
-                        })
-                    )}
-                </CommandGroup>
-            )}
+                        })}
+                    </CommandGroup>
+                )}
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

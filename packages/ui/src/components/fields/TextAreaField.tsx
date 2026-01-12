@@ -1,7 +1,7 @@
-import React from "react"
+import * as React from "react"
+import { cn } from "@/lib/utils"
 import { Textarea } from "../ui/textarea"
 import { Label } from "../ui/label"
-import { cn } from "@/lib/utils"
 import { FieldProps } from "./types"
 
 export function TextAreaField({
@@ -16,7 +16,8 @@ export function TextAreaField({
   required,
   description,
   name,
-}: FieldProps<string>) {
+  rows = 3,
+}: FieldProps<string> & { rows?: number }) {
   return (
     <div className={cn("grid gap-2", className)}>
       {label && (
@@ -32,7 +33,10 @@ export function TextAreaField({
         disabled={disabled}
         readOnly={readOnly}
         placeholder={placeholder}
-        className={cn(error && "border-destructive focus-visible:ring-destructive", "min-h-[80px]")}
+        rows={rows}
+        className={cn(
+          error && "border-destructive focus-visible:ring-destructive"
+        )}
       />
       {description && !error && (
         <p className="text-sm text-muted-foreground">{description}</p>

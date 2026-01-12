@@ -1,6 +1,6 @@
 import * as React from "react"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "../ui/button"
@@ -47,13 +47,13 @@ export function DateField({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {value ? format(value, "PPP") : <span>{placeholder || "Pick a date"}</span>}
+            {value ? format(new Date(value), "PPP") : <span>{placeholder || "Pick a date"}</span>}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
-            selected={value}
+            selected={value ? new Date(value) : undefined}
             onSelect={onChange}
             initialFocus
           />

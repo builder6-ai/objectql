@@ -1,12 +1,8 @@
-import React from "react"
+import * as React from "react"
+import { cn } from "@/lib/utils"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn } from "@/lib/utils"
 import { FieldProps } from "./types"
-
-export interface TextFieldProps extends FieldProps<string> {
-  type?: "text" | "email" | "password" | "url" | "tel"
-}
 
 export function TextField({
   value,
@@ -19,9 +15,9 @@ export function TextField({
   label,
   required,
   description,
-  type = "text",
   name,
-}: TextFieldProps) {
+  type = "text",
+}: FieldProps<string> & { type?: string }) {
   return (
     <div className={cn("grid gap-2", className)}>
       {label && (
@@ -38,7 +34,9 @@ export function TextField({
         disabled={disabled}
         readOnly={readOnly}
         placeholder={placeholder}
-        className={cn(error && "border-destructive focus-visible:ring-destructive")}
+        className={cn(
+          error && "border-destructive focus-visible:ring-destructive"
+        )}
       />
       {description && !error && (
         <p className="text-sm text-muted-foreground">{description}</p>

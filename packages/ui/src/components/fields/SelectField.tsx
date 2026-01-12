@@ -1,4 +1,5 @@
-import React from "react"
+import * as React from "react"
+import { cn } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -7,7 +8,6 @@ import {
   SelectValue,
 } from "../ui/select"
 import { Label } from "../ui/label"
-import { cn } from "@/lib/utils"
 import { FieldProps } from "./types"
 
 export function SelectField({
@@ -24,14 +24,14 @@ export function SelectField({
   name,
   options = [],
 }: FieldProps<string | number>) {
+  
+  // Normalize options
   const normalizedOptions = React.useMemo(() => {
-    return options.map((option) => {
-      if (typeof option === "object" && option !== null && "value" in option) {
-        return option
-      }
-      return { label: String(option), value: option }
-    })
-  }, [options])
+    return options.map((opt) => {
+      if (typeof opt === 'string') return { label: opt, value: opt };
+      return opt;
+    });
+  }, [options]);
 
   return (
     <div className={cn("grid gap-2", className)}>
@@ -47,14 +47,16 @@ export function SelectField({
         disabled={disabled || readOnly}
       >
         <SelectTrigger 
-            id={name}
-            className={cn(error && "border-destructive focus:ring-destructive")}
+          id={name}
+          className={cn(
+            error && "border-destructive focus:ring-destructive"
+          )}
         >
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={placeholder || "Select an option"} />
         </SelectTrigger>
         <SelectContent>
           {normalizedOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value?.toString() ?? ""}>
+            <SelectItem key={option.value} value={option.value.toString()}>
               {option.label}
             </SelectItem>
           ))}
