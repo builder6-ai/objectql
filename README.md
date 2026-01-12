@@ -153,12 +153,25 @@ You will see a **Data Grid** for Deals. Click "New" to see the **Form**. All CRU
 
 ## 📦 Ecosystem
 
+### Core Packages
+
 | Package | Description | Role |
 | --- | --- | --- |
 | **`@objectos/kernel`** | Core runtime engine that loads metadata, manages object registry, and coordinates data operations | Brain of ObjectOS |
 | **`@objectos/server`** | NestJS-based HTTP server that exposes REST APIs for CRUD operations | API Gateway |
 | **`@objectos/ui`** | React component library for building enterprise UIs (grids, forms, charts) | Frontend Components |
 | **`@objectos/preset-base`** | Standard metadata presets (User, Role, Permission objects) | Pre-built Objects |
+
+### Frontend Applications
+
+| Application | Description | Technology |
+| --- | --- | --- |
+| **`apps/web`** | Traditional component-based React admin UI with AG Grid | React + AG Grid + Tailwind |
+| **`apps/amis`** | Low-code admin UI using Baidu AMIS framework | React + AMIS + Tailwind |
+
+**Choose Your Frontend:**
+- Use `apps/web` for highly customized UIs with full control over components
+- Use `apps/amis` for rapid development with schema-based low-code approach
 
 ### External Dependencies
 

@@ -2,23 +2,9 @@
 
 这是一个使用 [AMIS](https://aisuda.bce.baidu.com/amis) 低代码框架实现的 ObjectOS 前端应用。
 
-## 特性
+## 🚀 快速开始
 
-- 🚀 **低代码开发**: 使用 AMIS 框架，通过 JSON Schema 快速构建界面
-- 📊 **自动表格**: 根据对象元数据自动生成 CRUD 表格
-- 📝 **自动表单**: 根据字段定义自动生成创建/编辑表单
-- 🔐 **身份认证**: 集成 Better-Auth 认证系统
-- 🎨 **主题支持**: 支持 AMIS 多种主题配置
-
-## 快速开始
-
-### 安装依赖
-
-```bash
-pnpm install
-```
-
-### 启动开发服务器
+### 运行开发服务器
 
 在项目根目录运行：
 
@@ -27,20 +13,67 @@ pnpm run dev:amis
 ```
 
 这将同时启动：
-- ObjectOS 服务器 (端口 3000)
-- AMIS 前端应用 (端口 5174)
+- **ObjectOS 服务器**: http://localhost:3000 (后端 API)
+- **AMIS 前端应用**: http://localhost:5174 (开发界面)
 
-访问 http://localhost:5174 查看应用。
+访问 http://localhost:5174 即可使用应用。
 
-### 构建生产版本
+### 默认登录
 
-```bash
-pnpm run build
+使用以下凭据登录（需要先在 ObjectOS 中创建用户）：
+
+```
+Email: your@email.com
+Password: yourpassword
 ```
 
-## 架构说明
+## ✨ 特性
 
-### 目录结构
+- 🎨 **低代码开发**: 使用 AMIS 框架，通过 JSON Schema 快速构建界面
+- 📊 **自动表格生成**: 根据对象元数据自动生成 CRUD 表格
+- 📝 **自动表单生成**: 根据字段定义自动生成创建/编辑表单
+- 🔐 **身份认证**: 集成 Better-Auth 认证系统
+- 🎯 **元数据驱动**: 从 ObjectOS 服务器动态获取对象元数据
+- 🌍 **国际化**: 支持中文界面（可扩展其他语言）
+- 📱 **响应式设计**: 支持桌面和移动设备
+
+## 📖 功能说明
+
+### 主页 - 对象列表
+
+应用启动后显示系统中所有可用的对象：
+
+- 对象名称和标签
+- 对象图标
+- 对象描述
+- 点击进入对象的 CRUD 界面
+
+### 对象 CRUD 页面
+
+每个对象都有自动生成的完整 CRUD 功能：
+
+**表格视图:**
+- ✓ 数据列表展示
+- ✓ 分页（10/20/50/100 条/页）
+- ✓ 排序
+- ✓ 筛选器
+- ✓ 批量选择和操作
+- ✓ 导出功能
+
+**表单功能:**
+- ✓ 新建记录（模态对话框）
+- ✓ 编辑记录（模态对话框）
+- ✓ 字段验证
+- ✓ 必填字段提示
+- ✓ 关联对象选择器
+
+**操作:**
+- ✓ 创建 - "新建" 按钮
+- ✓ 编辑 - 行操作 "编辑"
+- ✓ 删除 - 行操作 "删除"（带确认）
+- ✓ 批量删除
+
+## 🏗️ 架构
 
 ```
 apps/amis/
@@ -62,54 +95,38 @@ apps/amis/
 │   ├── App.tsx         # 应用主组件
 │   ├── main.tsx        # 应用入口
 │   └── index.css       # 全局样式
-├── index.html          # HTML 入口
-├── package.json        # 项目配置
-├── tsconfig.json       # TypeScript 配置
-├── vite.config.ts      # Vite 配置
-└── README.md          # 项目说明
+├── IMPLEMENTATION.md   # 详细实现文档
+└── README.md          # 本文件
 ```
 
-### 核心功能
+## 🔧 构建生产版本
 
-#### 1. 元数据驱动
-
-应用从 ObjectOS 服务器获取对象元数据，并自动转换为 AMIS Schema：
-
-```typescript
-// 获取对象元数据
-const response = await apiClient.get(`/metadata/${objectName}`);
-
-// 转换为 AMIS Schema
-const amisSchema = buildAmisCRUDSchema(objectMeta, `/api/data/${objectName}`);
+```bash
+cd apps/amis
+pnpm run build
 ```
 
-#### 2. AMIS Schema 构建
+构建输出在 `dist/` 目录。
 
-`schemaBuilder.ts` 提供了将 ObjectQL 字段类型转换为 AMIS 组件的功能：
-
-- 表单字段映射 (objectqlTypeToAmisFormType)
-- 表格列映射 (objectqlTypeToAmisColumnType)
-- CRUD Schema 构建 (buildAmisCRUDSchema)
-
-#### 3. 认证集成
-
-使用 Better-Auth 进行身份认证，支持：
-- 邮箱/密码登录
-- Session 管理
-- 自动跳转
-
-## API 端点
+## 📚 API 集成
 
 应用依赖以下 ObjectOS API 端点：
 
-- `GET /api/metadata/objects` - 获取所有对象列表
-- `GET /api/metadata/:objectName` - 获取对象元数据
-- `POST /api/data/:objectName/query` - 查询记录
-- `POST /api/data/:objectName` - 创建记录
-- `PATCH /api/data/:objectName/:id` - 更新记录
-- `DELETE /api/data/:objectName/:id` - 删除记录
+### 元数据端点
+```
+GET /api/metadata/objects          # 获取所有对象列表
+GET /api/metadata/:objectName      # 获取对象元数据
+```
 
-## 字段类型映射
+### 数据端点
+```
+POST /api/data/:objectName/query   # 查询记录
+POST /api/data/:objectName         # 创建记录
+PATCH /api/data/:objectName/:id    # 更新记录
+DELETE /api/data/:objectName/:id   # 删除记录
+```
+
+## 🎨 字段类型映射
 
 ### 表单字段
 
@@ -127,26 +144,16 @@ const amisSchema = buildAmisCRUDSchema(objectMeta, `/api/data/${objectName}`);
 | checkbox | checkbox |
 | lookup | select |
 
-### 表格列
+详细说明请参考 [IMPLEMENTATION.md](./IMPLEMENTATION.md)
 
-| ObjectQL 类型 | AMIS 类型 |
-|--------------|-----------|
-| text | text |
-| number | number |
-| currency | number |
-| date | date |
-| datetime | datetime |
-| checkbox | status |
-| url | link |
-
-## 自定义配置
+## 🛠️ 自定义配置
 
 ### 修改主题
 
-在 `AmisRenderer.tsx` 中修改 CSS 导入：
+在 `src/components/AmisRenderer.tsx` 中修改 CSS 导入：
 
 ```typescript
-// 使用 cxd 主题
+// 使用 cxd 主题（默认）
 import 'amis/lib/themes/cxd.css';
 
 // 或使用其他主题
@@ -154,28 +161,35 @@ import 'amis/lib/themes/cxd.css';
 // import 'amis/lib/themes/dark.css';
 ```
 
-### 自定义 Schema
-
-在 `schemaBuilder.ts` 中修改 `buildAmisCRUDSchema` 函数以自定义生成的 AMIS Schema。
-
-## 开发说明
-
-### 添加新页面
-
-1. 在 `src/pages/` 创建新组件
-2. 在 `App.tsx` 中添加路由
-3. 根据需要创建对应的 AMIS Schema
+可用主题: `cxd`, `antd`, `dark`
 
 ### 扩展字段类型
 
-在 `schemaBuilder.ts` 中的类型映射函数中添加新的字段类型支持。
+在 `src/utils/schemaBuilder.ts` 中的类型映射函数中添加新的字段类型支持。
 
-## 相关链接
+## 📖 文档
 
+- [详细实现文档](./IMPLEMENTATION.md) - 架构、工作原理、自定义指南
 - [AMIS 官方文档](https://aisuda.bce.baidu.com/amis/zh-CN/docs/index)
 - [ObjectOS 文档](https://github.com/objectql/objectos)
-- [Better-Auth 文档](https://www.better-auth.com/)
 
-## License
+## 🆚 对比 apps/web
+
+| 特性 | apps/web | apps/amis |
+|------|----------|-----------|
+| UI 框架 | React + AG Grid | React + AMIS |
+| 开发方式 | 组件化编程 | Schema 配置 |
+| 代码量 | ~5000 行 | ~1500 行 |
+| 定制性 | 高 | 中-高 |
+| 打包大小 | ~500KB | ~2.5MB |
+| 移动端支持 | 有限 | 良好 |
+| 学习曲线 | React 专业知识 | AMIS Schema 知识 |
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 License
 
 MIT
+
