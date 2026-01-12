@@ -9,20 +9,20 @@ importers:
   .:
     dependencies:
       '@objectql/core':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@objectql/driver-knex':
         specifier: ^1.5.0
         version: 1.5.0(better-sqlite3@12.6.0)(pg@8.16.3)(sqlite3@5.1.7)
       '@objectql/driver-mongo':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@objectql/starter-basic':
-        specifier: ^1.6.1
-        version: 1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)
+        specifier: ^1.7.0
+        version: 1.7.0(@objectql/core@1.7.0)(@objectql/driver-sql@1.7.0(sqlite3@5.1.7))(@objectql/platform-node@1.7.0)(@objectql/types@1.7.0)(sqlite3@5.1.7)
       '@objectql/starter-enterprise':
-        specifier: ^1.6.1
-        version: 1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)
+        specifier: ^1.7.0
+        version: 1.7.0(@objectql/core@1.7.0)(@objectql/driver-sql@1.7.0(sqlite3@5.1.7))(@objectql/platform-node@1.7.0)(@objectql/types@1.7.0)(sqlite3@5.1.7)
       build:
         specifier: ^0.1.4
         version: 0.1.4
@@ -70,8 +70,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       '@objectql/types':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       ag-grid-community:
         specifier: ^35.0.0
         version: 35.0.0
@@ -80,7 +80,7 @@ importers:
         version: 35.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       better-auth:
         specifier: ^1.4.10
-        version: 1.4.10(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3))
+        version: 1.4.11(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3))
       clsx:
         specifier: ^2.1.0
         version: 2.1.1
@@ -95,7 +95,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: ^7.54.2
-        version: 7.70.0(react@18.3.1)
+        version: 7.71.0(react@18.3.1)
       react-router-dom:
         specifier: ^7.12.0
         version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -152,11 +152,11 @@ importers:
   packages/kernel:
     dependencies:
       '@objectql/core':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@objectql/types':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       fast-glob:
         specifier: ^3.3.2
         version: 3.3.3
@@ -183,8 +183,8 @@ importers:
   packages/presets/base:
     dependencies:
       '@objectql/core':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -194,19 +194,19 @@ importers:
     dependencies:
       '@nestjs/common':
         specifier: ^10.0.0
-        version: 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
+        version: 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core':
         specifier: ^10.0.0
-        version: 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.21)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+        version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/mapped-types':
         specifier: ^2.1.0
-        version: 2.1.0(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)
+        version: 2.1.0(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)
       '@nestjs/platform-express':
         specifier: ^10.0.0
-        version: 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)
+        version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)
       '@nestjs/serve-static':
         specifier: ^4.0.2
-        version: 4.0.2(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)(express@4.22.1)
+        version: 4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.1)
       '@objectos/kernel':
         specifier: workspace:*
         version: link:../kernel
@@ -217,20 +217,20 @@ importers:
         specifier: workspace:*
         version: link:../../apps/web
       '@objectql/core':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@objectql/driver-knex':
         specifier: ^1.5.0
         version: 1.5.0(better-sqlite3@12.6.0)(pg@8.16.3)(sqlite3@5.1.7)
       '@objectql/driver-mongo':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@objectql/server':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       better-auth:
         specifier: ^1.4.10
-        version: 1.4.10(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3))
+        version: 1.4.11(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3))
       better-sqlite3:
         specifier: ^12.6.0
         version: 12.6.0
@@ -258,7 +258,7 @@ importers:
         version: 10.2.3(chokidar@3.6.0)(typescript@5.6.3)
       '@nestjs/testing':
         specifier: ^10.0.0
-        version: 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)(@nestjs/platform-express@10.4.21)
+        version: 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(@nestjs/platform-express@10.4.22)
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.25
@@ -291,10 +291,10 @@ importers:
         version: 3.2.2(react@18.3.1)
       '@hookform/resolvers':
         specifier: ^5.2.2
-        version: 5.2.2(react-hook-form@7.70.0(react@18.3.1))
+        version: 5.2.2(react-hook-form@7.71.0(react@18.3.1))
       '@objectql/types':
-        specifier: ^1.6.1
-        version: 1.6.1
+        specifier: ^1.7.0
+        version: 1.7.0
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@18.3.7(@types/react@18.3.27))(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -411,10 +411,10 @@ importers:
         version: 9.13.0(react@18.3.1)
       react-hook-form:
         specifier: ^7.70.0
-        version: 7.70.0(react@18.3.1)
+        version: 7.71.0(react@18.3.1)
       react-resizable-panels:
         specifier: ^4.3.3
-        version: 4.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 4.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
         specifier: ^2.15.4
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -770,8 +770,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@better-auth/core@1.4.10':
-    resolution: {integrity: sha512-AThrfb6CpG80wqkanfrbN2/fGOYzhGladHFf3JhaWt/3/Vtf4h084T6PJLrDE7M/vCCGYvDI1DkvP3P1OB2HAg==}
+  '@better-auth/core@1.4.11':
+    resolution: {integrity: sha512-BYKiYx5GVp5a4rIZXRJwCsDhpSRXd1mfcPn4AKXeuLhcKrurs4uWWN5iBFq+tJ2eNgAcs0WV5pFm/uoz0oFdQQ==}
     peerDependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -780,10 +780,10 @@ packages:
       kysely: ^0.28.5
       nanostores: ^1.0.1
 
-  '@better-auth/telemetry@1.4.10':
-    resolution: {integrity: sha512-Dq4XJX6EKsUu0h3jpRagX739p/VMOTcnJYWRrLtDYkqtZFg+sFiFsSWVcfapZoWpRSUGYX9iKwl6nDHn6Ju2oQ==}
+  '@better-auth/telemetry@1.4.11':
+    resolution: {integrity: sha512-PUtmnBZ7QQpuQUmwMf8pQBUGKEutUC9s5TsJAhoR69crAqWHKZCfR48iN+/4C5JMs2mpO75Ygsi6h9yJ/UqAIg==}
     peerDependencies:
-      '@better-auth/core': 1.4.10
+      '@better-auth/core': 1.4.11
 
   '@better-auth/utils@0.3.0':
     resolution: {integrity: sha512-W+Adw6ZA6mgvnSnhOki270rwJ42t4XzSK6YWGF//BbVXL6SwCLWfyzBc1lN2m/4RM28KubdBKQ4X5VMoLRNPQw==}
@@ -1495,8 +1495,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/simple-icons@1.2.65':
-    resolution: {integrity: sha512-v/O0UeqrDz6ASuRVE5g2Puo5aWyej4M/CxX6WYDBARgswwxK0mp3VQbGgPFEAAUU9QN02IjTgjMuO021gpWf2w==}
+  '@iconify-json/simple-icons@1.2.66':
+    resolution: {integrity: sha512-D1OnnXwiQXFkVMw5M+Bt8mPsXeMkQyGmMdrmN7lsQlKMUkfLOp6JWhnUJ92po51WXT046aF/zzqSmkKqg08p4Q==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1659,8 +1659,8 @@ packages:
       '@swc/core':
         optional: true
 
-  '@nestjs/common@10.4.21':
-    resolution: {integrity: sha512-2nabPCrq6HAc6PlZQsdDaV16ur7rs8Z8SH/rewS0SqbrvV6hgC/D5IPjVt4NvX7UjWKapqq+bymicuiZjP5WlQ==}
+  '@nestjs/common@10.4.22':
+    resolution: {integrity: sha512-fxJ4v85nDHaqT1PmfNCQ37b/jcv2OojtXTaK1P2uAXhzLf9qq6WNUOFvxBrV4fhQek1EQoT1o9oj5xAZmv3NRw==}
     peerDependencies:
       class-transformer: '*'
       class-validator: '*'
@@ -1672,8 +1672,8 @@ packages:
       class-validator:
         optional: true
 
-  '@nestjs/core@10.4.21':
-    resolution: {integrity: sha512-MhiSGplB4TkadceA7opn/NaZmJhwYYNdB8nS8I29nLNx3vU+8aGHBiueZgcphEVDETZJSfc2VA5Mn/FC3JcsrA==}
+  '@nestjs/core@10.4.22':
+    resolution: {integrity: sha512-6IX9+VwjiKtCjx+mXVPncpkQ5ZjKfmssOZPFexmT+6T9H9wZ3svpYACAo7+9e7Nr9DZSoRZw3pffkJP7Z0UjaA==}
     peerDependencies:
       '@nestjs/common': ^10.0.0
       '@nestjs/microservices': ^10.0.0
@@ -1702,8 +1702,8 @@ packages:
       class-validator:
         optional: true
 
-  '@nestjs/platform-express@10.4.21':
-    resolution: {integrity: sha512-xIsa4h+oKf4zrHpTWN2i0gYkGaXewDqv4+KCatI1+aWoZKScFdoI82MFfuzq+z/EBpnVP2ABGqvPJWu+ZhKYvQ==}
+  '@nestjs/platform-express@10.4.22':
+    resolution: {integrity: sha512-ySSq7Py/DFozzZdNDH67m/vHoeVdphDniWBnl6q5QVoXldDdrZIHLXLRMPayTDh5A95nt7jjJzmD4qpTbNQ6tA==}
     peerDependencies:
       '@nestjs/common': ^10.0.0
       '@nestjs/core': ^10.0.0
@@ -1729,8 +1729,8 @@ packages:
       fastify:
         optional: true
 
-  '@nestjs/testing@10.4.21':
-    resolution: {integrity: sha512-mQyJvrJ4mA9nukx+zXafh0iLtbGmwalnGWdoTih6cKtANGewIVsqgfSpuxwzyR4d42uc5jqgBulEZszmUFQ/5A==}
+  '@nestjs/testing@10.4.22':
+    resolution: {integrity: sha512-HO9aPus3bAedAC+jKVAA8jTdaj4fs5M9fing4giHrcYV2txe9CvC1l1WAjwQ9RDhEHdugjY4y+FZA/U/YqPZrA==}
     peerDependencies:
       '@nestjs/common': ^10.0.0
       '@nestjs/core': ^10.0.0
@@ -1779,47 +1779,47 @@ packages:
     engines: {node: '>=8.0.0', npm: '>=5.0.0'}
     hasBin: true
 
-  '@objectql/core@1.6.1':
-    resolution: {integrity: sha512-XgZRXSkJeAtyTuOkltAeTO62tzoRQyjRJb3XaKy0qBkkI3HDJObgDqWiib+XOXMcuICtyFXxHfp1rsD37AmXnA==}
+  '@objectql/core@1.7.0':
+    resolution: {integrity: sha512-2n1E+rnlwko2viE2WrT0JHwMWi/1EFqQh0ccJm6PTJeChScBaBk0ipV/W4KowhFe6Lc8PgbeNuRAMmXj5mudNQ==}
 
   '@objectql/driver-knex@1.5.0':
     resolution: {integrity: sha512-+ye0CNGKryzhWoaWIenFrSAq6N5fNMpLJ26ZN7Rxbrtm3s+iNaHOCHcrAbcKu/Avmcz4skSRb8Reui9kA3JIjw==}
 
-  '@objectql/driver-mongo@1.6.1':
-    resolution: {integrity: sha512-CB3/Y3D1IS7ZQOPTeq/wHYJLA7DS8wYkFMkOWJYmgiWO1Xj01BGhu7Zlg3SmlBL8TJ0HURDn5damt6xklJaDzA==}
+  '@objectql/driver-mongo@1.7.0':
+    resolution: {integrity: sha512-lGijdCYqg300ay7Qfs9/potvfv7LoCV72Mi9xpl7do5GDj57jFBs6DOY7ZXRGzeTjHE3I2BJiuQHGpkMyM+J2A==}
 
-  '@objectql/driver-sql@1.6.1':
-    resolution: {integrity: sha512-Yi8GYEkFVkBX5NHPB/wZWTnT+0m1APmBUJ2JbW6rNC3CT39ykGsfE+0M7kyonAQAwKnenpFeus2g9dhurS33hg==}
+  '@objectql/driver-sql@1.7.0':
+    resolution: {integrity: sha512-626fYsbvNIrMOxtSDtIE2g/iLZuk5LWprwwGGD4TZ+BGvepyN8euzoLP2qiq3qgTrCu93SIHKbJdRzbvhT7OdA==}
 
-  '@objectql/platform-node@1.6.1':
-    resolution: {integrity: sha512-SmL7Srq/o9L3N9pHQwhvh/9pZhLjxXatAMSFnekSV1KL7sHkn6XcXLrmTDkFmoXRQlTYOqs0yATJghCmQysj/A==}
+  '@objectql/platform-node@1.7.0':
+    resolution: {integrity: sha512-0HF85QetLJ5HHPPDMue7UlDH3uglxc3zIO4G+8Y1MxGSlTbdkmWFsM5b0uQfye/d+HaHfRWdmslfoh22BXh/ew==}
 
-  '@objectql/server@1.6.1':
-    resolution: {integrity: sha512-fKn6ET88QYndoWrCx8Kz/3B0CbCOk6dq5YBTNw+0Iu6mwcljBYfSXxnUAA6x5iZdCvFuw6XzTp4WBUQitKUBrQ==}
+  '@objectql/server@1.7.0':
+    resolution: {integrity: sha512-27BKmDCuVnU8hufTNPFdBJO+5HbxXts6WW6LZbqf2pFLmo82+dn/lV7VVVfcQy24/Iwf18yZni9dnRPkJRe88A==}
 
-  '@objectql/starter-basic@1.6.1':
-    resolution: {integrity: sha512-NYA4Km6zHoVkJG1T3/4fTkatcBXY4i6LMx1ui9oQQFzGYHz3aE6gfPTh8ZeBnqD0JxJ0pNF1EipX3oWGcEjg7g==}
+  '@objectql/starter-basic@1.7.0':
+    resolution: {integrity: sha512-Visxnoj23FQNPBddnKIwISKLICIJhA9fI8ETJrNfd9ZnY9VvDeg37b+GGc6aKpZOJO40laE1pzXpCRL7PSQefw==}
     peerDependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/driver-sql': 1.6.1
-      '@objectql/platform-node': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/driver-sql': 1.7.0
+      '@objectql/platform-node': 1.7.0
+      '@objectql/types': 1.7.0
       sqlite3: ^5.1.7
 
-  '@objectql/starter-enterprise@1.6.1':
-    resolution: {integrity: sha512-TJ1fXVvLHK3ueTuIIV3HYocEFfjsk56Wo182sh4s34Xevg/92OJyqztPTmTVeZQH5PcKMDcmuh283HW12Rf+7w==}
+  '@objectql/starter-enterprise@1.7.0':
+    resolution: {integrity: sha512-8yp9bz5U440Mvbg2ImaTAbwk7LnSaX2IjqRqGUO/0fh0L2iZvxiCIvAfZq2Dg3QtkYAjG+sv8IEyBdSLus9xOw==}
     peerDependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/driver-sql': 1.6.1
-      '@objectql/platform-node': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/driver-sql': 1.7.0
+      '@objectql/platform-node': 1.7.0
+      '@objectql/types': 1.7.0
       sqlite3: ^5.1.7
 
   '@objectql/types@1.5.0':
     resolution: {integrity: sha512-Z8OgQ30vnr5QLRkZuPJSy736us2JQpUWNerpxgeMfL0FlKuI33HEXt1yuR8GLha/wMp/OfYdpNlSXG0B+rw/Iw==}
 
-  '@objectql/types@1.6.1':
-    resolution: {integrity: sha512-Ss/hh5HiF0S90Htq4t+cWEMGsljI+joEaqK3jLtJmq68LkUiV1b++OwFfdXJv7hq3etKZ8wIz0q/rnXu+rRu6w==}
+  '@objectql/types@1.7.0':
+    resolution: {integrity: sha512-CbYH5zW4kuOUDDpvuvhbhe5iAzCl6EgVy+TtUoRQGy04am36s8PgKxV/7hbToCPzPt95CwxlEROU2oHBUmjxwQ==}
 
   '@paralleldrive/cuid2@2.3.1':
     resolution: {integrity: sha512-XO7cAxhnTZl0Yggq6jOgjiOHhbgcO4NqFqwSmQpjK3b6TEE6Uj/jfSk6wzYyemh3+I0sHirKSetjQwn5cZktFw==}
@@ -2750,8 +2750,8 @@ packages:
   '@types/d3-scale@4.0.9':
     resolution: {integrity: sha512-dLmtwB8zkAeO/juAMfnV+sItKjlsw2lKdZVVy6LRr0cBmegxSABiLEpGVmSJJ8O08i4+sGR6qQtb6WtuwJdvVw==}
 
-  '@types/d3-shape@3.1.7':
-    resolution: {integrity: sha512-VLvUQ33C+3J+8p+Daf+nYSOsjB4GXp19/S/aGo60m9h1v6XaxjiT82lKVWJCfzhtuZ3yD7i/TPeC/fuKLLOSmg==}
+  '@types/d3-shape@3.1.8':
+    resolution: {integrity: sha512-lae0iWfcDeR7qt7rA88BNiqdvPS5pFVPpo5OfjElwNaT2yyekbM0C9vK+yqBqEmHr6lDkRnYNoTBYlAgJa7a4w==}
 
   '@types/d3-time@3.0.4':
     resolution: {integrity: sha512-yuzZug1nkAAaBlBBikKZTgzCeA+k1uy4ZFwWANOfKw5z5LRhV0gNA7gNkKm7HoK+HRN0wX3EkxGk0fpbWhmB7g==}
@@ -3436,8 +3436,8 @@ packages:
     resolution: {integrity: sha512-B0xUquLkiGLgHhpPBqvl7GWegWBUNuujQ6kXd/r1U38ElPT6Ok8KZ8e+FpUGEc2ZoRQUzq/aUnaKFc/svWUGSg==}
     hasBin: true
 
-  better-auth@1.4.10:
-    resolution: {integrity: sha512-0kqwEBJLe8eyFzbUspRG/htOriCf9uMLlnpe34dlIJGdmDfPuQISd4shShvUrvIVhPxsY1dSTXdXPLpqISYOYg==}
+  better-auth@1.4.11:
+    resolution: {integrity: sha512-UvBokjRrLK+6mFvmZVhXEDe+ghqdR60DwfRvdth6R2cNnFn/VAGL6WcLVwEKBYjBplNMdslR62vOhUM+CSN0ww==}
     peerDependencies:
       '@lynx-js/react': '*'
       '@prisma/client': ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -3527,8 +3527,8 @@ packages:
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
 
-  body-parser@1.20.3:
-    resolution: {integrity: sha512-7rAxByjUMqQ3/bHJy7D6OGXvx/MMc4IqBn/X0fcM1QUcAItpZrBEYhWGem+tzXH90c+G01ypMcYJBO9Y30203g==}
+  body-parser@1.20.4:
+    resolution: {integrity: sha512-ZTgYYLMOXY9qKU/57FAo8F+HA2dGX7bqGc71txDRC1rS4frdFI5R7NhluHxH6M0YItAP0sHB4uqAOcYKxO6uGA==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
 
   brace-expansion@1.1.12:
@@ -3621,8 +3621,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  caniuse-lite@1.0.30001763:
-    resolution: {integrity: sha512-mh/dGtq56uN98LlNX9qdbKnzINhX0QzhiWBFEkFfsFO4QyCvL8YegrJAazCwXIeqkIob8BlZPGM3xdnY+sgmvQ==}
+  caniuse-lite@1.0.30001764:
+    resolution: {integrity: sha512-9JGuzl2M+vPL+pz70gtMF9sHdMFbY9FJaQBi186cHKH3pSzDvzoUJUPV6fqiKIMyXbud9ZLg4F3Yza1vJ1+93g==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -4415,8 +4415,8 @@ packages:
   fn.name@1.1.0:
     resolution: {integrity: sha512-GRnmB5gPyJpAhTQdSZTSp9uaPSvl09KoYcMQtsB9rQoOmzs9dH6ffeccH+Z+cv6P68Hu5bC6JjRh4Ah/mHSNRw==}
 
-  focus-trap@7.7.1:
-    resolution: {integrity: sha512-Pkp8m55GjxBLnhBoT6OXdMvfRr4TjMAKLvFM566zlIryq5plbhaTmLAJWTGR0EkRwLjEte1lCOG9MxF1ipJrOg==}
+  focus-trap@7.8.0:
+    resolution: {integrity: sha512-/yNdlIkpWbM0ptxno3ONTuf+2g318kh2ez3KSeZN5dZ8YC6AAmgeWz+GasYYiBJPFaYcSAPeu4GfhUaChzIJXA==}
 
   foreground-child@3.3.1:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
@@ -4614,10 +4614,6 @@ packages:
 
   http-cache-semantics@4.2.0:
     resolution: {integrity: sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ==}
-
-  http-errors@2.0.0:
-    resolution: {integrity: sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ==}
-    engines: {node: '>= 0.8'}
 
   http-errors@2.0.1:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
@@ -5843,10 +5839,6 @@ packages:
   pure-rand@7.0.1:
     resolution: {integrity: sha512-oTUZM/NAZS8p7ANR3SHh30kXB+zK2r2BPcEn/awJIbOvq82WoMN4p62AWWp3Hhw50G0xMsw1mhIBLqHw64EcNQ==}
 
-  qs@6.13.0:
-    resolution: {integrity: sha512-+38qI9SOr8tfZ4QmJNplMUxqjbe7LKvvZgWdExBOmd+egZTtjLB67Gu0HRX3u/XOq7UU2Nx6nsjvS16Z9uwfpg==}
-    engines: {node: '>=0.6'}
-
   qs@6.14.1:
     resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
@@ -5864,8 +5856,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  raw-body@2.5.2:
-    resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
+  raw-body@2.5.3:
+    resolution: {integrity: sha512-s4VSOf6yN0rvbRZGxs8Om5CWj6seneMwK3oDb4lWDH0UPhWcxwOWw5+qk24bxq87szX1ydrwylIOp2uG1ojUpA==}
     engines: {node: '>= 0.8'}
 
   rc@1.2.8:
@@ -5883,8 +5875,8 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react-hook-form@7.70.0:
-    resolution: {integrity: sha512-COOMajS4FI3Wuwrs3GPpi/Jeef/5W1DRR84Yl5/ShlT3dKVFUfoGiEZ/QE6Uw8P4T2/CLJdcTVYKvWBMQTEpvw==}
+  react-hook-form@7.71.0:
+    resolution: {integrity: sha512-oFDt/iIFMV9ZfV52waONXzg4xuSlbwKUPvXVH2jumL1me5qFhBMc4knZxuXiZ2+j6h546sYe3ZKJcg/900/iHw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -5922,8 +5914,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-resizable-panels@4.3.3:
-    resolution: {integrity: sha512-7ZmYcoOiipVwwz8X9O/HiRbm8THM6qnXo7p5dPI6ivzdDoteHo3iXS1pijs8Z4/XU8V1RwhuGgJiZU5G7Zy0KQ==}
+  react-resizable-panels@4.4.0:
+    resolution: {integrity: sha512-vGH1rIhyDOL4RSWYTx3eatjDohDFIRxJCAXUOaeL9HyamptUnUezqndjMtBo9hQeaq1CIP0NBbc7ZV3lBtlgxA==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -6282,10 +6274,6 @@ packages:
 
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
-
-  statuses@2.0.1:
-    resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
-    engines: {node: '>= 0.8'}
 
   statuses@2.0.2:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
@@ -7471,7 +7459,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@better-auth/core@1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
+  '@better-auth/core@1.4.11(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)':
     dependencies:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
@@ -7482,9 +7470,9 @@ snapshots:
       nanostores: 1.1.0
       zod: 4.3.5
 
-  '@better-auth/telemetry@1.4.10(@better-auth/core@1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
+  '@better-auth/telemetry@1.4.11(@better-auth/core@1.4.11(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))':
     dependencies:
-      '@better-auth/core': 1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/core': 1.4.11(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
 
@@ -8045,10 +8033,10 @@ snapshots:
   '@gar/promisify@1.1.3':
     optional: true
 
-  '@hookform/resolvers@5.2.2(react-hook-form@7.70.0(react@18.3.1))':
+  '@hookform/resolvers@5.2.2(react-hook-form@7.71.0(react@18.3.1))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.70.0(react@18.3.1)
+      react-hook-form: 7.71.0(react@18.3.1)
 
   '@humanfs/core@0.19.1': {}
 
@@ -8061,7 +8049,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify-json/simple-icons@1.2.65':
+  '@iconify-json/simple-icons@1.2.66':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -8360,7 +8348,7 @@ snapshots:
       - uglify-js
       - webpack-cli
 
-  '@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+  '@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)':
     dependencies:
       file-type: 20.4.1
       iterare: 1.2.1
@@ -8371,9 +8359,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nestjs/core@10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.21)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+  '@nestjs/core@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
     dependencies:
-      '@nestjs/common': 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nuxtjs/opencollective': 0.3.2(encoding@0.1.13)
       fast-safe-stringify: 2.1.1
       iterare: 1.2.1
@@ -8383,20 +8371,20 @@ snapshots:
       tslib: 2.8.1
       uid: 2.0.2
     optionalDependencies:
-      '@nestjs/platform-express': 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)
+      '@nestjs/platform-express': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)
     transitivePeerDependencies:
       - encoding
 
-  '@nestjs/mapped-types@2.1.0(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)':
+  '@nestjs/mapped-types@2.1.0(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)':
     dependencies:
-      '@nestjs/common': 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
       reflect-metadata: 0.1.14
 
-  '@nestjs/platform-express@10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)':
+  '@nestjs/platform-express@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)':
     dependencies:
-      '@nestjs/common': 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
-      '@nestjs/core': 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.21)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
-      body-parser: 1.20.3
+      '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      body-parser: 1.20.4
       cors: 2.8.5
       express: 4.22.1
       multer: 2.0.2
@@ -8426,21 +8414,21 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/serve-static@4.0.2(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)(express@4.22.1)':
+  '@nestjs/serve-static@4.0.2(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(express@4.22.1)':
     dependencies:
-      '@nestjs/common': 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
-      '@nestjs/core': 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.21)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       path-to-regexp: 0.2.5
     optionalDependencies:
       express: 4.22.1
 
-  '@nestjs/testing@10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)(@nestjs/platform-express@10.4.21)':
+  '@nestjs/testing@10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)(@nestjs/platform-express@10.4.22)':
     dependencies:
-      '@nestjs/common': 10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2)
-      '@nestjs/core': 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.21)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/common': 10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/core': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.22)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       tslib: 2.8.1
     optionalDependencies:
-      '@nestjs/platform-express': 10.4.21(@nestjs/common@10.4.21(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.21)
+      '@nestjs/platform-express': 10.4.22(@nestjs/common@10.4.22(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.22)
 
   '@noble/ciphers@2.1.1': {}
 
@@ -8480,9 +8468,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@objectql/core@1.6.1':
+  '@objectql/core@1.7.0':
     dependencies:
-      '@objectql/types': 1.6.1
+      '@objectql/types': 1.7.0
 
   '@objectql/driver-knex@1.5.0(better-sqlite3@12.6.0)(pg@8.16.3)(sqlite3@5.1.7)':
     dependencies:
@@ -8498,9 +8486,9 @@ snapshots:
       - supports-color
       - tedious
 
-  '@objectql/driver-mongo@1.6.1':
+  '@objectql/driver-mongo@1.7.0':
     dependencies:
-      '@objectql/types': 1.6.1
+      '@objectql/types': 1.7.0
       mongodb: 5.9.2
     transitivePeerDependencies:
       - '@aws-sdk/credential-providers'
@@ -8509,9 +8497,9 @@ snapshots:
       - mongodb-client-encryption
       - snappy
 
-  '@objectql/driver-sql@1.6.1(sqlite3@5.1.7)':
+  '@objectql/driver-sql@1.7.0(sqlite3@5.1.7)':
     dependencies:
-      '@objectql/types': 1.6.1
+      '@objectql/types': 1.7.0
       knex: 3.1.0(better-sqlite3@12.6.0)(pg@8.16.3)(sqlite3@5.1.7)
     transitivePeerDependencies:
       - better-sqlite3
@@ -8523,38 +8511,38 @@ snapshots:
       - supports-color
       - tedious
 
-  '@objectql/platform-node@1.6.1':
+  '@objectql/platform-node@1.7.0':
     dependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/types': 1.7.0
       fast-glob: 3.3.3
       js-yaml: 4.1.1
 
-  '@objectql/server@1.6.1':
+  '@objectql/server@1.7.0':
     dependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/types': 1.7.0
       js-yaml: 4.1.1
 
-  '@objectql/starter-basic@1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)':
+  '@objectql/starter-basic@1.7.0(@objectql/core@1.7.0)(@objectql/driver-sql@1.7.0(sqlite3@5.1.7))(@objectql/platform-node@1.7.0)(@objectql/types@1.7.0)(sqlite3@5.1.7)':
     dependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/driver-sql': 1.6.1(sqlite3@5.1.7)
-      '@objectql/platform-node': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/driver-sql': 1.7.0(sqlite3@5.1.7)
+      '@objectql/platform-node': 1.7.0
+      '@objectql/types': 1.7.0
       sqlite3: 5.1.7
 
-  '@objectql/starter-enterprise@1.6.1(@objectql/core@1.6.1)(@objectql/driver-sql@1.6.1(sqlite3@5.1.7))(@objectql/platform-node@1.6.1)(@objectql/types@1.6.1)(sqlite3@5.1.7)':
+  '@objectql/starter-enterprise@1.7.0(@objectql/core@1.7.0)(@objectql/driver-sql@1.7.0(sqlite3@5.1.7))(@objectql/platform-node@1.7.0)(@objectql/types@1.7.0)(sqlite3@5.1.7)':
     dependencies:
-      '@objectql/core': 1.6.1
-      '@objectql/driver-sql': 1.6.1(sqlite3@5.1.7)
-      '@objectql/platform-node': 1.6.1
-      '@objectql/types': 1.6.1
+      '@objectql/core': 1.7.0
+      '@objectql/driver-sql': 1.7.0(sqlite3@5.1.7)
+      '@objectql/platform-node': 1.7.0
+      '@objectql/types': 1.7.0
       sqlite3: 5.1.7
 
   '@objectql/types@1.5.0': {}
 
-  '@objectql/types@1.6.1': {}
+  '@objectql/types@1.7.0': {}
 
   '@paralleldrive/cuid2@2.3.1':
     dependencies:
@@ -9495,7 +9483,7 @@ snapshots:
     dependencies:
       '@types/d3-time': 3.0.4
 
-  '@types/d3-shape@3.1.7':
+  '@types/d3-shape@3.1.8':
     dependencies:
       '@types/d3-path': 3.1.1
 
@@ -9935,13 +9923,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@vueuse/integrations@12.8.2(focus-trap@7.7.1)(typescript@5.6.3)':
+  '@vueuse/integrations@12.8.2(focus-trap@7.8.0)(typescript@5.6.3)':
     dependencies:
       '@vueuse/core': 12.8.2(typescript@5.6.3)
       '@vueuse/shared': 12.8.2(typescript@5.6.3)
       vue: 3.5.26(typescript@5.6.3)
     optionalDependencies:
-      focus-trap: 7.7.1
+      focus-trap: 7.8.0
     transitivePeerDependencies:
       - typescript
 
@@ -10212,7 +10200,7 @@ snapshots:
   autoprefixer@10.4.23(postcss@8.5.6):
     dependencies:
       browserslist: 4.28.1
-      caniuse-lite: 1.0.30001763
+      caniuse-lite: 1.0.30001764
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.6
@@ -10276,10 +10264,10 @@ snapshots:
 
   baseline-browser-mapping@2.9.14: {}
 
-  better-auth@1.4.10(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3)):
+  better-auth@1.4.11(better-sqlite3@12.6.0)(mongodb@7.0.0(socks@2.8.7))(pg@8.16.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@4.0.16(@types/node@20.19.28)(jiti@1.21.7)(jsdom@27.4.0)(terser@5.44.1))(vue@3.5.26(typescript@5.6.3)):
     dependencies:
-      '@better-auth/core': 1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
-      '@better-auth/telemetry': 1.4.10(@better-auth/core@1.4.10(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
+      '@better-auth/core': 1.4.11(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0)
+      '@better-auth/telemetry': 1.4.11(@better-auth/core@1.4.11(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7(zod@4.3.5))(jose@6.1.3)(kysely@0.28.9)(nanostores@1.1.0))
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
@@ -10335,18 +10323,18 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
 
-  body-parser@1.20.3:
+  body-parser@1.20.4:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
       debug: 2.6.9
       depd: 2.0.0
       destroy: 1.2.0
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       iconv-lite: 0.4.24
       on-finished: 2.4.1
-      qs: 6.13.0
-      raw-body: 2.5.2
+      qs: 6.14.1
+      raw-body: 2.5.3
       type-is: 1.6.18
       unpipe: 1.0.0
     transitivePeerDependencies:
@@ -10368,7 +10356,7 @@ snapshots:
   browserslist@4.28.1:
     dependencies:
       baseline-browser-mapping: 2.9.14
-      caniuse-lite: 1.0.30001763
+      caniuse-lite: 1.0.30001764
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
@@ -10467,7 +10455,7 @@ snapshots:
 
   camelcase@6.3.0: {}
 
-  caniuse-lite@1.0.30001763: {}
+  caniuse-lite@1.0.30001764: {}
 
   ccount@2.0.1: {}
 
@@ -11152,7 +11140,7 @@ snapshots:
     dependencies:
       accepts: 1.3.8
       array-flatten: 1.1.1
-      body-parser: 1.20.3
+      body-parser: 1.20.4
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookie: 0.7.2
@@ -11288,7 +11276,7 @@ snapshots:
 
   fn.name@1.1.0: {}
 
-  focus-trap@7.7.1:
+  focus-trap@7.8.0:
     dependencies:
       tabbable: 6.4.0
 
@@ -11527,14 +11515,6 @@ snapshots:
 
   http-cache-semantics@4.2.0:
     optional: true
-
-  http-errors@2.0.0:
-    dependencies:
-      depd: 2.0.0
-      inherits: 2.0.4
-      setprototypeof: 1.2.0
-      statuses: 2.0.1
-      toidentifier: 1.0.1
 
   http-errors@2.0.1:
     dependencies:
@@ -12893,10 +12873,6 @@ snapshots:
 
   pure-rand@7.0.1: {}
 
-  qs@6.13.0:
-    dependencies:
-      side-channel: 1.1.0
-
   qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
@@ -12911,10 +12887,10 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  raw-body@2.5.2:
+  raw-body@2.5.3:
     dependencies:
       bytes: 3.1.2
-      http-errors: 2.0.0
+      http-errors: 2.0.1
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
@@ -12938,7 +12914,7 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
-  react-hook-form@7.70.0(react@18.3.1):
+  react-hook-form@7.71.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -12969,7 +12945,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.27
 
-  react-resizable-panels@4.3.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-resizable-panels@4.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -13387,8 +13363,6 @@ snapshots:
       escape-string-regexp: 2.0.0
 
   stackback@0.0.2: {}
-
-  statuses@2.0.1: {}
 
   statuses@2.0.2: {}
 
@@ -13940,7 +13914,7 @@ snapshots:
       '@types/d3-ease': 3.0.2
       '@types/d3-interpolate': 3.0.4
       '@types/d3-scale': 4.0.9
-      '@types/d3-shape': 3.1.7
+      '@types/d3-shape': 3.1.8
       '@types/d3-time': 3.0.4
       '@types/d3-timer': 3.0.2
       d3-array: 3.2.4
@@ -13979,7 +13953,7 @@ snapshots:
     dependencies:
       '@docsearch/css': 3.8.2
       '@docsearch/js': 3.8.2(@algolia/client-search@5.46.2)(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(search-insights@2.17.3)
-      '@iconify-json/simple-icons': 1.2.65
+      '@iconify-json/simple-icons': 1.2.66
       '@shikijs/core': 2.5.0
       '@shikijs/transformers': 2.5.0
       '@shikijs/types': 2.5.0
@@ -13988,8 +13962,8 @@ snapshots:
       '@vue/devtools-api': 7.7.9
       '@vue/shared': 3.5.26
       '@vueuse/core': 12.8.2(typescript@5.6.3)
-      '@vueuse/integrations': 12.8.2(focus-trap@7.7.1)(typescript@5.6.3)
-      focus-trap: 7.7.1
+      '@vueuse/integrations': 12.8.2(focus-trap@7.8.0)(typescript@5.6.3)
+      focus-trap: 7.8.0
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 2.5.0
