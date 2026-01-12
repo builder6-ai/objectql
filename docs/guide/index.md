@@ -348,6 +348,8 @@ Now that you have a basic understanding:
 3. **[Security Guide](./security-guide.md)** - Implement authentication and permissions
 4. **[Writing Hooks](./logic-hooks.md)** - Add custom business logic
 5. **[SDK Reference](./sdk-reference.md)** - Full API documentation
+6. **[UI Component Plan](../UI_COMPONENT_PLAN.md)** - Complete UI component development roadmap
+7. **[UI Task Assignments](../UI_TASK_ASSIGNMENTS.md)** - Sprint planning and task allocation
 
 ## Common Patterns
 
