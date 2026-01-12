@@ -104,6 +104,7 @@ function getValidationRules(fieldConfig: FieldConfig): RegisterOptions {
     }
   }
   
+  // Handle custom regex first - it takes precedence
   if (fieldConfig.regex) {
     rules.pattern = {
       value: new RegExp(fieldConfig.regex),
@@ -111,16 +112,16 @@ function getValidationRules(fieldConfig: FieldConfig): RegisterOptions {
     }
   }
   
-  // Email validation
-  if (fieldConfig.type === 'email') {
+  // Only apply built-in email validation if no custom regex is defined
+  if (fieldConfig.type === 'email' && !fieldConfig.regex) {
     rules.pattern = {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+      value: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
       message: 'Invalid email address'
     }
   }
   
-  // URL validation
-  if (fieldConfig.type === 'url') {
+  // Only apply built-in URL validation if no custom regex is defined
+  if (fieldConfig.type === 'url' && !fieldConfig.regex) {
     rules.pattern = {
       // Require http(s) scheme and a plausible hostname, with optional port and path
       value: /^(https?:\/\/)([\w-]+(\.[\w-]+)+)(:\d+)?(\/[^\s]*)?$/i,
