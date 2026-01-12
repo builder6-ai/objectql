@@ -6,7 +6,7 @@ This document describes the testing infrastructure and test suites for the Objec
 
 ## Test Framework
 
-- **Test Runner**: Vitest 2.1.8
+- **Test Runner**: Vitest 2.1.9
 - **Test Library**: @testing-library/react 16.3.1
 - **DOM Assertions**: @testing-library/jest-dom 6.9.1
 - **Coverage Provider**: v8
@@ -25,6 +25,18 @@ pnpm test:ui
 
 # Run tests with coverage
 pnpm test:coverage
+
+# Run specific test file
+pnpm test src/__tests__/allFieldTypes.test.ts
+```
+
+## Test Statistics
+
+```
+Test Files: 7
+Test Cases: 133
+Pass Rate: 100%
+Execution Time: ~3.3 seconds
 ```
 
 ## Test Structure
@@ -32,11 +44,13 @@ pnpm test:coverage
 ```
 apps/amis/
 ├── src/__tests__/          # Unit and integration tests
-│   ├── schemaBuilder.test.ts      # Schema conversion tests
-│   ├── AmisRenderer.test.tsx      # Component tests
-│   ├── ObjectPage.test.tsx        # Page component tests
-│   ├── api.test.ts                # API client tests
-│   └── integration.test.tsx       # Integration tests
+│   ├── allFieldTypes.test.ts      # All 23 field type validations (73 tests)
+│   ├── schemaBuilder.test.ts      # Schema conversion tests (30 tests)
+│   ├── lookupComponent.test.ts    # Lookup component tests (14 tests)
+│   ├── AmisRenderer.test.tsx      # Component tests (4 tests)
+│   ├── ObjectPage.test.tsx        # Page component tests (5 tests)
+│   ├── api.test.ts                # API client tests (1 test)
+│   └── integration.test.tsx       # Integration tests (6 tests)
 ├── test/
 │   ├── setup.ts            # Test setup and configuration
 │   └── testUtils.tsx       # Test utilities and helpers
@@ -45,7 +59,32 @@ apps/amis/
 
 ## Test Suites
 
-### 1. Schema Builder Tests (`schemaBuilder.test.ts`)
+### 1. Field Type Validation Tests (`allFieldTypes.test.ts`)
+
+**NEW** - Comprehensive validation of all 23 supported field types.
+
+**Coverage:**
+- Form component mapping for all types
+- Table column mapping for all types
+- Complete schema generation tests
+- Field configuration property tests
+- Unknown type fallback handling
+
+**Key Test Cases:**
+- ✅ 73 tests covering all field types
+- ✅ Text types (text, textarea, email, url, phone, password, html)
+- ✅ Number types (number, currency, percent)
+- ✅ Boolean types (checkbox, switch)
+- ✅ Selection types (select, picklist, multiselect)
+- ✅ Date/time types (date, datetime, time)
+- ✅ Lookup types (lookup, master_detail)
+- ✅ Media types (image, file)
+- ✅ Special types (color, rating, slider)
+- ✅ Field configuration properties (minLength, maxLength, validation, etc.)
+
+See [FIELD_TYPE_VALIDATION.md](./FIELD_TYPE_VALIDATION.md) for complete details.
+
+### 2. Schema Builder Tests (`schemaBuilder.test.ts`)
 
 Tests the ObjectQL to AMIS schema conversion logic.
 
@@ -69,7 +108,31 @@ Tests the ObjectQL to AMIS schema conversion logic.
 - ✅ Lookup field configuration
 - ✅ Currency and percent formatting
 
-### 2. AMIS Renderer Tests (`AmisRenderer.test.tsx`)
+### 3. Lookup Component Tests (`lookupComponent.test.ts`)
+
+**NEW** - Comprehensive tests for lookup/relationship field handling.
+
+**Coverage:**
+- Basic lookup configuration
+- Custom field configuration
+- Master-detail relationships
+- Inline record creation
+- Multiple selection support
+- Filtered lookups
+- Table column display
+
+**Key Test Cases:**
+- ✅ 14 tests for lookup functionality
+- ✅ Searchable and clearable dropdowns
+- ✅ Inline creation with `allow_create`
+- ✅ Multiple selection for many-to-many
+- ✅ Custom label and value fields
+- ✅ Filtered options
+- ✅ Table display with resolved names
+
+See [LOOKUP_GUIDE.md](./LOOKUP_GUIDE.md) for usage examples.
+
+### 4. AMIS Renderer Tests (`AmisRenderer.test.tsx`)
 
 Tests the core AMIS rendering component.
 
@@ -86,7 +149,7 @@ Tests the core AMIS rendering component.
 - ✅ Merges custom data
 - ✅ Includes user in context
 
-### 3. Object Page Tests (`ObjectPage.test.tsx`)
+### 5. Object Page Tests (`ObjectPage.test.tsx`)
 
 Tests the dynamic object page component.
 
@@ -104,7 +167,7 @@ Tests the dynamic object page component.
 - ✅ Displays error messages
 - ✅ Handles network errors
 
-### 4. API Client Tests (`api.test.ts`)
+### 6. API Client Tests (`api.test.ts`)
 
 Tests the Axios API client configuration.
 
@@ -116,7 +179,7 @@ Tests the Axios API client configuration.
 - ✅ 1 test for API client structure
 - ✅ Verifies all HTTP methods exist
 
-### 5. Integration Tests (`integration.test.tsx`)
+### 7. Integration Tests (`integration.test.tsx`)
 
 Tests the complete workflow from routing to rendering.
 
@@ -278,11 +341,11 @@ vi.mock('amis/lib/themes/cxd.css', () => ({}))
 
 ## Test Statistics
 
-- **Total Test Files**: 5
-- **Total Tests**: 46
-- **Passing**: 46 (100%)
+- **Total Test Files**: 7
+- **Total Tests**: 133
+- **Passing**: 133 (100%)
 - **Failing**: 0
-- **Average Duration**: ~2.5s
+- **Average Duration**: ~3.3s
 
 ## Continuous Integration
 

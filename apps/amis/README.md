@@ -132,10 +132,12 @@ pnpm test:coverage    # 运行测试并生成覆盖率报告
 
 测试包括：
 - ✅ 30+ 单元测试 (schemaBuilder, API client, components)
-- ✅ 5 组件测试 (AmisRenderer, ObjectPage)
+- ✅ 73 字段类型验证测试 (所有 23 种字段类型)
+- ✅ 14 Lookup 组件测试
+- ✅ 9 组件测试 (AmisRenderer, ObjectPage)
 - ✅ 6 集成测试 (完整页面流程)
 
-详细信息请参考 [TESTING.md](./TESTING.md)
+详细信息请参考 [TESTING.md](./TESTING.md) 和 [FIELD_TYPE_VALIDATION.md](./FIELD_TYPE_VALIDATION.md)
 
 ## 📚 API 集成
 
@@ -200,6 +202,7 @@ import 'amis/lib/themes/cxd.css';
 
 - [详细实现文档](./IMPLEMENTATION.md) - 架构、工作原理、自定义指南
 - [Lookup 组件指南](./LOOKUP_GUIDE.md) - 关联字段完整使用指南
+- [字段类型验证报告](./FIELD_TYPE_VALIDATION.md) - 所有字段类型的完整验证和测试
 - [AMIS 官方文档](https://aisuda.bce.baidu.com/amis/zh-CN/docs/index)
 - [ObjectOS 文档](https://github.com/objectql/objectos)
 
