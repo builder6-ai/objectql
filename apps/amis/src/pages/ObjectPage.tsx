@@ -19,7 +19,7 @@ const ObjectPage: React.FC = () => {
         setError(null);
 
         // Fetch object metadata from server
-        const response = await apiClient.get(`/metadata/${objectName}`);
+        const response = await apiClient.get(`/metadata/object/${objectName}`);
         const objectMeta = response.data;
 
         // Build AMIS CRUD schema from metadata

@@ -19,8 +19,16 @@ const Home: React.FC = () => {
     const fetchObjects = async () => {
       try {
         // Fetch list of available objects from server
-        const response = await apiClient.get('/metadata/objects');
-        setObjects(response.data);
+        const response = await apiClient.get('/metadata/object');
+        const data = response.data;
+        if (Array.isArray(data)) {
+          setObjects(data);
+        } else if (data && Array.isArray(data.object)) {
+          setObjects(data.object);
+        } else {
+          console.warn('Unexpected response format:', data);
+          setObjects([]);
+        }
       } catch (err) {
         console.error('Failed to fetch objects:', err);
       } finally {
