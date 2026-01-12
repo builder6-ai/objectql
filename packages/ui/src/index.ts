@@ -52,6 +52,9 @@ export { useIsMobile } from './hooks/use-mobile';
 // AG Grid table components
 // AgGridTable: Alternative export name for flexibility
 // DataTable: Primary table component with AG Grid (recommended)
+// ObjectGridTable: Metadata-driven AG Grid table (uses ObjectConfig)
 export { AgGridTable } from './components/ag-grid-table';
 export { DataTable, schema } from './components/data-table';
+export { ObjectGridTable } from './components/object-grid-table';
+export type { ObjectGridTableProps } from './components/object-grid-table';
 // Export shadcn components as they are added
