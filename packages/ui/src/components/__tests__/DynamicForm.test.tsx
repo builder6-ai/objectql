@@ -3,7 +3,6 @@ import '@testing-library/jest-dom'
 import { DynamicForm } from '../forms/DynamicForm'
 import { ObjectConfig } from '@objectql/types'
 import { describe, it, expect, vi } from 'vitest'
-import { User } from 'lucide-react'
 
 const simpleConfig: ObjectConfig = {
   name: 'user',
