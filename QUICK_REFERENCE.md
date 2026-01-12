@@ -29,8 +29,9 @@ ObjectQL (Protocol) → ObjectOS (Runtime) → Your Application
 git clone https://github.com/objectql/objectos.git
 cd objectos
 pnpm install
-pnpm run build
-pnpm run dev
+pnpm run dev     # Start development (Server + Web Watch)
+pnpm run build   # Build for production
+pnpm run start   # Run production build
 ```
 
 ### Create Your First Object

@@ -189,8 +189,22 @@ pnpm run test
 ### Development Workflow
 
 ```bash
-# Start the development server (watches for changes)
+# Start the full stack development environment
+# - Server runs in watch mode on http://localhost:3000
+# - Web runs in build watch mode (changes auto-compile)
 pnpm run dev
+
+# Start only the server (without frontend build watch)
+pnpm run server
+
+# Start only the frontend build watch
+pnpm run web:watch
+
+# Build for production (compiles both server and web)
+pnpm run build
+
+# Run the production build (starts server serving built web assets)
+pnpm run start
 
 # Run tests in watch mode
 pnpm run test --watch
