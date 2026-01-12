@@ -40,11 +40,11 @@
   },
   "version": "0.1.0",
   "dependencies": {
-    "@objectql/core": "^1.6.1",
+    "@objectql/core": "^1.7.0",
     "@objectql/driver-knex": "^1.5.0",
-    "@objectql/driver-mongo": "^1.6.1",
-    "@objectql/starter-basic": "^1.6.1",
-    "@objectql/starter-enterprise": "^1.6.1",
+    "@objectql/driver-mongo": "^1.7.0",
+    "@objectql/starter-basic": "^1.7.0",
+    "@objectql/starter-enterprise": "^1.7.0",
     "build": "^0.1.4"
   }
 }
