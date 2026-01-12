@@ -20,6 +20,10 @@ export function objectqlTypeToAmisFormType(fieldType: string): string {
     password: 'input-password',
     phone: 'input-text',
     html: 'rich-text',
+    switch: 'switch',
+    slider: 'input-range',
+    color: 'input-color',
+    rating: 'input-rating',
   };
   
   return typeMap[fieldType] || 'input-text';
@@ -46,6 +50,9 @@ export function objectqlTypeToAmisColumnType(fieldType: string): string {
     master_detail: 'text',
     image: 'image',
     file: 'link',
+    switch: 'switch',
+    rating: 'mapping',
+    color: 'color',
   };
   
   return typeMap[fieldType] || 'text';
@@ -71,8 +78,38 @@ export function buildAmisCRUDSchema(objectMeta: any, apiEndpoint: string) {
       };
     } else if (fieldConfig.type === 'currency') {
       column.prefix = '$';
+      column.precision = fieldConfig.precision || 2;
     } else if (fieldConfig.type === 'percent') {
       column.suffix = '%';
+    } else if (fieldConfig.type === 'url') {
+      column.type = 'link';
+      column.blank = true; // Open in new tab
+    } else if (fieldConfig.type === 'image') {
+      column.type = 'image';
+      column.enlargeAble = true;
+      column.thumbMode = 'cover';
+    } else if (fieldConfig.type === 'date') {
+      column.format = 'YYYY-MM-DD';
+    } else if (fieldConfig.type === 'datetime') {
+      column.format = 'YYYY-MM-DD HH:mm:ss';
+    } else if (fieldConfig.type === 'rating') {
+      column.type = 'mapping';
+      const count = fieldConfig.count || 5;
+      const stars: Record<string, string> = {};
+      for (let i = 1; i <= count; i++) {
+        stars[i.toString()] = '⭐'.repeat(i);
+      }
+      column.map = stars;
+    }
+
+    // Add width configuration if specified
+    if (fieldConfig.width) {
+      column.width = fieldConfig.width;
+    }
+
+    // Hide column if specified
+    if (fieldConfig.hidden) {
+      column.toggled = false;
     }
 
     return column;
@@ -101,7 +138,7 @@ export function buildAmisCRUDSchema(objectMeta: any, apiEndpoint: string) {
     } else if (fieldConfig.type === 'lookup' || fieldConfig.type === 'master_detail') {
       // For lookup fields, we would need to fetch reference data
       field.type = 'select';
-      field.source = `/api/data/${fieldConfig.reference_to}?fields=_id,name&pageSize=100`;
+      field.source = `/api/data/${fieldConfig.reference_to}/query`;
       field.labelField = 'name';
       field.valueField = '_id';
     } else if (fieldConfig.type === 'textarea') {
@@ -113,10 +150,70 @@ export function buildAmisCRUDSchema(objectMeta: any, apiEndpoint: string) {
       if (fieldConfig.type === 'currency') {
         field.prefix = '$';
       }
+      if (fieldConfig.precision !== undefined) {
+        field.precision = fieldConfig.precision;
+      }
+    } else if (fieldConfig.type === 'percent') {
+      field.suffix = '%';
+      field.min = fieldConfig.min || 0;
+      field.max = fieldConfig.max || 100;
+    } else if (fieldConfig.type === 'email') {
+      // Add email validation
+      field.validations = {
+        isEmail: true,
+      };
+      field.validationErrors = {
+        isEmail: '请输入有效的邮箱地址',
+      };
+    } else if (fieldConfig.type === 'url') {
+      // Add URL validation
+      field.validations = {
+        isUrl: true,
+      };
+      field.validationErrors = {
+        isUrl: '请输入有效的URL地址',
+      };
+    } else if (fieldConfig.type === 'phone') {
+      // Add phone validation pattern
+      field.validations = {
+        matchRegexp: '/^1[3-9]\\d{9}$/',
+      };
+      field.validationErrors = {
+        matchRegexp: '请输入有效的手机号码',
+      };
+    } else if (fieldConfig.type === 'rating') {
+      field.count = fieldConfig.count || 5;
+      field.half = fieldConfig.allowHalf || false;
+    } else if (fieldConfig.type === 'slider') {
+      field.min = fieldConfig.min || 0;
+      field.max = fieldConfig.max || 100;
+      field.step = fieldConfig.step || 1;
     }
 
     if (fieldConfig.placeholder) {
       field.placeholder = fieldConfig.placeholder;
+    }
+
+    if (fieldConfig.description) {
+      field.description = fieldConfig.description;
+    }
+
+    if (fieldConfig.help) {
+      field.hint = fieldConfig.help;
+    }
+
+    // Add custom validation rules
+    if (fieldConfig.minLength) {
+      field.minLength = fieldConfig.minLength;
+    }
+
+    if (fieldConfig.maxLength) {
+      field.maxLength = fieldConfig.maxLength;
+    }
+
+    if (fieldConfig.pattern) {
+      field.validations = field.validations || {};
+      field.validations.matchRegexp = fieldConfig.pattern;
     }
 
     return field;

@@ -108,6 +108,24 @@ pnpm run build
 
 构建输出在 `dist/` 目录。
 
+## 🧪 测试
+
+运行测试套件：
+
+```bash
+cd apps/amis
+pnpm test              # 运行所有测试
+pnpm test:ui          # 使用 UI 界面运行测试
+pnpm test:coverage    # 运行测试并生成覆盖率报告
+```
+
+测试包括：
+- ✅ 30+ 单元测试 (schemaBuilder, API client, components)
+- ✅ 5 组件测试 (AmisRenderer, ObjectPage)
+- ✅ 6 集成测试 (完整页面流程)
+
+详细信息请参考 [TESTING.md](./TESTING.md)
+
 ## 📚 API 集成
 
 应用依赖以下 ObjectOS API 端点：
