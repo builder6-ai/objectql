@@ -18,6 +18,7 @@ export {
     mergeFieldConfig,
     mergeFields,
     isDeleted,
-    DELETED_MARKER
+    DELETED_MARKER,
+    FieldOverride
 } from './utils/merge';
 

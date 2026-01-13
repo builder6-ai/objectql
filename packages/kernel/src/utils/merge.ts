@@ -7,6 +7,11 @@ import { ObjectConfig, FieldConfig } from '@objectql/types';
 export const DELETED_MARKER = { _deleted: true };
 
 /**
+ * Type for field override - allows partial field config or deletion marker
+ */
+export type FieldOverride = Partial<FieldConfig> | null | { _deleted: true };
+
+/**
  * Check if a value is a deletion marker.
  */
 export function isDeleted(value: any): boolean {
@@ -128,15 +133,15 @@ export function mergeObjectConfig(base: ObjectConfig, override: Partial<ObjectCo
     // Merge validation
     if (override.validation) {
         merged.validation = {
-            rules: override.validation.rules || base.validation?.rules,
-            ai_context: override.validation.ai_context || base.validation?.ai_context
+            rules: override.validation.rules ?? base.validation?.rules,
+            ai_context: override.validation.ai_context ?? base.validation?.ai_context
         };
     }
 
     // Merge AI config
     if (override.ai) {
         merged.ai = {
-            search: override.ai.search || base.ai?.search
+            search: override.ai.search ?? base.ai?.search
         };
     }
 

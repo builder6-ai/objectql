@@ -3,7 +3,8 @@ import {
     mergeFieldConfig, 
     mergeFields, 
     isDeleted,
-    DELETED_MARKER 
+    DELETED_MARKER,
+    FieldOverride
 } from '../src/utils/merge';
 import { ObjectConfig, FieldConfig } from '@objectql/types';
 
@@ -412,6 +413,28 @@ describe('Merge Utilities', () => {
 
             // Check unchanged fields
             expect(result.fields.email.required).toBe(true);
+        });
+
+        it('should use nullish coalescing for validation rules override', () => {
+            const base: ObjectConfig = {
+                name: 'user',
+                label: 'User',
+                fields: {},
+                validation: {
+                    rules: [{ type: 'required', field: 'email' }] as any
+                }
+            };
+
+            // Override with empty array should work (not fall back to base)
+            const override: Partial<ObjectConfig> = {
+                validation: {
+                    rules: []
+                }
+            };
+
+            const result = mergeObjectConfig(base, override);
+            expect(result.validation?.rules).toEqual([]);
+            expect(result.validation?.rules).not.toEqual(base.validation?.rules);
         });
     });
 });
