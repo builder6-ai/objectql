@@ -1,0 +1,1149 @@
+# Web Framework Specification
+
+## 1. Overview
+
+The ObjectOS Web Framework is a **plugin-based, extensible architecture** for building enterprise web applications. It provides a minimal core with well-defined extension points, allowing developers to replace or extend any component through a standardized plugin system.
+
+### Design Principles
+
+1. **Minimalist Core**: The framework provides only essential functionality
+2. **Plugin Everything**: All major features (tables, forms, charts) are plugins
+3. **Clear Contracts**: Well-defined interfaces for plugin development
+4. **Progressive Enhancement**: Start simple, add complexity as needed
+5. **Ecosystem Ready**: Designed for third-party plugin development
+
+---
+
+## 2. Core Framework Architecture
+
+### 2.1 Framework Layers
+
+```
+┌─────────────────────────────────────────┐
+│         Application Layer               │
+│  (User's App, Routes, Pages)            │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│         Plugin Layer                    │
+│  (Tables, Forms, Charts, Widgets)       │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│         Framework Core                  │
+│  (Plugin Registry, Event Bus, Context)  │
+└─────────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────────┐
+│         Foundation Layer                │
+│  (React, UI Primitives, Theme)          │
+└─────────────────────────────────────────┘
+```
+
+### 2.2 Core Modules
+
+The framework core provides:
+
+| Module | Responsibility | Status |
+|--------|---------------|--------|
+| **PluginRegistry** | Plugin registration and lifecycle management | Core |
+| **EventBus** | Event-driven communication between plugins | Core |
+| **ThemeProvider** | Theming and styling system | Core |
+| **ContextManager** | Application state and configuration | Core |
+| **ComponentRegistry** | Component override and extension system | Core |
+
+---
+
+## 3. Plugin System
+
+### 3.1 Plugin Interface
+
+Every plugin must implement the `IObjectOSPlugin` interface:
+
+```typescript
+interface IObjectOSPlugin {
+  // Unique plugin identifier
+  name: string;
+  
+  // Semantic version
+  version: string;
+  
+  // Plugin metadata
+  metadata: {
+    displayName: string;
+    description: string;
+    author?: string;
+    homepage?: string;
+  };
+  
+  // Plugin dependencies (other plugins required)
+  dependencies?: string[];
+  
+  // Initialize plugin (called once on registration)
+  initialize(context: PluginContext): void | Promise<void>;
+  
+  // Cleanup on plugin unload
+  destroy?(): void | Promise<void>;
+}
+```
+
+### 3.2 Plugin Context
+
+The framework provides plugins with a context object:
+
+```typescript
+interface PluginContext {
+  // Access to plugin registry
+  registry: PluginRegistry;
+  
+  // Event bus for pub/sub
+  events: EventBus;
+  
+  // Component registry for overrides
+  components: ComponentRegistry;
+  
+  // Theme system access
+  theme: ThemeProvider;
+  
+  // Application configuration
+  config: AppConfig;
+  
+  // HTTP client for API calls
+  http: HttpClient;
+}
+```
+
+### 3.3 Plugin Registration
+
+Plugins are registered at application startup:
+
+```typescript
+import { createFramework } from '@objectos/web-framework';
+import { AGGridPlugin } from '@objectos/plugin-aggrid';
+import { ReactHookFormPlugin } from '@objectos/plugin-react-hook-form';
+
+const framework = createFramework({
+  plugins: [
+    new AGGridPlugin(),
+    new ReactHookFormPlugin(),
+    // ... other plugins
+  ]
+});
+```
+
+---
+
+## 4. Component Plugin System
+
+### 4.1 Component Plugin Categories
+
+The framework defines standard plugin categories:
+
+| Category | Purpose | Default Implementation |
+|----------|---------|----------------------|
+| **TablePlugin** | Data grid/table component | `@objectos/plugin-table-default` |
+| **FormPlugin** | Form builder and validation | `@objectos/plugin-form-default` |
+| **ChartPlugin** | Data visualization | `@objectos/plugin-chart-default` |
+| **CalendarPlugin** | Calendar/scheduler views | `@objectos/plugin-calendar-default` |
+| **KanbanPlugin** | Kanban board views | `@objectos/plugin-kanban-default` |
+| **EditorPlugin** | Rich text editor | `@objectos/plugin-editor-default` |
+| **FileUploaderPlugin** | File upload handling | `@objectos/plugin-uploader-default` |
+
+### 4.2 Table Plugin Interface
+
+Example: Replacing the table component
+
+```typescript
+interface ITablePlugin extends IObjectOSPlugin {
+  // Plugin category identifier
+  category: 'table';
+  
+  // Render the table component
+  renderTable(props: TableProps): React.ReactElement;
+  
+  // Table capabilities (optional features)
+  capabilities: {
+    sorting?: boolean;
+    filtering?: boolean;
+    grouping?: boolean;
+    virtualization?: boolean;
+    export?: boolean;
+    cellEditing?: boolean;
+  };
+}
+
+// Usage in component
+const TableComponent = framework.components.get('table');
+<TableComponent data={data} columns={columns} />
+```
+
+### 4.3 Form Plugin Interface
+
+Example: Replacing the form component
+
+```typescript
+interface IFormPlugin extends IObjectOSPlugin {
+  // Plugin category identifier
+  category: 'form';
+  
+  // Render form component
+  renderForm(props: FormProps): React.ReactElement;
+  
+  // Form capabilities
+  capabilities: {
+    validation?: boolean;
+    conditionalFields?: boolean;
+    fileUpload?: boolean;
+    autoSave?: boolean;
+    multiStep?: boolean;
+  };
+  
+  // Validation integration
+  createValidator?(schema: ValidationSchema): Validator;
+}
+
+// Usage
+const FormComponent = framework.components.get('form');
+<FormComponent schema={schema} onSubmit={handleSubmit} />
+```
+
+### 4.4 Chart Plugin Interface
+
+Example: Replacing chart/visualization components
+
+```typescript
+interface IChartPlugin extends IObjectOSPlugin {
+  category: 'chart';
+  
+  // Supported chart types
+  chartTypes: string[]; // e.g., ['bar', 'line', 'pie', 'area']
+  
+  // Render chart
+  renderChart(props: ChartProps): React.ReactElement;
+  
+  // Chart capabilities
+  capabilities: {
+    interactive?: boolean;
+    realtime?: boolean;
+    export?: boolean;
+    animations?: boolean;
+  };
+}
+```
+
+---
+
+## 5. Component Override System
+
+### 5.1 Component Registration
+
+Plugins can register or override components:
+
+```typescript
+class AGGridPlugin implements ITablePlugin {
+  name = '@objectos/plugin-aggrid';
+  category = 'table';
+  
+  initialize(context: PluginContext) {
+    // Register as the table component provider
+    context.components.register('table', AGGridTable);
+    
+    // Can also register variants
+    context.components.register('table.advanced', AGGridAdvanced);
+    context.components.register('table.mobile', AGGridMobile);
+  }
+  
+  renderTable(props: TableProps) {
+    return <AGGridTable {...props} />;
+  }
+}
+```
+
+### 5.2 Component Resolution
+
+The framework resolves components using a priority system:
+
+```typescript
+// Priority order:
+// 1. User-specified override
+// 2. Active plugin for category
+// 3. Default fallback
+
+const TableComponent = framework.components.get('table', {
+  fallback: DefaultTable,
+  variant: 'advanced' // optional variant
+});
+```
+
+### 5.3 Partial Overrides
+
+Plugins can extend rather than replace:
+
+```typescript
+class CustomTablePlugin implements ITablePlugin {
+  initialize(context: PluginContext) {
+    // Get the current table component
+    const BaseTable = context.components.get('table');
+    
+    // Wrap and enhance it
+    const EnhancedTable = (props) => (
+      <BaseTable
+        {...props}
+        onRowClick={(row) => {
+          // Custom behavior
+          console.log('Row clicked:', row);
+          props.onRowClick?.(row);
+        }}
+      />
+    );
+    
+    // Register the enhanced version
+    context.components.register('table', EnhancedTable);
+  }
+}
+```
+
+---
+
+## 6. Event System
+
+### 6.1 Standard Events
+
+The framework defines standard lifecycle events:
+
+```typescript
+// Framework lifecycle
+'framework:initialized'
+'framework:ready'
+'framework:error'
+
+// Plugin lifecycle
+'plugin:registered'
+'plugin:initialized'
+'plugin:destroyed'
+
+// Data events
+'data:fetched'
+'data:created'
+'data:updated'
+'data:deleted'
+
+// UI events
+'view:changed'
+'record:selected'
+'form:submitted'
+'table:sorted'
+'filter:applied'
+```
+
+### 6.2 Event Subscription
+
+Plugins can subscribe to events:
+
+```typescript
+class AnalyticsPlugin implements IObjectOSPlugin {
+  initialize(context: PluginContext) {
+    // Listen to data events
+    context.events.on('data:created', (payload) => {
+      this.trackEvent('record_created', payload);
+    });
+    
+    // Listen to UI events
+    context.events.on('form:submitted', (payload) => {
+      this.trackEvent('form_submit', payload);
+    });
+  }
+  
+  trackEvent(name: string, data: any) {
+    // Send to analytics service
+  }
+}
+```
+
+### 6.3 Custom Events
+
+Plugins can emit custom events:
+
+```typescript
+class NotificationPlugin implements IObjectOSPlugin {
+  initialize(context: PluginContext) {
+    this.events = context.events;
+  }
+  
+  showNotification(message: string) {
+    // Emit custom event
+    this.events.emit('notification:show', {
+      message,
+      timestamp: Date.now()
+    });
+  }
+}
+```
+
+---
+
+## 7. Theme System
+
+### 7.1 Theme Structure
+
+The framework uses a centralized theme system:
+
+```typescript
+interface Theme {
+  // Color system
+  colors: {
+    primary: string;
+    secondary: string;
+    success: string;
+    warning: string;
+    error: string;
+    background: string;
+    foreground: string;
+    border: string;
+    // ... more colors
+  };
+  
+  // Typography
+  typography: {
+    fontFamily: string;
+    fontSize: Record<string, string>;
+    fontWeight: Record<string, number>;
+    lineHeight: Record<string, string>;
+  };
+  
+  // Spacing
+  spacing: Record<string, string>;
+  
+  // Border radius
+  radius: Record<string, string>;
+  
+  // Shadows
+  shadows: Record<string, string>;
+  
+  // Breakpoints
+  breakpoints: {
+    sm: string;
+    md: string;
+    lg: string;
+    xl: string;
+  };
+}
+```
+
+### 7.2 Theme Customization
+
+Plugins can access and extend the theme:
+
+```typescript
+class CustomThemePlugin implements IObjectOSPlugin {
+  initialize(context: PluginContext) {
+    // Extend existing theme
+    context.theme.extend({
+      colors: {
+        brand: '#FF6B6B',
+        accent: '#4ECDC4'
+      }
+    });
+    
+    // Or replace entirely
+    context.theme.set(customTheme);
+  }
+}
+```
+
+### 7.3 Component Theming
+
+Components use theme tokens:
+
+```typescript
+import { useTheme } from '@objectos/web-framework';
+
+function CustomComponent() {
+  const theme = useTheme();
+  
+  return (
+    <div style={{
+      color: theme.colors.primary,
+      padding: theme.spacing.md,
+      borderRadius: theme.radius.md
+    }}>
+      Content
+    </div>
+  );
+}
+```
+
+---
+
+## 8. Plugin Development Guide
+
+### 8.1 Creating a Plugin
+
+Step-by-step guide to create a plugin:
+
+**Step 1: Define the plugin structure**
+
+```typescript
+// my-table-plugin/src/index.ts
+import { ITablePlugin, PluginContext } from '@objectos/web-framework';
+import { MyTableComponent } from './MyTable';
+
+export class MyTablePlugin implements ITablePlugin {
+  name = '@myorg/table-plugin';
+  version = '1.0.0';
+  category = 'table';
+  
+  metadata = {
+    displayName: 'My Custom Table',
+    description: 'A custom table implementation',
+    author: 'Your Name'
+  };
+  
+  capabilities = {
+    sorting: true,
+    filtering: true,
+    virtualization: true
+  };
+  
+  initialize(context: PluginContext) {
+    // Register the component
+    context.components.register('table', MyTableComponent);
+    
+    // Set up event listeners
+    context.events.on('data:fetched', this.handleDataFetched);
+  }
+  
+  renderTable(props) {
+    return <MyTableComponent {...props} />;
+  }
+  
+  handleDataFetched = (data) => {
+    console.log('Data fetched:', data);
+  };
+  
+  destroy() {
+    // Cleanup
+  }
+}
+```
+
+**Step 2: Implement the component**
+
+```typescript
+// my-table-plugin/src/MyTable.tsx
+import React from 'react';
+import { TableProps } from '@objectos/web-framework';
+
+export function MyTableComponent(props: TableProps) {
+  const { data, columns, onRowClick } = props;
+  
+  return (
+    <table>
+      <thead>
+        <tr>
+          {columns.map(col => (
+            <th key={col.id}>{col.label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map(row => (
+          <tr key={row.id} onClick={() => onRowClick?.(row)}>
+            {columns.map(col => (
+              <td key={col.id}>{row[col.field]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+**Step 3: Package and publish**
+
+```json
+// package.json
+{
+  "name": "@myorg/table-plugin",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "peerDependencies": {
+    "@objectos/web-framework": "^0.1.0",
+    "react": "^18.0.0"
+  }
+}
+```
+
+### 8.2 Plugin Best Practices
+
+1. **Minimal Dependencies**: Keep plugin dependencies minimal
+2. **Clear Documentation**: Document all props, events, and capabilities
+3. **Backward Compatibility**: Maintain compatibility across versions
+4. **Error Handling**: Handle errors gracefully, don't crash the app
+5. **Performance**: Optimize for performance (lazy loading, memoization)
+6. **Testing**: Provide comprehensive tests
+7. **TypeScript**: Use TypeScript for better DX
+
+### 8.3 Plugin Testing
+
+```typescript
+// __tests__/plugin.test.ts
+import { createTestFramework } from '@objectos/web-framework/testing';
+import { MyTablePlugin } from '../src';
+
+describe('MyTablePlugin', () => {
+  it('should register successfully', () => {
+    const framework = createTestFramework();
+    const plugin = new MyTablePlugin();
+    
+    framework.registerPlugin(plugin);
+    
+    expect(framework.hasPlugin('@myorg/table-plugin')).toBe(true);
+  });
+  
+  it('should render table component', () => {
+    const framework = createTestFramework();
+    framework.registerPlugin(new MyTablePlugin());
+    
+    const TableComponent = framework.components.get('table');
+    const { container } = render(
+      <TableComponent 
+        data={mockData} 
+        columns={mockColumns} 
+      />
+    );
+    
+    expect(container.querySelector('table')).toBeInTheDocument();
+  });
+});
+```
+
+---
+
+## 9. Official Plugin Ecosystem
+
+### 9.1 Core Plugins (Maintained by ObjectOS Team)
+
+| Plugin | Package | Description |
+|--------|---------|-------------|
+| **Default Table** | `@objectos/plugin-table-default` | Basic table implementation using TanStack Table |
+| **AG Grid Table** | `@objectos/plugin-table-aggrid` | Advanced table using AG Grid |
+| **Default Form** | `@objectos/plugin-form-default` | Form using React Hook Form |
+| **Formik Form** | `@objectos/plugin-form-formik` | Alternative form using Formik |
+| **Recharts** | `@objectos/plugin-chart-recharts` | Charts using Recharts |
+| **Chart.js** | `@objectos/plugin-chart-chartjs` | Charts using Chart.js |
+| **FullCalendar** | `@objectos/plugin-calendar-full` | Full-featured calendar |
+| **Tiptap Editor** | `@objectos/plugin-editor-tiptap` | Rich text editor |
+| **React DnD Kanban** | `@objectos/plugin-kanban-dnd` | Kanban board with drag-n-drop |
+
+### 9.2 Community Plugins
+
+The ecosystem welcomes community contributions:
+
+- **Plugin Registry**: https://plugins.objectos.org
+- **Development Guide**: https://docs.objectos.org/plugin-development
+- **Plugin Template**: https://github.com/objectql/plugin-template
+
+### 9.3 Plugin Discovery
+
+Users can discover and install plugins:
+
+```bash
+# Search for plugins
+npm search objectos-plugin
+
+# Install a plugin
+npm install @vendor/objectos-plugin-name
+
+# Use in application
+import { VendorPlugin } from '@vendor/objectos-plugin-name';
+framework.registerPlugin(new VendorPlugin());
+```
+
+---
+
+## 10. Framework Configuration
+
+### 10.1 Framework Initialization
+
+```typescript
+import { createFramework } from '@objectos/web-framework';
+
+const framework = createFramework({
+  // Plugin configuration
+  plugins: [
+    new TablePlugin(),
+    new FormPlugin()
+  ],
+  
+  // Theme configuration
+  theme: {
+    mode: 'light',
+    preset: 'default',
+    customization: {
+      colors: {
+        primary: '#0066CC'
+      }
+    }
+  },
+  
+  // Feature flags
+  features: {
+    devTools: process.env.NODE_ENV === 'development',
+    analytics: true,
+    errorBoundary: true
+  },
+  
+  // API configuration
+  api: {
+    baseURL: '/api/v4',
+    timeout: 30000
+  },
+  
+  // Performance settings
+  performance: {
+    lazyLoadPlugins: true,
+    virtualizeGrids: true,
+    cacheComponents: true
+  }
+});
+```
+
+### 10.2 Runtime Configuration
+
+Configuration can be updated at runtime:
+
+```typescript
+// Update API settings
+framework.config.set('api.baseURL', '/api/v5');
+
+// Enable/disable features
+framework.config.set('features.analytics', false);
+
+// Update theme
+framework.config.set('theme.mode', 'dark');
+```
+
+---
+
+## 11. Advanced Patterns
+
+### 11.1 Plugin Communication
+
+Plugins can communicate via events:
+
+```typescript
+// Plugin A: Export functionality
+class ExportPlugin implements IObjectOSPlugin {
+  initialize(context: PluginContext) {
+    context.events.on('table:export', (data) => {
+      this.exportToCSV(data);
+    });
+  }
+}
+
+// Plugin B: Trigger export
+class TablePlugin implements ITablePlugin {
+  exportData() {
+    this.context.events.emit('table:export', this.data);
+  }
+}
+```
+
+### 11.2 Plugin Dependencies
+
+Declare dependencies between plugins:
+
+```typescript
+class AdvancedTablePlugin implements ITablePlugin {
+  dependencies = ['@objectos/plugin-export'];
+  
+  initialize(context: PluginContext) {
+    // Can safely use export plugin
+    const exportPlugin = context.registry.get('@objectos/plugin-export');
+  }
+}
+```
+
+### 11.3 Middleware Pattern
+
+Plugins can implement middleware:
+
+```typescript
+class LoggingPlugin implements IObjectOSPlugin {
+  initialize(context: PluginContext) {
+    // Intercept API calls
+    context.http.use(async (request, next) => {
+      console.log('Request:', request);
+      const response = await next(request);
+      console.log('Response:', response);
+      return response;
+    });
+  }
+}
+```
+
+### 11.4 Lazy Loading Plugins
+
+Load plugins on demand:
+
+```typescript
+const framework = createFramework({
+  plugins: [
+    // Eager load
+    new CorePlugin(),
+    
+    // Lazy load
+    {
+      name: '@objectos/plugin-advanced-charts',
+      loader: () => import('@objectos/plugin-advanced-charts')
+    }
+  ]
+});
+
+// Load when needed
+await framework.loadPlugin('@objectos/plugin-advanced-charts');
+```
+
+---
+
+## 12. Migration Guide
+
+### 12.1 Migrating from Monolithic Components
+
+Before (Monolithic):
+```typescript
+import { ObjectGrid } from '@objectos/ui';
+
+<ObjectGrid 
+  data={data} 
+  columns={columns}
+  // Tightly coupled to specific implementation
+/>
+```
+
+After (Plugin-based):
+```typescript
+import { useComponent } from '@objectos/web-framework';
+
+function MyView() {
+  const TableComponent = useComponent('table');
+  
+  return (
+    <TableComponent 
+      data={data} 
+      columns={columns}
+      // Implementation can be swapped via plugins
+    />
+  );
+}
+```
+
+### 12.2 Creating Wrapper Plugins
+
+Wrap existing components as plugins:
+
+```typescript
+import { ObjectGrid } from '@objectos/ui/legacy';
+
+class LegacyTablePlugin implements ITablePlugin {
+  renderTable(props: TableProps) {
+    // Adapt props to legacy interface
+    return <ObjectGrid {...adaptProps(props)} />;
+  }
+}
+```
+
+---
+
+## 13. Performance Considerations
+
+### 13.1 Bundle Size
+
+- **Tree Shaking**: Only include used plugins
+- **Code Splitting**: Lazy load plugins
+- **Peer Dependencies**: Share common dependencies
+
+### 13.2 Runtime Performance
+
+- **Memoization**: Cache component resolutions
+- **Event Debouncing**: Batch event emissions
+- **Virtual Scrolling**: Use for large datasets
+
+### 13.3 Plugin Initialization
+
+```typescript
+// Lazy initialization
+class HeavyPlugin implements IObjectOSPlugin {
+  private initialized = false;
+  
+  async initialize(context: PluginContext) {
+    // Defer heavy operations
+    context.events.on('plugin:activate', async () => {
+      if (!this.initialized) {
+        await this.loadHeavyDependencies();
+        this.initialized = true;
+      }
+    });
+  }
+}
+```
+
+---
+
+## 14. Security
+
+### 14.1 Plugin Sandboxing
+
+Plugins run in the same context but should follow security guidelines:
+
+- **No eval()**: Never use eval or Function constructor
+- **Sanitize Input**: Always sanitize user input
+- **CSP Compliance**: Follow Content Security Policy
+- **XSS Prevention**: Escape HTML output
+
+### 14.2 Plugin Verification
+
+```typescript
+// Verify plugin signature (future feature)
+framework.config.set('security.verifyPlugins', true);
+
+// Whitelist approved plugins
+framework.config.set('security.allowedPlugins', [
+  '@objectos/*',
+  '@trusted-vendor/*'
+]);
+```
+
+---
+
+## 15. TypeScript Support
+
+### 15.1 Plugin Type Definitions
+
+```typescript
+// Strongly typed plugin interface
+import type { 
+  ITablePlugin, 
+  TableProps, 
+  PluginContext 
+} from '@objectos/web-framework';
+
+export class MyPlugin implements ITablePlugin {
+  // Full type safety
+}
+```
+
+### 15.2 Type Augmentation
+
+Extend framework types:
+
+```typescript
+// my-plugin/types.d.ts
+import '@objectos/web-framework';
+
+declare module '@objectos/web-framework' {
+  interface ComponentRegistry {
+    'my-custom-component': typeof MyComponent;
+  }
+  
+  interface EventMap {
+    'custom:event': { data: string };
+  }
+}
+```
+
+---
+
+## 16. Testing Framework
+
+### 16.1 Test Utilities
+
+```typescript
+import { 
+  createTestFramework,
+  mockPlugin,
+  mockComponent 
+} from '@objectos/web-framework/testing';
+
+describe('Framework Tests', () => {
+  it('should work with test framework', () => {
+    const framework = createTestFramework();
+    const plugin = mockPlugin('table');
+    
+    framework.registerPlugin(plugin);
+    expect(framework.hasPlugin('table')).toBe(true);
+  });
+});
+```
+
+### 16.2 Component Testing
+
+```typescript
+import { renderWithFramework } from '@objectos/web-framework/testing';
+
+test('component uses plugin', () => {
+  const { getByRole } = renderWithFramework(
+    <MyComponent />,
+    {
+      plugins: [new MockTablePlugin()]
+    }
+  );
+  
+  expect(getByRole('table')).toBeInTheDocument();
+});
+```
+
+---
+
+## 17. Future Roadmap
+
+### 17.1 Planned Features
+
+- **Plugin Marketplace**: Web-based plugin discovery
+- **Visual Plugin Builder**: No-code plugin creation
+- **Plugin Analytics**: Usage tracking and metrics
+- **Hot Reload**: Update plugins without reload
+- **Remote Plugins**: Load plugins from CDN
+- **Plugin Versioning**: Multiple versions simultaneously
+
+### 17.2 API Stability
+
+- **Core API**: Stable (Semantic Versioning)
+- **Plugin API**: Stable (Backward compatible)
+- **Internal API**: May change between minor versions
+
+---
+
+## 18. Examples
+
+### 18.1 Complete Example Application
+
+```typescript
+// app.tsx
+import { createFramework } from '@objectos/web-framework';
+import { AGGridPlugin } from '@objectos/plugin-table-aggrid';
+import { ReactHookFormPlugin } from '@objectos/plugin-form-rhf';
+import { RechartsPlugin } from '@objectos/plugin-chart-recharts';
+
+// Initialize framework
+const framework = createFramework({
+  plugins: [
+    new AGGridPlugin({
+      license: process.env.AGGRID_LICENSE
+    }),
+    new ReactHookFormPlugin(),
+    new RechartsPlugin()
+  ],
+  theme: {
+    preset: 'enterprise',
+    mode: 'light'
+  }
+});
+
+// Provide framework to app
+function App() {
+  return (
+    <FrameworkProvider framework={framework}>
+      <Router>
+        <Routes>
+          <Route path="/contacts" element={<ContactsView />} />
+          <Route path="/deals" element={<DealsView />} />
+        </Routes>
+      </Router>
+    </FrameworkProvider>
+  );
+}
+
+// Use framework components
+function ContactsView() {
+  const Table = useComponent('table');
+  const Form = useComponent('form');
+  
+  return (
+    <div>
+      <Table 
+        data={contacts}
+        columns={columns}
+        onRowClick={handleRowClick}
+      />
+      <Form
+        schema={contactSchema}
+        onSubmit={handleSubmit}
+      />
+    </div>
+  );
+}
+```
+
+### 18.2 Custom Plugin Example
+
+See section 8.1 for complete plugin development example.
+
+---
+
+## 19. Glossary
+
+- **Plugin**: Self-contained module that extends framework functionality
+- **Component Registry**: Central storage for component overrides
+- **Event Bus**: Pub/sub system for inter-plugin communication
+- **Plugin Context**: Runtime environment provided to plugins
+- **Theme Provider**: Centralized styling and theming system
+- **Framework Core**: Minimal core providing plugin infrastructure
+
+---
+
+## 20. References
+
+- **Plugin Development Guide**: `/docs/guide/plugin-development.md`
+- **Component API Reference**: `/docs/api/components.md`
+- **Event System Reference**: `/docs/api/events.md`
+- **TypeScript Definitions**: `@objectos/web-framework/types`
+- **Example Plugins**: `https://github.com/objectql/example-plugins`
+
+---
+
+## Appendix A: Default Plugin Implementations
+
+The framework ships with minimal default implementations for all plugin categories. These can be replaced with more advanced alternatives:
+
+### Table Plugin (Default)
+- **Package**: `@objectos/plugin-table-default`
+- **Features**: Basic sorting, filtering
+- **Library**: TanStack Table
+
+### Form Plugin (Default)
+- **Package**: `@objectos/plugin-form-default`
+- **Features**: Validation, field types
+- **Library**: React Hook Form
+
+### Chart Plugin (Default)
+- **Package**: `@objectos/plugin-chart-default`
+- **Features**: Line, bar, pie charts
+- **Library**: Recharts
+
+---
+
+## Appendix B: Plugin Checklist
+
+When creating a plugin, ensure:
+
+- [ ] Implements `IObjectOSPlugin` interface
+- [ ] Has unique name and version
+- [ ] Provides clear metadata (description, author)
+- [ ] Handles initialization and cleanup
+- [ ] Documents all capabilities
+- [ ] Includes TypeScript definitions
+- [ ] Has comprehensive tests
+- [ ] Follows security best practices
+- [ ] Optimized for performance
+- [ ] Has clear documentation
+- [ ] Publishes to npm registry
+- [ ] Lists in plugin marketplace
+
+---
+
+**Version**: 1.0.0  
+**Last Updated**: 2026-01-13  
+**Status**: Draft Specification
