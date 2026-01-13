@@ -347,7 +347,8 @@ Now that you have a basic understanding:
 2. **[Architecture Guide](./architecture.md)** - Understand the three-layer architecture
 3. **[Security Guide](./security-guide.md)** - Implement authentication and permissions
 4. **[Writing Hooks](./logic-hooks.md)** - Add custom business logic
-5. **[SDK Reference](./sdk-reference.md)** - Full API documentation
+5. **[Plugin Development](./plugin-development.md)** - Create custom plugins for the web framework
+6. **[SDK Reference](./sdk-reference.md)** - Full API documentation
 
 ## Common Patterns
 
