@@ -5,7 +5,7 @@
  * It serves as a minimal reference implementation for table plugins.
  */
 
-import type { ITablePlugin, PluginContext, TableProps } from '@objectos/web-framework';
+import type { ITablePlugin, PluginContext, TableProps, PluginMetadata, PluginCapabilities } from '@objectos/web-framework';
 import { SimpleTable } from './components/SimpleTable';
 
 export interface SimpleTableConfig {
@@ -20,21 +20,38 @@ export class SimpleTablePlugin implements ITablePlugin {
   version = '1.0.0';
   category = 'table';
   
-  metadata = {
+  metadata: PluginMetadata = {
     displayName: 'Simple Table',
     description: 'A minimal table plugin demonstrating basic functionality',
+    longDescription: '# Simple Table Plugin\n\nA minimal ObjectOS table plugin that demonstrates the basic plugin architecture.',
     author: 'ObjectOS Team',
     homepage: 'https://github.com/objectql/objectos',
-    license: 'MIT'
+    category: 'table',
+    license: 'MIT',
+    pricing: {
+      type: 'free'
+    },
+    links: {
+      documentation: 'https://docs.objectos.org/plugins/simple-table',
+      support: 'https://github.com/objectql/objectos/issues',
+      repository: 'https://github.com/objectql/objectos'
+    },
+    tags: ['table', 'data-grid', 'basic', 'example']
   };
   
-  capabilities = {
-    sorting: true,
-    filtering: false,
-    grouping: false,
-    virtualization: false,
-    export: false,
-    cellEditing: false
+  capabilities: PluginCapabilities = {
+    provides: {
+      components: ['table'],
+      services: []
+    },
+    features: {
+      sorting: true,
+      filtering: false,
+      grouping: false,
+      virtualization: false,
+      export: false,
+      cellEditing: false
+    }
   };
   
   private config: SimpleTableConfig;

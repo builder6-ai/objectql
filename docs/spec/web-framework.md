@@ -62,19 +62,17 @@ Every plugin must implement the `IObjectOSPlugin` interface:
 
 ```typescript
 interface IObjectOSPlugin {
-  // Unique plugin identifier
+  // Unique plugin identifier (npm package name)
   name: string;
   
   // Semantic version
   version: string;
   
-  // Plugin metadata
-  metadata: {
-    displayName: string;
-    description: string;
-    author?: string;
-    homepage?: string;
-  };
+  // Plugin metadata (for marketplace and UI)
+  metadata: PluginMetadata;
+  
+  // Plugin capabilities declaration
+  capabilities: PluginCapabilities;
   
   // Plugin dependencies (other plugins required)
   dependencies?: string[];
@@ -84,6 +82,74 @@ interface IObjectOSPlugin {
   
   // Cleanup on plugin unload
   destroy?(): void | Promise<void>;
+}
+
+interface PluginMetadata {
+  // Display name shown in UI
+  displayName: string;
+  
+  // Description for marketplace
+  description: string;
+  
+  // Long description (supports markdown)
+  longDescription?: string;
+  
+  // Plugin author/vendor
+  author: string;
+  
+  // Author/vendor website
+  homepage?: string;
+  
+  // Plugin category for marketplace browsing
+  category: 'table' | 'form' | 'chart' | 'calendar' | 'editor' | 'utility' | 'integration';
+  
+  // Plugin icon (URL or base64)
+  icon?: string;
+  
+  // Screenshots for marketplace
+  screenshots?: string[];
+  
+  // License type (MIT, Commercial, etc.)
+  license: string;
+  
+  // Pricing information
+  pricing?: {
+    type: 'free' | 'paid' | 'freemium' | 'subscription';
+    price?: number;
+    currency?: string;
+    trialDays?: number;
+  };
+  
+  // Support and documentation links
+  links?: {
+    documentation?: string;
+    support?: string;
+    changelog?: string;
+    repository?: string;
+  };
+  
+  // Minimum framework version required
+  minFrameworkVersion?: string;
+  
+  // Tags for search and categorization
+  tags?: string[];
+}
+
+interface PluginCapabilities {
+  // What components does this plugin provide?
+  provides?: {
+    components?: string[];  // e.g., ['table', 'table.advanced']
+    hooks?: string[];       // e.g., ['data:transform']
+    services?: string[];    // e.g., ['export', 'analytics']
+  };
+  
+  // What components/services does this plugin extend?
+  extends?: string[];
+  
+  // Feature flags this plugin supports
+  features?: {
+    [key: string]: boolean;
+  };
 }
 ```
 
@@ -129,6 +195,285 @@ const framework = createFramework({
     // ... other plugins
   ]
 });
+```
+
+### 3.4 Plugin Package Structure
+
+Plugins are distributed as npm packages with a standardized structure:
+
+```
+@vendor/objectos-plugin-name/
+├── package.json           # Package metadata
+├── plugin.manifest.json   # Plugin manifest (required)
+├── dist/
+│   ├── index.js          # Main entry point
+│   ├── index.d.ts        # TypeScript definitions
+│   └── assets/           # Icons, images, etc.
+├── README.md
+├── LICENSE
+└── CHANGELOG.md
+```
+
+**plugin.manifest.json** (Required):
+
+```json
+{
+  "name": "@vendor/objectos-plugin-advanced-table",
+  "version": "1.2.0",
+  "frameworkVersion": ">=0.1.0",
+  "metadata": {
+    "displayName": "Advanced Data Table",
+    "description": "High-performance data table with advanced features",
+    "longDescription": "# Advanced Table\n\nA feature-rich table component...",
+    "author": "Acme Corp",
+    "homepage": "https://acme.com/plugins/advanced-table",
+    "category": "table",
+    "icon": "https://cdn.acme.com/icons/table.svg",
+    "screenshots": [
+      "https://cdn.acme.com/screenshots/table-1.png",
+      "https://cdn.acme.com/screenshots/table-2.png"
+    ],
+    "license": "Commercial",
+    "pricing": {
+      "type": "subscription",
+      "price": 29.99,
+      "currency": "USD",
+      "trialDays": 14
+    },
+    "links": {
+      "documentation": "https://docs.acme.com/table",
+      "support": "https://support.acme.com",
+      "changelog": "https://acme.com/changelog",
+      "repository": "https://github.com/acme/table-plugin"
+    },
+    "tags": ["table", "grid", "data", "advanced", "enterprise"]
+  },
+  "capabilities": {
+    "provides": {
+      "components": ["table", "table.advanced", "table.mobile"],
+      "services": ["export", "column-manager"]
+    },
+    "features": {
+      "sorting": true,
+      "filtering": true,
+      "grouping": true,
+      "virtualization": true,
+      "export": true,
+      "cellEditing": true,
+      "pivoting": true
+    }
+  },
+  "dependencies": [
+    "@objectos/plugin-export"
+  ],
+  "permissions": [
+    "storage.read",
+    "storage.write",
+    "network.external"
+  ]
+}
+```
+
+### 3.5 Plugin Installation and Activation
+
+#### Programmatic Installation (Developer)
+
+```typescript
+import { PluginManager } from '@objectos/web-framework';
+
+const manager = new PluginManager();
+
+// Install from npm
+await manager.install('@vendor/objectos-plugin-advanced-table');
+
+// Or install from URL (for private registries)
+await manager.install('https://private-registry.com/plugin.tar.gz');
+
+// Enable the plugin
+await manager.enable('@vendor/objectos-plugin-advanced-table');
+```
+
+#### UI-Based Installation (End User)
+
+The framework provides a built-in plugin management interface accessible at `/admin/plugins`:
+
+**Plugin Marketplace UI Features:**
+
+1. **Browse Plugins**
+   - Search by name, category, tags
+   - Filter by pricing (free, paid, trial available)
+   - Sort by popularity, rating, recent updates
+   - View plugin details, screenshots, reviews
+
+2. **Install Plugin**
+   - Click "Install" button
+   - For paid plugins: Redirects to payment/licensing
+   - Shows installation progress
+   - Handles dependency installation automatically
+
+3. **Manage Installed Plugins**
+   - Enable/Disable plugins without uninstalling
+   - Configure plugin settings
+   - View plugin status and health
+   - Update to newer versions
+   - Uninstall plugins
+
+4. **Plugin Configuration**
+   - Each plugin can provide a settings UI
+   - Admin can configure plugin-specific options
+   - Changes take effect immediately or after restart
+
+**Example Plugin Management UI:**
+
+```tsx
+import { PluginMarketplace, PluginManager } from '@objectos/web-framework/admin';
+
+function PluginManagementPage() {
+  return (
+    <div>
+      <h1>Plugin Management</h1>
+      
+      {/* Marketplace for browsing and installing */}
+      <PluginMarketplace 
+        registry="https://marketplace.objectos.org"
+        onInstall={handleInstall}
+      />
+      
+      {/* Manage installed plugins */}
+      <PluginManager 
+        plugins={installedPlugins}
+        onEnable={handleEnable}
+        onDisable={handleDisable}
+        onConfigure={handleConfigure}
+        onUninstall={handleUninstall}
+      />
+    </div>
+  );
+}
+```
+
+### 3.6 Plugin Marketplace System
+
+#### Marketplace Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│         ObjectOS Application                │
+│  ┌─────────────────────────────────────┐   │
+│  │    Plugin Management UI             │   │
+│  └─────────────────┬───────────────────┘   │
+│                    │                        │
+│  ┌─────────────────▼───────────────────┐   │
+│  │    Plugin Manager Service           │   │
+│  │  - Install/Uninstall                │   │
+│  │  - Enable/Disable                   │   │
+│  │  - License Verification             │   │
+│  └─────────────────┬───────────────────┘   │
+└────────────────────┼────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────┐
+│     Plugin Marketplace (marketplace.objectos.org)  │
+│  ┌─────────────────────────────────────┐   │
+│  │    Plugin Registry API              │   │
+│  │  - Search plugins                   │   │
+│  │  - Download packages                │   │
+│  │  - Verify signatures                │   │
+│  └─────────────────────────────────────┘   │
+│                                             │
+│  ┌─────────────────────────────────────┐   │
+│  │    License Management               │   │
+│  │  - Purchase handling                │   │
+│  │  - License key generation           │   │
+│  │  - Subscription management          │   │
+│  └─────────────────────────────────────┘   │
+│                                             │
+│  ┌─────────────────────────────────────┐   │
+│  │    Analytics & Reviews              │   │
+│  │  - Download counts                  │   │
+│  │  - User ratings                     │   │
+│  │  - Review management                │   │
+│  └─────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+#### Marketplace API
+
+```typescript
+// Search plugins
+GET /api/plugins/search?q=table&category=table&pricing=free
+
+// Get plugin details
+GET /api/plugins/@vendor/objectos-plugin-name
+
+// Download plugin package
+GET /api/plugins/@vendor/objectos-plugin-name/download
+
+// Purchase plugin (for commercial plugins)
+POST /api/plugins/@vendor/objectos-plugin-name/purchase
+
+// Verify license
+POST /api/plugins/@vendor/objectos-plugin-name/verify-license
+{
+  "licenseKey": "xxxx-xxxx-xxxx-xxxx",
+  "instanceId": "unique-installation-id"
+}
+```
+
+#### Plugin Distribution Models
+
+1. **Free & Open Source**
+   - Published to npm registry
+   - Listed in marketplace for free
+   - No license verification required
+
+2. **Commercial - One-time Purchase**
+   - Purchase generates a license key
+   - License key validated on installation
+   - Can be installed on limited number of instances
+
+3. **Commercial - Subscription**
+   - Monthly/yearly subscription
+   - License key expires if subscription lapses
+   - Automatic renewal handling
+
+4. **Freemium**
+   - Basic features free
+   - Advanced features require license
+   - Plugin checks license at runtime for premium features
+
+#### License Verification
+
+```typescript
+class CommercialPlugin implements IObjectOSPlugin {
+  async initialize(context: PluginContext) {
+    // Verify license before initialization
+    const licenseValid = await this.verifyLicense(context);
+    
+    if (!licenseValid) {
+      throw new Error('Invalid or expired license');
+    }
+    
+    // Initialize plugin features
+    this.initializeFeatures(context);
+  }
+  
+  private async verifyLicense(context: PluginContext): Promise<boolean> {
+    const license = context.config.get('plugins.licenses.' + this.name);
+    
+    const response = await fetch('https://marketplace.objectos.org/api/verify', {
+      method: 'POST',
+      body: JSON.stringify({
+        plugin: this.name,
+        licenseKey: license,
+        instanceId: context.config.get('instanceId')
+      })
+    });
+    
+    const result = await response.json();
+    return result.valid;
+  }
+}
 ```
 
 ---

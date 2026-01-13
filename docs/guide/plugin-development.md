@@ -53,8 +53,10 @@ my-plugin/
 │   └── utils/            # Utility functions
 ├── examples/             # Usage examples
 ├── tests/                # Test files
-├── package.json
+├── package.json          # npm package configuration
+├── plugin.manifest.json  # Plugin manifest (required)
 ├── tsconfig.json
+├── LICENSE
 └── README.md
 ```
 
@@ -68,7 +70,7 @@ Every plugin must implement the `IObjectOSPlugin` interface:
 
 ```typescript
 // src/index.ts
-import type { IObjectOSPlugin, PluginContext } from '@objectos/web-framework';
+import type { IObjectOSPlugin, PluginContext, PluginMetadata, PluginCapabilities } from '@objectos/web-framework';
 
 export class MyPlugin implements IObjectOSPlugin {
   // Required: Unique identifier (use npm package naming)
@@ -77,13 +79,43 @@ export class MyPlugin implements IObjectOSPlugin {
   // Required: Semantic version
   version = '1.0.0';
   
-  // Required: Plugin metadata
-  metadata = {
+  // Required: Enhanced plugin metadata (for marketplace)
+  metadata: PluginMetadata = {
     displayName: 'My Awesome Plugin',
     description: 'Does something amazing',
-    author: 'Your Name',
+    longDescription: '# My Plugin\n\nDetailed description with markdown support...',
+    author: 'Your Name or Company',
     homepage: 'https://github.com/myorg/my-plugin',
-    license: 'MIT'
+    category: 'table', // or 'form', 'chart', 'utility', etc.
+    icon: 'https://cdn.myorg.com/icon.svg',
+    screenshots: [
+      'https://cdn.myorg.com/screenshot1.png',
+      'https://cdn.myorg.com/screenshot2.png'
+    ],
+    license: 'MIT', // or 'Commercial', 'GPL', etc.
+    pricing: {
+      type: 'free' // or 'paid', 'freemium', 'subscription'
+    },
+    links: {
+      documentation: 'https://docs.myorg.com',
+      support: 'https://support.myorg.com',
+      changelog: 'https://github.com/myorg/my-plugin/releases',
+      repository: 'https://github.com/myorg/my-plugin'
+    },
+    tags: ['table', 'data-grid', 'enterprise']
+  };
+  
+  // Required: Capability declaration
+  capabilities: PluginCapabilities = {
+    provides: {
+      components: ['table'],
+      services: ['export']
+    },
+    features: {
+      sorting: true,
+      filtering: true,
+      export: true
+    }
   };
   
   // Optional: Dependencies on other plugins
@@ -98,6 +130,58 @@ export class MyPlugin implements IObjectOSPlugin {
   // Optional: Cleanup when plugin is destroyed
   async destroy(): Promise<void> {
     // Cleanup logic
+  }
+}
+```
+
+### 2.2 Plugin Manifest File
+
+Create `plugin.manifest.json` in the root of your plugin package:
+
+```json
+{
+  "name": "@myorg/objectos-plugin-name",
+  "version": "1.0.0",
+  "frameworkVersion": ">=0.1.0",
+  "metadata": {
+    "displayName": "My Awesome Plugin",
+    "description": "Does something amazing",
+    "longDescription": "# My Plugin\n\nDetailed description...",
+    "author": "Your Name or Company",
+    "homepage": "https://github.com/myorg/my-plugin",
+    "category": "table",
+    "icon": "https://cdn.myorg.com/icon.svg",
+    "screenshots": [
+      "https://cdn.myorg.com/screenshot1.png"
+    ],
+    "license": "MIT",
+    "pricing": {
+      "type": "free"
+    },
+    "links": {
+      "documentation": "https://docs.myorg.com",
+      "support": "https://support.myorg.com",
+      "repository": "https://github.com/myorg/my-plugin"
+    },
+    "tags": ["table", "data-grid"]
+  },
+  "capabilities": {
+    "provides": {
+      "components": ["table"],
+      "services": ["export"]
+    },
+    "features": {
+      "sorting": true,
+      "filtering": true
+    }
+  },
+  "dependencies": [],
+  "permissions": [
+    "storage.read",
+    "storage.write"
+  ]
+}
+```
   }
 }
 ```
@@ -525,7 +609,172 @@ npm publish --access public
 npm publish --tag beta
 ```
 
-### 4.4 Documentation Requirements
+### 4.4 Submitting to ObjectOS Marketplace
+
+To make your plugin discoverable in the ObjectOS marketplace:
+
+**Step 1: Prepare Your Plugin**
+
+Ensure you have:
+- ✅ `plugin.manifest.json` with complete metadata
+- ✅ README.md with clear documentation
+- ✅ LICENSE file
+- ✅ CHANGELOG.md
+- ✅ High-quality icon and screenshots
+- ✅ Published to npm registry
+
+**Step 2: Submit to Marketplace**
+
+```bash
+# Install ObjectOS CLI
+npm install -g @objectos/cli
+
+# Login to marketplace
+objectos login
+
+# Submit your plugin
+objectos plugin submit @myorg/objectos-plugin-name
+
+# This will:
+# 1. Validate plugin.manifest.json
+# 2. Check npm package exists
+# 3. Scan for security issues
+# 4. Submit for review (if commercial)
+# 5. Publish to marketplace (if approved)
+```
+
+**Step 3: Marketplace Review Process**
+
+For **free plugins**:
+- Automated security scan
+- Validation of manifest
+- Immediate publication if checks pass
+
+For **commercial plugins**:
+- All free plugin checks
+- Manual review by ObjectOS team (1-3 business days)
+- License verification setup
+- Payment integration (if applicable)
+
+### 4.5 Commercial Plugin Distribution
+
+#### Setting Up Commercial Licensing
+
+**1. Configure Pricing in Manifest:**
+
+```json
+{
+  "metadata": {
+    "license": "Commercial",
+    "pricing": {
+      "type": "subscription",
+      "price": 29.99,
+      "currency": "USD",
+      "trialDays": 14
+    }
+  }
+}
+```
+
+**2. Implement License Verification:**
+
+```typescript
+export class CommercialPlugin implements ITablePlugin {
+  async initialize(context: PluginContext) {
+    // Verify license on initialization
+    const isValid = await this.verifyLicense(context);
+    
+    if (!isValid) {
+      // Show license purchase UI
+      this.showLicenseRequired(context);
+      return;
+    }
+    
+    // Continue with normal initialization
+    this.initializeFeatures(context);
+  }
+  
+  private async verifyLicense(context: PluginContext): Promise<boolean> {
+    const licenseKey = context.config.get(`plugins.licenses.${this.name}`);
+    
+    if (!licenseKey) {
+      return false;
+    }
+    
+    // Verify with marketplace API
+    const response = await fetch('https://marketplace.objectos.org/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plugin: this.name,
+        version: this.version,
+        licenseKey: licenseKey,
+        instanceId: context.config.get('instanceId')
+      })
+    });
+    
+    const result = await response.json();
+    return result.valid && !result.expired;
+  }
+  
+  private showLicenseRequired(context: PluginContext) {
+    context.events.emit('plugin:license-required', {
+      plugin: this.name,
+      purchaseUrl: `https://marketplace.objectos.org/plugins/${this.name}/purchase`
+    });
+  }
+}
+```
+
+**3. Handle Trial Period:**
+
+```typescript
+private async checkTrialStatus(context: PluginContext): Promise<{
+  isTrial: boolean;
+  daysRemaining: number;
+  expired: boolean;
+}> {
+  const installDate = context.config.get(`plugins.installed.${this.name}`);
+  
+  if (!installDate) {
+    // First install, set install date
+    const now = new Date().toISOString();
+    await context.config.set(`plugins.installed.${this.name}`, now);
+    
+    return {
+      isTrial: true,
+      daysRemaining: this.metadata.pricing.trialDays || 0,
+      expired: false
+    };
+  }
+  
+  const installed = new Date(installDate);
+  const now = new Date();
+  const daysPassed = Math.floor((now.getTime() - installed.getTime()) / (1000 * 60 * 60 * 24));
+  const trialDays = this.metadata.pricing.trialDays || 0;
+  
+  return {
+    isTrial: true,
+    daysRemaining: Math.max(0, trialDays - daysPassed),
+    expired: daysPassed >= trialDays
+  };
+}
+```
+
+#### Revenue Sharing
+
+ObjectOS marketplace uses the following revenue share model:
+
+- **Free plugins**: No fees
+- **Paid plugins**: 20% marketplace fee
+- **Your revenue**: 80% of sale price
+
+Payment processing:
+- Monthly payouts via Stripe
+- Minimum payout: $100
+- Automatic tax documentation (W-9/W-8)
+
+### 4.6 Documentation Requirements
 
 Every plugin MUST include:
 
@@ -535,12 +784,15 @@ Every plugin MUST include:
    - Configuration options
    - API documentation
    - Contributing guide
+   - License information
    
 2. **CHANGELOG.md** tracking version history
 
-3. **LICENSE** file (MIT recommended)
+3. **LICENSE** file (MIT recommended for free, Commercial for paid)
 
 4. **TypeScript definitions** (`.d.ts` files)
+
+5. **plugin.manifest.json** with complete metadata
 
 ---
 

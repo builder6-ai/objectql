@@ -1,0 +1,42 @@
+{
+  "name": "@example/simple-table-plugin",
+  "version": "1.0.0",
+  "frameworkVersion": ">=0.1.0",
+  "metadata": {
+    "displayName": "Simple Table",
+    "description": "A minimal table plugin demonstrating basic functionality",
+    "longDescription": "# Simple Table Plugin\n\nA minimal ObjectOS table plugin that demonstrates the basic plugin architecture.\n\n## Features\n\n- Basic table rendering\n- Column sorting\n- Row click handling\n- Responsive design\n- TypeScript support",
+    "author": "ObjectOS Team",
+    "homepage": "https://github.com/objectql/objectos",
+    "category": "table",
+    "icon": "https://raw.githubusercontent.com/objectql/objectos/main/docs/public/icons/table.svg",
+    "screenshots": [],
+    "license": "MIT",
+    "pricing": {
+      "type": "free"
+    },
+    "links": {
+      "documentation": "https://docs.objectos.org/plugins/simple-table",
+      "support": "https://github.com/objectql/objectos/issues",
+      "repository": "https://github.com/objectql/objectos",
+      "changelog": "https://github.com/objectql/objectos/blob/main/examples/plugins/simple-table/CHANGELOG.md"
+    },
+    "tags": ["table", "data-grid", "basic", "example", "reference"]
+  },
+  "capabilities": {
+    "provides": {
+      "components": ["table"],
+      "services": []
+    },
+    "features": {
+      "sorting": true,
+      "filtering": false,
+      "grouping": false,
+      "virtualization": false,
+      "export": false,
+      "cellEditing": false
+    }
+  },
+  "dependencies": [],
+  "permissions": []
+}
