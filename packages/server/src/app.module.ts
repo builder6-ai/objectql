@@ -9,15 +9,34 @@ import { AuthMiddleware } from './auth/auth.middleware.js';
 import { ObjectOS } from '@objectos/kernel';
 import { createRESTHandler, createMetadataHandler, createNodeHandler, createStudioHandler } from '@objectql/server';
 
+// Resolve the path to the built web client
+// This allows serving the React frontend from the NestJS server
 const clientDistPath = resolve(dirname(require.resolve('@objectos/web/package.json')), 'dist');
 
+/**
+ * Application Root Module
+ * 
+ * Configures the NestJS application with:
+ * - ObjectQLModule: Provides ObjectOS kernel instance
+ * - AuthModule: Handles authentication with Better-Auth
+ * - ServeStaticModule: Serves the React frontend from @objectos/web
+ * 
+ * Implements middleware to expose ObjectQL server handlers:
+ * - REST API: /api/data/* - Standard CRUD operations
+ * - Metadata API: /api/metadata/* - Object and app metadata
+ * - JSON-RPC: /api/objectql - Advanced query operations
+ * 
+ * Following Rule #3: NestJS Native DI - uses module system and dependency injection
+ * Following Rule #1: The Dependency Wall - server handles HTTP, kernel handles logic
+ */
 @Module({
   imports: [
     ObjectQLModule, 
     AuthModule,
+    // Serve React frontend, excluding API routes
     ServeStaticModule.forRoot({
       rootPath: clientDistPath,
-      exclude: ['/api/(.*)'],
+      exclude: ['/api/(.*)'], // API routes handled by controllers/middleware
     }),
   ],
   controllers: [AppController],
@@ -26,48 +45,59 @@ const clientDistPath = resolve(dirname(require.resolve('@objectos/web/package.js
 export class AppModule implements NestModule {
   constructor(@Inject(ObjectOS) private objectos: ObjectOS) {}
 
+  /**
+   * Configure middleware for the application.
+   * 
+   * Sets up request handlers from @objectql/server package:
+   * 
+   * 1. **Authentication Middleware**: Validates JWT tokens on all /api/* routes
+   * 2. **REST Handler**: CRUD operations at /api/data/:object
+   * 3. **Metadata Handler**: Schema information at /api/metadata/:type
+   * 4. **JSON-RPC Handler**: Advanced queries at /api/objectql
+   * 
+   * URL Handling Strategy:
+   * - REST and Metadata handlers expect full URLs (e.g., /api/data/contacts)
+   * - JSON-RPC handler expects path to be stripped to /
+   * 
+   * @param consumer - NestJS middleware consumer
+   */
   configure(consumer: MiddlewareConsumer) {
+    // Create handlers from @objectql/server package
+    // These are Express-compatible middleware functions
     const restHandler = createRESTHandler(this.objectos);
     const metadataHandler = createMetadataHandler(this.objectos);
     const objectQLHandler = createNodeHandler(this.objectos);
     const studioHandler = createStudioHandler();
 
+    /**
+     * Helper to conditionally strip URL prefix for handlers.
+     * 
+     * Different handlers have different URL expectations:
+     * - REST: Expects /api/data/:object pattern (full path required)
+     * - Metadata: Expects /api/metadata/:type pattern (full path required)
+     * - JSON-RPC: Expects POST to / with operation in body
+     * 
+     * @param prefix - The URL prefix to potentially strip
+     * @param handler - The Express middleware handler
+     * @returns Wrapped middleware function
+     */
     const stripPrefix = (prefix: string, handler: any) => {
       return (req: any, res: any, next: any) => {
-        // We do NOT strip prefix for REST API because @objectql/server expects /api/data/:object
-        // But we DO strip for others that don't expect it?
-        // Let's check:
-        // Studio usually expects assets at relative root.
-        // ObjectQL Node Handler usually expects POST / (body contains op)
-        // Metadata handler likely expects /:type or /:type/:name
-        
-        // HOWEVER, based on reading @objectql/server/dist/adapters/rest.js, 
-        // it explicitly checks: url.match(/^\/api\/data\/([^\/\?]+)(?:\/([^\/\?]+))?(\?.*)?$/)
-        // So it REQUIRES the URL to start with /api/data/ !!!
-        
-        // Therefore, for REST handler, we MUST NOT strip the prefix if it's currently matching /api/data*
-        
-        // For ObjectQL handler (rpc), it just reads body, so path likely ignored or should be /
-        // For Metadata handler, probably expects /:type
-        
+        // REST API handler needs full path because it matches:
+        // /^\/api\/data\/([^\/\?]+)(?:\/([^\/\?]+))?(\?.*)?$/
         if (prefix === '/api/data') {
-             // For REST API, do NOT strip, pass through as is.
-             // But Wait! NestJS might have already consumed part of it? 
-             // "consumer.forRoutes" does NOT strip prefix. req.url is full path.
-             // So if we just pass handler, req.url is /api/data/projects
-             // And REST handler regex expects ^/api/data/...
-             // So for REST handler, we just return handler directly without strip logic.
              return handler(req, res, next);
         }
 
+        // Metadata handler needs full path because it matches:
+        // /api/metadata/objects, /api/metadata/apps, etc.
         if (prefix === '/api/metadata') {
-             // Metadata Handler explicitly matches full URLs like /api/metadata/objects.
-             // See @objectql/server/dist/metadata.js
              return handler(req, res, next);
         }
 
-        // For others, strip as before
-          if (req.originalUrl.startsWith(prefix)) {
+        // For JSON-RPC and other handlers, strip the prefix
+        // so the handler sees req.url as / instead of /api/objectql
+        if (req.originalUrl.startsWith(prefix)) {
              const urlPart = req.originalUrl.substring(prefix.length);
              req.url = urlPart || '/';
              if (req.url.startsWith('?')) {
@@ -75,7 +105,8 @@ export class AppModule implements NestModule {
              }
         }
 
-        // UX Improvement: If visiting JSON-RPC root with GET, show friendly message instead of 405
+        // UX Improvement: Friendly message for GET requests to JSON-RPC endpoint
+        // JSON-RPC requires POST, but users might navigate to it in browser
         if (prefix === '/api/objectql' && req.method === 'GET' && (req.url === '/' || req.url === '')) {
              res.setHeader('Content-Type', 'application/json');
              res.end(JSON.stringify({
@@ -90,18 +121,30 @@ export class AppModule implements NestModule {
       };
     };
 
+    // Apply authentication middleware to all API routes
     consumer
       .apply(AuthMiddleware)
       .forRoutes({ path: 'api/*', method: RequestMethod.ALL });
 
+    // REST API: CRUD operations
+    // POST /api/data/:object - Create record
+    // GET /api/data/:object/:id - Get record
+    // PATCH /api/data/:object/:id - Update record
+    // DELETE /api/data/:object/:id - Delete record
     consumer
       .apply(stripPrefix('/api/data', restHandler))
       .forRoutes({ path: 'api/data*', method: RequestMethod.ALL });
 
+    // Metadata API: Schema information
+    // GET /api/metadata/objects - List all objects
+    // GET /api/metadata/objects/:name - Get object schema
+    // GET /api/metadata/apps - List all apps
     consumer
         .apply(stripPrefix('/api/metadata', metadataHandler))
         .forRoutes({ path: 'api/metadata*', method: RequestMethod.ALL });
 
+    // JSON-RPC API: Advanced query operations
+    // POST /api/objectql with body: { op: 'find', object: 'contacts', args: {...} }
     consumer
         .apply(stripPrefix('/api/objectql', objectQLHandler))
         .forRoutes({ path: 'api/objectql*', method: RequestMethod.ALL });
