@@ -1,194 +1,163 @@
 # ObjectOS
 
+
+  **The Enterprise Low-Code Runtime Engine.**
+  
+  Instant Backend. Security Kernel. Workflow Automation.
+  
+  *Built on [ObjectQL](https://github.com/objectql/objectql) & [NestJS](https://nestjs.com/).*
+
+  [![License](https://img.shields.io/badge/license-AGPL%20v3-red.svg)](LICENSE)
+  [![Stack](https://img.shields.io/badge/stack-Node.js%20%7C%20NestJS-E0234E.svg)](https://nestjs.com/)
+  [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](docker-compose.yml)
+
+---
+
+## 🏢 Introduction
+
+**ObjectOS** is a production-ready, metadata-driven runtime platform. 
+
+While **ObjectQL** defines *how data looks*, **ObjectOS** defines *how business runs*. It acts as the "Operating System" for your enterprise data, instantly turning static YAML schemas into secure, scalable, and compliant APIs.
+
+**The Role of ObjectOS:**
+* **The Enforcer:** Intercepts every request to enforce RBAC (Role-Based Access Control) and Record-Level Security (RLS).
+* **The Server:** Automatically serves REST, GraphQL, and JSON-RPC APIs for **[Object UI](https://github.com/objectql/objectui)**.
+* **The Automator:** Runs server-side triggers, workflows, and scheduled jobs.
+
+---
+
+## 🚀 Key Features
+
+### 🛡️ Enterprise Security Kernel
+ObjectOS doesn't just read data; it protects it.
+* **Authentication:** Integrated OIDC, SAML, and LDAP support (via Better-Auth).
+* **Fine-Grained Permission:** Field-level and record-level sharing rules defined in YAML.
+* **Audit Logging:** Built-in tracking of who did what and when.
+
+### 🔌 Instant API Gateway
+Stop writing boilerplate controllers.
+* **Auto-generated REST API:** `GET /api/v1/data/{object}` works out-of-the-box.
+* **Auto-generated GraphQL:** Instant schema stitching based on your ObjectQL definitions.
+* **Metadata API:** Serves UI configuration to frontend clients like Object UI.
+
+### ⚙️ Workflow & Automation
+* **Triggers:** Run code `beforeInsert`, `afterUpdate`, `beforeDelete`.
+* **Flow Engine:** Visual workflow execution (compatible with BPMN-style logic).
+* **Job Queue:** Background task processing based on Redis.
+
+---
+
+## 📦 Architecture
+
+ObjectOS is built as a modular Monorepo using **NestJS**.
+
+| Package | Role | Description |
+| :--- | :--- | :--- |
+| **`@objectos/kernel`** | **The Brain** | The core logic engine. Wraps ObjectQL, manages plugins, and handles the event bus. |
+| **`@objectos/server`** | **The Gateway** | NestJS application layer. Handles HTTP/WS traffic, Middlewares, and Guards. |
+| **`@objectos/plugin-auth`** | **Auth** | Authentication strategies (Local, OAuth2, Enterprise SSO). |
+| **`@objectos/plugin-workflow`** | **Logic** | Workflow engine and trigger runner. |
+| **`@objectos/presets`** | **Config** | Standard system objects (`_users`, `_roles`, `_audit_log`). |
+
+---
+
+## ⚡ Getting Started
+
+### Prerequisites
+* Node.js 18+
+* PostgreSQL or MongoDB
+* Redis (for Queues/Caching)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone [https://github.com/objectql/objectos.git](https://github.com/objectql/objectos.git)
+
+# Install dependencies
+pnpm install
+
+# Configure environment
+cp .env.example .env
+
+```
+
+### Running the Server
+
+ObjectOS runs as a standard NestJS application.
+
+```bash
+# Start in development mode
+pnpm dev
+
+# The API is now available at http://localhost:3000
+# The Metadata API is at http://localhost:3000/api/v1/metadata
+
+```
+
+---
+
+## 🧩 Usage Example
+
+ObjectOS is designed to be injected into your application.
+
+```typescript
+// main.ts (Your NestJS App)
+import { NestFactory } from '@nestjs/core';
+import { ObjectOSModule } from '@objectos/server';
+import { SqlDriver } from '@objectql/driver-sql';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Initialize ObjectOS
+  await app.get(ObjectOSModule).boot({
+    // 1. Define Data Source (ObjectQL Driver)
+    driver: new SqlDriver({
+      connection: process.env.DATABASE_URL
+    }),
+    
+    // 2. Load Plugins
+    plugins: [
+      AuthPlugin({ secret: '...' }),
+      WorkflowPlugin()
+    ],
+    
+    // 3. Load Metadata
+    metadata: ['./src/objects/*.yml']
+  });
+
+  await app.listen(3000);
+}
+bootstrap();
+
+```
+
+---
+
+## ⚖️ License & Commercial Usage
+
+**ObjectOS is open-source software licensed under the [GNU Affero General Public License v3.0 (AGPLv3)](https://www.google.com/search?q=AGPLv3).**
+
+### What this means:
+
+* ✅ **Free for internal use:** You can use ObjectOS internally within your company for free.
+* ✅ **Free for open source:** You can use ObjectOS in AGPL-licensed open-source projects.
+* ⚠️ **Copyleft:** If you modify ObjectOS or link it into your application and convey it to users (e.g., as a SaaS), you **must** open-source your entire application under AGPL.
+
+### Commercial License
+
+If you wish to build proprietary/closed-source SaaS applications using ObjectOS, or cannot comply with the AGPL, you must purchase a **Commercial License**.
+
+👉 [Contact Sales for Enterprise Licensing](https://www.objectos.org/enterprise)
+
+---
+
 <div align="center">
+<sub>Part of the <b>Object Ecosystem</b>.</sub>
 
-**Open-source alternative to Salesforce & Airtable.**
-*A full-stack low-code platform with metadata-driven backend and auto-generated React UI.*
 
-[Documentation](https://objectos.org) · [Protocol Specs](https://github.com/objectql/objectql) · [AI Builder](https://www.builder6.ai)
 
+
+<sub><a href="https://github.com/objectql/objectql">ObjectQL (Data)</a> • <b>ObjectOS (System)</b> • <a href="https://github.com/objectql/objectui">Object UI (View)</a></sub>
 </div>
-
----
-
-## 📖 Introduction
-
-**ObjectOS** is a high-performance, metadata-driven runtime engine that brings your enterprise applications to life.
-
-### The Two-Layer Architecture
-
-1. **[ObjectQL](https://github.com/objectql/objectql)** - The Metadata Standard
-   - Defines the protocol for describing business objects, fields, relationships, and logic
-   - Pure specification in YAML format (`*.object.yml`)
-   - Enables AI and tools to generate massive amounts of enterprise metadata
-
-2. **ObjectOS** - The Runtime Engine (This Repository)
-   - Interprets and executes ObjectQL metadata
-   - Generates fully functional enterprise applications from metadata
-   - Provides the kernel, drivers, server, and UI components
-
-Think of it as **ObjectQL is the blueprint language, ObjectOS is the builder**.
-
-### What You Get
-
-Most platforms force you to choose: flexibility (like **Airtable**) or structure (like **Salesforce**). ObjectOS gives you both in a single, open-source package.
-
-By defining your business logic in standard `*.object.yml` files, ObjectOS instantly generates:
-
-1. **A Powerful Backend:** Node.js kernel with built-in Auth, Permissions (RBAC/RLS), and Workflow.
-2. **A Unified Frontend:** A React application that combines high-performance Data Grids with enterprise-grade Detail Forms.
-3. **Database Agnostic:** Works with PostgreSQL, MongoDB, or SQLite through pluggable drivers.
-
-## ✨ Key Features
-
-### 🖥️ The Unified UI (Hybrid Experience)
-
-Stop building separate "Admin Panels" and "Dashboards".
-
-* **Grid View (Airtable-like):** Powered by **TanStack Table**. Supports resizing, sorting, and inline editing for mass data entry.
-* **Detail Drawer (Salesforce-like):** Click any row to slide out a structured form with related lists and activity feeds.
-* **Auto-Generated:** Zero frontend code required. Rendered dynamically from metadata.
-
-### ⚙️ The Metadata Engine
-
-* **Protocol Driven:** Describes data, validation, and layout in pure YAML.
-* **Database Agnostic:** Runs on PostgreSQL, MongoDB, or SQLite.
-* **Enterprise Security:** Field-level security and record-level sharing rules out of the box.
-
-### 🤖 AI-First Architecture
-
-ObjectOS is designed to be the "Execution Layer" for AI.
-
-* Don't write boilerplate. Let AI generate your `object.yml` and complex formulas.
-* The runtime handles the heavy lifting (CRUD, Validation, State Management).
-
----
-
-## 🏗 Architecture
-
-ObjectOS implements a clean three-layer architecture following the principle:
-
-> **"Kernel handles logic, Drivers handle data, Server handles HTTP."**
-
-```mermaid
-graph TD
-    subgraph "Layer 1: Metadata Protocol"
-        YAML[*.object.yml files<br/>ObjectQL Format] -->|Parsed by| Parser
-    end
-    
-    subgraph "Layer 2: Runtime Engine"
-        Parser --> Kernel["@objectos/kernel<br/>Core Logic Engine"]
-        Kernel --> Plugins["Plugins<br/>Auth, Workflow, Validation"]
-        Kernel --> Driver["ObjectQL Drivers<br/>PostgreSQL, MongoDB, SQLite"]
-        Driver --> DB[(Database)]
-    end
-    
-    subgraph "Layer 3: Application Layer"
-        Kernel <-->|REST API| Server["@objectos/server<br/>NestJS Gateway"]
-        Server --> UI["@objectos/ui<br/>React Components"]
-        UI --> App[Enterprise Application]
-    end
-    
-    style Kernel fill:#4a9eff,stroke:#333,stroke-width:2px
-    style App fill:#f9f,stroke:#333,stroke-width:2px
-
-```
-
-### Key Design Principles
-
-1. **Metadata-First**: Everything is defined declaratively in YAML
-2. **Protocol-Driven**: ObjectOS strictly implements the ObjectQL protocol
-3. **Database Agnostic**: Swap databases without changing business logic
-4. **Separation of Concerns**: Kernel never touches HTTP, Server never touches SQL
-
----
-
-## 🚀 Quick Start
-
-Build a CRM in less than a minute.
-
-### 1. Create a Project
-
-```bash
-npx create-objectos-app my-company
-cd my-company
-npm install
-
-```
-
-### 2. Define an Object
-
-Create `objects/deal.object.yml`:
-
-```yaml
-name: deals
-label: Sales Deal
-icon: dollar-sign
-fields:
-  title:
-    type: text
-    required: true
-  amount:
-    type: currency
-    scale: 2
-  stage:
-    type: select
-    options: ["New", "Negotiation", "Won", "Lost"]
-  close_date:
-    type: date
-
-```
-
-### 3. Run the Platform
-
-```bash
-npm run dev
-
-```
-
-Visit `http://localhost:3000`.
-You will see a **Data Grid** for Deals. Click "New" to see the **Form**. All CRUD operations work instantly.
-
----
-
-## 📦 Ecosystem
-
-| Package | Description | Role |
-| --- | --- | --- |
-| **`@objectos/kernel`** | Core runtime engine that loads metadata, manages object registry, and coordinates data operations | Brain of ObjectOS |
-| **`@objectos/server`** | NestJS-based HTTP server that exposes REST APIs for CRUD operations | API Gateway |
-| **`@objectos/ui`** | React component library for building enterprise UIs (grids, forms, charts) | Frontend Components |
-| **`@objectos/preset-base`** | Standard metadata presets (User, Role, Permission objects) | Pre-built Objects |
-
-### External Dependencies
-
-| Package | Source | Purpose |
-| --- | --- | --- |
-| **`@objectql/core`** | [objectql/objectql](https://github.com/objectql/objectql) | Metadata parser and validator |
-| **`@objectql/types`** | [objectql/objectql](https://github.com/objectql/objectql) | TypeScript type definitions for ObjectQL protocol |
-| **`@objectql/driver-sql`** | [objectql/objectql](https://github.com/objectql/objectql) | PostgreSQL/MySQL/SQLite driver implementation |
-| **`@objectql/driver-mongo`** | [objectql/objectql](https://github.com/objectql/objectql) | MongoDB driver implementation |
-
----
-
-## 🤝 Contributing
-
-We are building the future of open-source business software.
-
-* **Core Protocol:** Contribute to [objectql/objectql](https://github.com/objectql/objectql).
-* **Runtime & UI:** Submit PRs to this repository.
-* **Read the Guide:** See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
-
-## 📚 Documentation
-
-- **[Quick Reference](./QUICK_REFERENCE.md)** - Command reference and common patterns
-- **[Architecture](./ARCHITECTURE.md)** - Deep dive into the three-layer architecture
-- **[Roadmap](./ROADMAP.md)** - Development plan and feature roadmap
-- **[Contributing Guide](./CONTRIBUTING.md)** - How to contribute to ObjectOS
-- **[Online Documentation](https://objectos.org)** - Full guides and API reference
-
-## 📄 License
-
-[GNU Affero General Public License v3.0 (AGPL-3.0)](./LICENSE) © [ObjectOS Team](https://objectos.org)
-
-This project is licensed under the GNU Affero General Public License v3.0, which is a strong copyleft license that ensures the software remains free and open source. See the [LICENSE](./LICENSE) file for details.
