@@ -1,0 +1,31 @@
+{
+  "name": "@example/workflow-plugin",
+  "version": "1.0.0",
+  "frameworkVersion": ">=0.1.0",
+  "metadata": {
+    "displayName": "Workflow Engine",
+    "description": "Complete workflow and automation system",
+    "author": "ObjectOS Examples",
+    "category": "integration",
+    "license": "MIT",
+    "pricing": { "type": "free" },
+    "tags": ["workflow", "automation", "approval"]
+  },
+  "capabilities": {
+    "provides": {
+      "components": ["workflow-designer", "workflow-board"],
+      "services": ["workflow-engine"]
+    },
+    "metadata": {
+      "objects": ["workflow", "workflow_instance"],
+      "fields": ["workflow_status"],
+      "actions": ["start_workflow", "approve"]
+    },
+    "backend": {
+      "hooks": ["workflow:beforeStart"],
+      "actions": ["workflow.start", "approval.approve"],
+      "apis": ["/api/workflow/execute"],
+      "services": ["WorkflowEngine"]
+    }
+  }
+}

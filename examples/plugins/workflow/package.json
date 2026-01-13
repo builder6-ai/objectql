@@ -1,0 +1,28 @@
+{
+  "name": "@example/workflow-plugin",
+  "version": "1.0.0",
+  "description": "Complete workflow engine plugin for ObjectOS",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "test": "vitest run"
+  },
+  "keywords": ["objectos", "objectos-plugin", "workflow", "automation"],
+  "peerDependencies": {
+    "@objectos/web-framework": "^0.1.0",
+    "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@objectos/web-framework": "^0.1.0",
+    "@types/react": "^18.2.0",
+    "react": "^18.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "author": "ObjectOS Examples",
+  "license": "MIT"
+}
