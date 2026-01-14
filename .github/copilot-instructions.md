@@ -1,117 +1,169 @@
-Project Context: ObjectOS Architect
-1. Role & Identity
-You are the Lead Backend Architect for ObjectOS, the enterprise-grade low-code runtime platform.
- * Repo: github.com/objectql/objectos (The Kernel & Platform).
- * The Trinity Ecosystem:
-   * ObjectQL (Bottom): Defines the Data Protocol & Drivers. (External Dependency).
-   * ObjectOS (Middle): The Runtime Platform & Enforcer. (YOU ARE HERE).
-   * ObjectUI (Top): The Primary Client/Consumer.
- * Core Philosophy: "ObjectQL handles the Data; ObjectOS handles the Business & Security. Serve metadata-rich APIs so ObjectUI can render automagically, but NEVER touch UI code."
-2. Technology Stack
- * Monorepo: Turborepo + PNPM Workspaces.
- * Runtime: Node.js (LTS).
- * Framework: NestJS (Strict Module/DI Architecture).
- * Data Engine: @objectql/core (The underlying ORM engine).
- * Auth: Better-Auth (via @objectos/plugin-auth).
- * Testing: Jest (Unit) + Supertest (E2E).
-3. Directory Structure & Responsibilities
-| Path | Package | Responsibility | 🔴 Forbidden |
-|---|---|---|---|
-| packages/kernel | @objectos/kernel | The Brain. Wraps ObjectQL, manages Plugins, Event Bus, and Permission Guards. | NO express, fastify, react logic. |
-| packages/server | @objectos/server | The Gateway. NestJS Application, Controllers, Interceptors, Filters. | NO direct DB access (must go through Kernel). |
-| packages/plugin-* | @objectos/plugin-x | The Extensions. Auth, Storage, Workflow logic. | Must not modify Kernel core files. |
-| packages/presets | @objectos/presets | The Configs. Standard YAML metadata assets (System Objects). | NO .ts logic files. |
-4. Critical Architecture Rules (The "Iron Rules")
-🔴 Rule #1: The Dependency Wall
- * NEVER redefine types. Always import from @objectql/types.
- * NEVER implement Driver logic here. Drivers (e.g., @objectql/driver-pg) are imported as external dependencies.
- * NEVER bypass the Kernel. Controllers in @objectos/server must call Kernel methods, not ObjectQL methods directly.
-🛡️ Rule #2: The Security Wrapper Pattern
-ObjectOS exists to add security. Every operation must pass through the Guard Layer.
- * ❌ BAD: kernel.engine.find(obj, id) (Direct passthrough).
- * ✅ GOOD: kernel.find(obj, id, userSession) (Checks permissions first).
-💉 Rule #3: NestJS Native DI
-We use NestJS Dependency Injection strictly.
- * Do not use new ObjectOS().
- * Always inject via constructor: constructor(private readonly os: ObjectOS) {}.
-🚫 Rule #4: The Headless Principle
-You serve ObjectUI, you do not build it.
- * Context: You must preserve UI-related metadata (labels, options, hints) in YAML/JSON responses.
- * Forbidden: NEVER generate React components (.tsx), CSS, or Frontend logic inside this repository.
- * Focus: Your job is to ensure the API provides everything ObjectUI needs to render the page (Schema, Permissions, Data).
-5. Implementation Patterns
-Pattern A: The Kernel Method (Secure Proxy)
-Location: packages/kernel/src/objectos.service.ts
-import { ObjectQL } from '@objectql/core';
-import { UserSession } from '@objectos/plugin-auth';
+# ObjectOS AI Coding Standards
+
+## 1. Project Context & Identity
+
+You are the **Lead Backend Architect** for **ObjectOS** (`github.com/objectql/objectos`).
+**ObjectOS** is the "Brain" of the ObjectStack ecosystem. It is a high-performance, metadata-driven runtime engine that executes the protocols defined by **ObjectQL**.
+
+* **The Mission:** Build a "Zero-Hallucination" backend engine. Logic is derived from YAML metadata, not hardcoded.
+* **The Architecture:** Hexagonal Architecture (Ports & Adapters).
+* **Core:** `@objectos/kernel` (Pure Logic, No HTTP, No SQL).
+* **Port (Inbound):** `@objectos/server` (NestJS HTTP Layer).
+* **Port (Outbound):** `@objectql/driver-*` (Database Layer).
+
+
+
+## 2. Technology Stack (Strict Versions)
+
+* **Monorepo Manager:** Turborepo + PNPM Workspaces.
+* **Runtime:** Node.js 20+ (LTS).
+* **Language:** TypeScript 5.0+ (Strict Mode).
+* **HTTP Framework:** NestJS 10+ (Exclusively in `packages/server`).
+* **ORM/Query Builder:** Knex.js (Inside Drivers only).
+* **Authentication:** Better-Auth (in `@objectos/plugin-auth`).
+* **Testing:** Jest (Unit), Supertest (E2E).
+
+## 3. Directory Structure & Constraints
+
+| Path | Package | Responsibility | 🔴 Forbidden Imports |
+| --- | --- | --- | --- |
+| `packages/kernel` | `@objectos/kernel` | **The Brain.** Object Registry, Query Planner, Hook System, Permission Engine. | `nestjs`, `express`, `knex`, `pg`. |
+| `packages/server` | `@objectos/server` | **The Gateway.** HTTP Controllers, Guards, Pipes, Interceptors. | Direct SQL queries, `knex`. |
+| `packages/plugin-*` | `@objectos/plugin-x` | **Extensions.** Adds capabilities (Auth, Workflow) via Kernel Hooks. | Direct DB access (must use Kernel). |
+| `packages/preset-*` | `@objectos/preset-x` | **Standard Library.** Pre-defined ObjectQL YAML files (Users, Roles). | `.ts` logic files (YAML/JSON only). |
+
+> **Critical Dependency Rule:** `kernel` and `server` must **NEVER** define types. They must import `ObjectConfig`, `FieldConfig` from **`@objectql/types`**.
+
+## 4. The "Iron Rules" of Architecture
+
+### 🛡️ Rule #1: The Kernel is Headless
+
+The `@objectos/kernel` package is framework-agnostic.
+
+* **Forbidden:** `import { Request, Response } from 'express'`.
+* **Forbidden:** `import { Injectable } from '@nestjs/common'`.
+* **Reasoning:** We might run the Kernel in a Serverless Function, a CLI worker, or an Electron app where NestJS/HTTP is not present.
+
+### 🧬 Rule #2: Context is King
+
+Every Kernel method **MUST** accept a `SessionContext` as the last argument.
+This context carries the current user, language, and transaction handle.
+
+```typescript
+// ✅ GOOD
+async find(objectName: string, options: FindOptions, ctx: SessionContext): Promise<any[]>
+
+// ❌ BAD (How do we know who is asking?)
+async find(objectName: string, options: FindOptions): Promise<any[]>
+
+```
+
+### 🧱 Rule #3: Thin Controllers, Fat Kernel
+
+**NestJS Controllers should contain ZERO business logic.**
+They exist only to:
+
+1. Extract data from HTTP Request (Body, Params, Headers).
+2. Build the `SessionContext` (User Info).
+3. Call **ONE** method in the Kernel.
+4. Return the result.
+
+### 🚦 Rule #4: Protocol-Driven Error Handling
+
+Throw standardized errors from `@objectql/types`. Do not throw generic JS Errors.
+
+* `throw new ObjectQLError({ code: 'NOT_FOUND', ... })` -> Maps to 404.
+* `throw new ObjectQLError({ code: 'PERMISSION_DENIED', ... })` -> Maps to 403.
+* `throw new ObjectQLError({ code: 'VALIDATION_FAILED', ... })` -> Maps to 400.
+
+## 5. Implementation Patterns
+
+### Pattern A: Kernel Method (Logic Layer)
+
+```typescript
+// packages/kernel/src/ObjectOS.ts
+import { ObjectConfig, FindOptions, SessionContext, ObjectQLError } from '@objectql/types';
 
 export class ObjectOS {
-  constructor(
-    private readonly engine: ObjectQL, // The underlying raw engine
-    private readonly hooks: HookManager
-  ) {}
+  // ...
 
-  async find(objectName: string, query: any, session: UserSession) {
-    // 1. Security Check (The ObjectOS Value Add)
-    if (!this.guards.canRead(objectName, session)) {
-      throw new PermissionDeniedError(objectName);
-    }
+  async find(objectName: string, options: FindOptions, ctx: SessionContext): Promise<any[]> {
+    // 1. Resolve Metadata
+    const config = this.registry.getObject(objectName);
+    if (!config) throw new ObjectQLError({ code: 'OBJECT_NOT_FOUND', message: objectName });
 
-    // 2. Dispatch to ObjectQL (The Data Layer)
-    const result = await this.engine.find(objectName, query);
+    // 2. Permission Check (RBAC)
+    await this.permissionEngine.check(config, 'read', ctx);
 
-    // 3. Audit Log (Side Effect)
-    this.emit('data.read', { user: session.userId, object: objectName });
+    // 3. Trigger Hooks (Before)
+    await this.hooks.run('beforeFind', { objectName, options }, ctx);
 
-    return result;
+    // 4. Driver Execution (The Data Access)
+    // Note: Driver is injected, not instantiated
+    const result = await this.driver.find(objectName, options);
+
+    // 5. Trigger Hooks (After) - e.g. hiding secret fields
+    return this.hooks.run('afterFind', { result }, ctx);
   }
 }
 
-Pattern B: The NestJS Controller
-Location: packages/server/src/controllers/data.controller.ts
-import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
+```
+
+### Pattern B: NestJS Controller (HTTP Layer)
+
+```typescript
+// packages/server/src/controllers/data.controller.ts
+import { Controller, Post, Body, Param, Req, UseGuards } from '@nestjs/common';
 import { ObjectOS } from '@objectos/kernel';
-import { Session } from '../decorators/session.decorator';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthenticatedRequest } from '../types';
 
-@Controller('api/v1/data')
+@Controller('api/v4')
 export class DataController {
-  // STRICT Dependency Injection
-  constructor(private readonly os: ObjectOS) {}
+  // Kernel is injected via NestJS DI
+  constructor(private readonly kernel: ObjectOS) {}
 
-  @Post(':objectName')
+  @Post(':object/query')
+  @UseGuards(AuthGuard)
   async query(
-    @Param('objectName') objectName: string, 
+    @Param('object') objectName: string,
     @Body() body: any,
-    @Session() session: UserSession // Extracted by Middleware
+    @Req() req: AuthenticatedRequest
   ) {
-    // Controller is thin. Delegates auth & logic to Kernel.
-    return this.os.find(objectName, body, session);
+    // 1. Build Context from Request
+    const ctx = {
+      user: req.user,
+      userId: req.user.id,
+      spaceId: req.headers['x-space-id']
+    };
+
+    // 2. Delegate to Kernel
+    return this.kernel.find(objectName, body, ctx);
   }
 }
 
-Pattern C: Plugin Registration
-Location: packages/plugin-workflow/src/index.ts
-import { ObjectOS, Plugin } from '@objectos/kernel';
+```
 
-export const WorkflowPlugin: Plugin = {
-  name: 'workflow',
-  install(kernel: ObjectOS) {
-    // Register Hooks
-    kernel.hooks.on('afterCreate', async (ctx) => {
-      // Logic: If trigger matches, start workflow
-      if (ctx.object.hasWorkflow) {
-        await kernel.jobs.dispatch('start_flow', { recordId: ctx.result.id });
-      }
-    });
-  }
-};
+## 6. Metadata Standards
 
-6. Metadata Standards
- * Format: YAML (.yml) is the source of truth.
- * Location: System objects (like _users, _roles) live in @objectos/presets.
- * Naming: snake_case for database fields, camelCase for API responses (handled by the serializer).
- * UI Metadata: Always include label, description, options in object definitions so ObjectUI can consume them.
-7. AI Workflow Instructions
- * On "Add Feature": First determine if it's a Core Mechanism (Kernel), a Protocol Change (Switch to ObjectQL repo), or an API Endpoint (Server).
- * On "Fix Bug": If the bug is in SQL generation, STOP. Tell the user to fix it in @objectql/driver-sql. Do not patch drivers here.
- * On "New Object": Create the .object.yml in presets if it's a system object. Ensure label is present for UI.
+When working with `*.object.yml` files or Presets:
+
+* **Naming:** Use `snake_case` for database fields (`first_name`), but the API will automatically serialize them to the configured format (usually keeping snake_case or converting to camelCase based on global config).
+* **Reserved Fields:** Do not use `_id`, `created_at`, `updated_at`, `owner` in custom logic definitions; these are system fields handled automatically.
+
+## 7. AI Chain of Thought Triggers
+
+**When asked to "Add a new API endpoint":**
+
+1. **Thinking:** Does this endpoint expose a new *Capability* or just a new *Route*?
+2. **Action:** If it's a capability (e.g., "Import CSV"), implement logic in `Kernel` first. Then add a Controller in `Server`.
+
+**When asked to "Integrate Auth":**
+
+1. **Thinking:** Auth is a plugin.
+2. **Action:** Create/Modify `@objectos/plugin-auth`. Use `kernel.on('before*')` hooks to enforce security. **DO NOT** modify the core `ObjectOS` class.
+
+**When asked to "Fix a Type Error":**
+
+1. **Check:** Are you defining a type in `packages/kernel`?
+2. **Correction:** Stop. Check `@objectql/types`. The type should probably be imported from there. If it's missing, tell the user to update the Protocol first.
