@@ -69,9 +69,11 @@ export class AuthMiddleware implements NestMiddleware {
           };
       } 
       // Strategy 2: Development/Testing Header Fallback
-      else if (req.headers['x-user-id']) {
+      // Only enabled if OBJECTQL_ALLOW_DEV_HEADERS is explicitly set to 'true'
+      // Default: disabled (secure by default)
+      else if (req.headers['x-user-id'] && process.env.OBJECTQL_ALLOW_DEV_HEADERS === 'true') {
           // Allow testing without full authentication in development
-          // ⚠️ This should be disabled in production via environment check
+          // ⚠️ Never enable this in production - it bypasses authentication
           const userId = req.headers['x-user-id'] as string;
           const isAdmin = userId === 'admin';
           req['user'] = {

@@ -110,6 +110,9 @@ NODE_ENV=production
 # Auth (Better-Auth)
 BETTER_AUTH_SECRET=your-secret-key
 BETTER_AUTH_URL=http://localhost:3000
+
+# Development (DO NOT USE IN PRODUCTION)
+OBJECTQL_ALLOW_DEV_HEADERS=true  # Enables x-user-id header authentication bypass
 ```
 
 ## API Reference
@@ -270,7 +273,13 @@ x-user-id: testuser
 x-space-id: org123
 ```
 
-⚠️ **Warning**: This fallback should be disabled in production.
+⚠️ **Security**: This fallback is **disabled by default**. To enable it in development, set:
+
+```bash
+export OBJECTQL_ALLOW_DEV_HEADERS=true
+```
+
+**Never enable this in production** - it bypasses authentication entirely.
 
 ## Project Structure
 
