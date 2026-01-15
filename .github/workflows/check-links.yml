@@ -23,11 +23,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Check links in Markdown files
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        uses: lycheeverse/lychee-action@v2
         with:
-          use-quiet-mode: 'yes'
-          use-verbose-mode: 'yes'
-          config-file: '.github/markdown-link-check-config.json'
-          folder-path: '.'
-          file-path: './README.md, ./CONTRIBUTING.md'
-          check-modified-files-only: 'no'
+          args: --verbose --no-progress --exclude-mail '**/*.md' 'docs/**/*.md'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
