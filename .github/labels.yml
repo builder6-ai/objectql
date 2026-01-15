@@ -1,0 +1,103 @@
+# GitHub Labels Configuration
+# This file can be used with label-sync tools to ensure consistent labels
+
+labels:
+  # Package Labels
+  - name: kernel
+    color: '0366d6'
+    description: 'Changes in @objectos/kernel package'
+
+  - name: server
+    color: '0366d6'
+    description: 'Changes in @objectos/server package'
+
+  - name: ui
+    color: '0366d6'
+    description: 'Changes in @objectos/ui package'
+
+  - name: presets
+    color: '0366d6'
+    description: 'Changes in preset packages'
+
+  # Type Labels
+  - name: documentation
+    color: 'd4c5f9'
+    description: 'Documentation changes'
+
+  - name: workflows
+    color: 'd4c5f9'
+    description: 'GitHub Actions workflow changes'
+
+  - name: dependencies
+    color: 'd4c5f9'
+    description: 'Dependency updates'
+
+  - name: automated
+    color: 'e99695'
+    description: 'Automated PRs and updates'
+
+  - name: github-actions
+    color: 'd4c5f9'
+    description: 'GitHub Actions updates'
+
+  - name: tests
+    color: 'd4c5f9'
+    description: 'Test-related changes'
+
+  - name: configuration
+    color: 'd4c5f9'
+    description: 'Configuration file changes'
+
+  # Size Labels
+  - name: size/xs
+    color: '00ff00'
+    description: 'Extra small changes (0-10 lines)'
+
+  - name: size/s
+    color: 'c2e0c6'
+    description: 'Small changes (11-100 lines)'
+
+  - name: size/m
+    color: 'fbca04'
+    description: 'Medium changes (101-500 lines)'
+
+  - name: size/l
+    color: 'ff9800'
+    description: 'Large changes (501-1000 lines)'
+
+  - name: size/xl
+    color: 'd93f0b'
+    description: 'Extra large changes (1000+ lines)'
+
+  # Status Labels
+  - name: stale
+    color: 'eeeeee'
+    description: 'Inactive issues or PRs'
+
+  - name: pinned
+    color: 'fef2c0'
+    description: 'Never mark as stale'
+
+  - name: security
+    color: 'd73a4a'
+    description: 'Security-related issues or PRs'
+
+  - name: bug
+    color: 'd73a4a'
+    description: 'Bug reports'
+
+  - name: enhancement
+    color: 'a2eeef'
+    description: 'Feature requests and enhancements'
+
+  - name: good first issue
+    color: '7057ff'
+    description: 'Good for newcomers'
+
+  - name: in-progress
+    color: 'fbca04'
+    description: 'Work in progress'
+
+  - name: blocked
+    color: 'b60205'
+    description: 'Blocked by external factors'
