@@ -33,6 +33,24 @@ One-time setup script to configure the pnpm-lock.yaml merge driver.
 - Sets `merge.pnpm-lock.driver` to point to the merge script
 - The `.gitattributes` file maps `pnpm-lock.yaml` to use this driver
 
+## test-merge-driver.sh
+
+Test script to verify the merge driver is properly configured.
+
+**Usage:**
+```bash
+./scripts/test-merge-driver.sh
+```
+
+**What it tests:**
+- Verifies `.gitattributes` exists and is correctly configured
+- Checks that merge scripts exist and are executable
+- Validates shell script syntax
+- Tests the setup script execution
+- Verifies Git config is properly set
+
+Run this script after setup to confirm everything is working correctly.
+
 ## Why This Matters
 
 In a monorepo with multiple packages, `pnpm-lock.yaml` frequently has merge conflicts when multiple branches add or update dependencies. Rather than manually resolving these conflicts (which is error-prone), the merge driver automatically regenerates the lockfile using pnpm's own dependency resolution logic.
