@@ -1,0 +1,6 @@
+# Set lockfile to use union merge strategy to reduce conflicts
+# This tells Git to keep changes from both branches when there's a conflict
+pnpm-lock.yaml merge=union
+
+# Treat pnpm-lock.yaml as generated file for diff purposes
+pnpm-lock.yaml linguist-generated=true

@@ -165,9 +165,11 @@ describe('ObjectOS.insert', () => {
 
 ### Prerequisites
 
-- Node.js 18+ (LTS recommended)
-- PNPM 8+
+- **Node.js 20+** (LTS recommended)
+- **PNPM 9.x** (Required - enforced via engines field)
 - PostgreSQL 13+ (for integration tests)
+
+> ⚠️ **Important:** This project requires pnpm version 9.x to ensure consistent lockfile format and avoid merge conflicts. Other versions may cause issues.
 
 ### Setup
 
@@ -175,6 +177,9 @@ describe('ObjectOS.insert', () => {
 # Clone the repository
 git clone https://github.com/objectql/objectos.git
 cd objectos
+
+# Install pnpm if you haven't (use version 9.x)
+npm install -g pnpm@9
 
 # Install dependencies
 pnpm install
@@ -286,6 +291,35 @@ git push origin feature/your-feature-name
 # - Add screenshots for UI changes
 ```
 
+### Handling pnpm-lock.yaml Conflicts
+
+If you encounter merge conflicts in `pnpm-lock.yaml`:
+
+**Automated Resolution (Recommended):**
+- Our GitHub Actions will automatically detect and resolve lockfile conflicts
+- A bot will regenerate the lockfile and commit the changes to your PR
+- Review the automated commit to ensure your dependencies are correct
+
+**Manual Resolution:**
+```bash
+# If you prefer to resolve manually:
+# 1. Delete the conflicted lockfile
+rm pnpm-lock.yaml
+
+# 2. Reinstall dependencies to regenerate it
+pnpm install
+
+# 3. Commit the resolved lockfile
+git add pnpm-lock.yaml
+git commit -m "chore: resolve pnpm-lock.yaml conflicts"
+git push
+```
+
+**Prevention Tips:**
+- Always use pnpm version 9.x (enforced via `engines` field)
+- Pull latest changes from main before installing new dependencies
+- Run `pnpm install` after merging main into your branch
+
 ### PR Checklist
 
 Before submitting, ensure:
@@ -293,7 +327,7 @@ Before submitting, ensure:
 - [ ] All tests pass
 - [ ] New tests added for new features
 - [ ] Documentation updated
-- [ ] No merge conflicts
+- [ ] No merge conflicts (pnpm-lock.yaml conflicts will be auto-resolved)
 - [ ] Conventional commit messages used
 
 ## Testing

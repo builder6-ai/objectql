@@ -1,0 +1,63 @@
+name: Validate Lockfile
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '**/package.json'
+
+jobs:
+  validate:
+    name: Validate pnpm-lock.yaml
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Validate lockfile is up-to-date
+        run: |
+          # This will fail if lockfile is out of sync with package.json files
+          pnpm install --frozen-lockfile
+          echo "✅ Lockfile is up-to-date and consistent"
+
+      - name: Check for merge conflict markers
+        run: |
+          if grep -rn "<<<<<<< HEAD" pnpm-lock.yaml; then
+            echo "❌ Merge conflict markers found in pnpm-lock.yaml"
+            echo "::error::Please resolve merge conflicts in pnpm-lock.yaml"
+            exit 1
+          fi
+          echo "✅ No merge conflict markers found"
+
+      - name: Verify lockfile integrity
+        run: |
+          # Verify the lockfile format is valid
+          if [ ! -f "pnpm-lock.yaml" ]; then
+            echo "❌ pnpm-lock.yaml not found"
+            exit 1
+          fi
+          
+          # Check lockfile version
+          LOCKFILE_VERSION=$(head -1 pnpm-lock.yaml | grep -oP "lockfileVersion: '\K[0-9.]+")
+          echo "Lockfile version: $LOCKFILE_VERSION"
+          
+          if [ "$LOCKFILE_VERSION" != "9.0" ]; then
+            echo "⚠️ Warning: Lockfile version is $LOCKFILE_VERSION, expected 9.0"
+          fi
+          
+          echo "✅ Lockfile integrity verified"

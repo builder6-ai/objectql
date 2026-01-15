@@ -1,0 +1,97 @@
+name: Auto-resolve pnpm-lock.yaml Conflicts
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - '**/package.json'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  resolve-lockfile:
+    runs-on: ubuntu-latest
+    # Only run on PRs from the same repository (not forks) to avoid security issues
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Check for merge conflicts in lockfile
+        id: check-conflict
+        run: |
+          if git show :pnpm-lock.yaml 2>&1 | grep -q "<<<<<<< HEAD"; then
+            echo "conflict=true" >> $GITHUB_OUTPUT
+            echo "::notice::Detected merge conflict in pnpm-lock.yaml"
+          else
+            echo "conflict=false" >> $GITHUB_OUTPUT
+            echo "::notice::No merge conflict detected in pnpm-lock.yaml"
+          fi
+        continue-on-error: true
+
+      - name: Resolve lockfile by reinstalling dependencies
+        if: steps.check-conflict.outputs.conflict == 'true' || github.event_name == 'pull_request'
+        run: |
+          # Remove lockfile to force a fresh resolution
+          rm -f pnpm-lock.yaml
+          
+          # Reinstall to generate a new lockfile
+          pnpm install --no-frozen-lockfile
+          
+          echo "::notice::Successfully regenerated pnpm-lock.yaml"
+
+      - name: Check if lockfile changed
+        id: check-changes
+        run: |
+          if git diff --quiet pnpm-lock.yaml; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "::notice::No changes to lockfile"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "::notice::Lockfile has been updated"
+          fi
+
+      - name: Commit resolved lockfile
+        if: steps.check-changes.outputs.changed == 'true'
+        run: |
+          git add pnpm-lock.yaml
+          git commit -m "chore: auto-resolve pnpm-lock.yaml conflicts [skip ci]"
+          git push origin ${{ github.head_ref }}
+          echo "::notice::Committed and pushed resolved lockfile"
+
+      - name: Comment on PR
+        if: steps.check-changes.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 **Lockfile Auto-resolved**\n\nThe `pnpm-lock.yaml` has been automatically regenerated to resolve conflicts. Please review the changes and ensure your dependencies are correct.'
+            })
