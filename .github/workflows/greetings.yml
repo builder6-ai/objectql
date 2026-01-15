@@ -23,13 +23,13 @@ jobs:
             Please make sure you've provided all the necessary information and context.
             Our team will review this as soon as possible.
             
-            In the meantime, you might want to check out our [Contributing Guide](https://github.com/objectstack-ai/objectos/blob/main/CONTRIBUTING.md)
+            In the meantime, you might want to check out our [Contributing Guide](https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md)
             and [Documentation](https://objectos.org/docs).
           pr-message: >
             🎉 Thanks for opening your first pull request! We're excited to review your contribution.
             
             Please make sure:
-            - [ ] Your code follows our [coding standards](https://github.com/objectstack-ai/objectos/blob/main/CONTRIBUTING.md)
+            - [ ] Your code follows our [coding standards](https://github.com/${{ github.repository }}/blob/main/CONTRIBUTING.md)
             - [ ] All tests pass
             - [ ] You've added tests for new features
             - [ ] Documentation is updated (if needed)
