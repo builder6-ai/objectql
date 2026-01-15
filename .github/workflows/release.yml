@@ -16,6 +16,16 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      - name: Configure Git Merge Driver for pnpm-lock.yaml
+        run: |
+          # Configure custom merge driver for pnpm-lock.yaml
+          git config merge.pnpm-merge.name "pnpm-lock.yaml merge driver"
+          git config merge.pnpm-merge.driver \
+            "pnpm install --no-frozen-lockfile"
+
+          # Apply merge driver (CI-only, doesn't affect repository)
+          echo "pnpm-lock.yaml merge=pnpm-merge" >> .git/info/attributes
+
       - name: Install pnpm
         uses: pnpm/action-setup@v3
         with:
