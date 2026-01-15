@@ -16,6 +16,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
       - name: Configure Git Merge Driver for pnpm-lock.yaml
         run: |
           # Configure custom merge driver for pnpm-lock.yaml
@@ -25,11 +30,6 @@ jobs:
 
           # Apply merge driver (CI-only, doesn't affect repository)
           echo "pnpm-lock.yaml merge=pnpm-merge" >> .git/info/attributes
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
 
       - name: Setup Node.js 20.x
         uses: actions/setup-node@v4
