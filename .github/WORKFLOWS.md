@@ -279,7 +279,7 @@ Some workflows require repository secrets:
 
 You can view the status of all workflows:
 
-- **Actions tab:** [View workflows](../../actions)
+- **Actions tab:** [View workflows](https://github.com/objectstack-ai/objectos/actions)
 - **Badge:** Add workflow badges to README for quick status overview
 
 ---

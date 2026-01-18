@@ -100,7 +100,7 @@ Key workflows:
 ## 🔍 Monitoring
 
 View workflow runs:
-- Go to the [Actions tab](../../actions)
+- Go to the [Actions tab](https://github.com/objectstack-ai/objectos/actions)
 - Filter by workflow name
 - Check logs for failures
 
