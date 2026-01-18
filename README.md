@@ -139,7 +139,7 @@ bootstrap();
 
 Want to contribute or see what's coming next?
 
-- **[Development Plan (Q1 2026)](./DEVELOPMENT_PLAN.md)** - Detailed implementation plan for upcoming features
+- **[Development Plan (Q1 2026)](./docs/guide/development-plan.md)** - Detailed implementation plan for upcoming features
 - **[Long-term Roadmap](./ROADMAP.md)** - Strategic vision through 2026 and beyond
 - **[Architecture Guide](./ARCHITECTURE.md)** - Deep dive into system design
 - **[Contributing Guide](./CONTRIBUTING.md)** - How to contribute to ObjectOS
